@@ -11,10 +11,13 @@ class PriceSearcher
 
   def find
     @last_table.each do |elem|
-      @rezult<<elem if !elem[0].nil? and elem[0]=~/#{@name.upcase}[., )]/ 
+      @rezult<<elem if !elem[0].nil? and elem[0]=~/#{@name.upcase}[., )]{1}/ 
     end
     out
-    min_max if @rezult.length!=0
+    if @rezult.length!=0
+      min_max 
+      similar_price
+    end
   end
 
   def out
@@ -25,7 +28,7 @@ class PriceSearcher
       puts "'#{@name}' is #{@rezult[0][14]} BYN in Minsk these days."
     else
       @rezult.each do |elem|
-        puts "'#{@name}'(#{elem[0].capitalize}) is #{elem[14]} BYN in Minsk these days."
+        puts "'#{@name}'(#{elem[0].capitalize.gsub(/\s+/, " ")}) is #{elem[14]} BYN in Minsk these days."
       end
     end
   end
@@ -65,8 +68,8 @@ class PriceSearcher
       puts "Lowest was on #{min_date[0]}/#{min_date[1]} at #{min} BYN"
       puts "Hightest was on #{max_date[0]}/#{max_date[1]} at #{max} BYN"
     elsif @rezult.length>1      
-      puts "Lowest of #{elem[0].capitalize} was on #{min_date[0]}/#{min_date[1]} at #{min} BYN"
-      puts "Hightest of #{elem[0].capitalize} was on #{max_date[0]}/#{max_date[1]} at #{max} BYN"
+      puts "Lowest of '#{elem[0].capitalize.gsub(/\s+/, " ")}' was on #{min_date[0]}/#{min_date[1]} at #{min} BYN"
+      puts "Hightest of '#{elem[0].capitalize.gsub(/\s+/, " ")}' was on #{max_date[0]}/#{max_date[1]} at #{max} BYN"
     end  
   end
 
@@ -95,11 +98,40 @@ class PriceSearcher
     true if date[1].to_i<2017
   end
 
+  def similar_price
+    @rezult.each do |rez|
+      similar=[]
+      @last_table.each do |elem|
+        if !elem[14].nil? 
+          case elem[14].to_f
+          when rez[14]-0.25..rez[14]+0.25 then
+            similar<<elem if elem[14].to_f!=0
+          end
+        end
+      end
+      out_similar(rez,similar)
+    end
+  end
+
+  def out_similar(rez,similar)
+    if @rezult.length==1
+      puts "For similar price you also can afford #{similar_elements(similar)}."
+    elsif @rezult.length>1
+      puts "For similar price as '#{rez[0].gsub(/\s+/, " ")}' you also can afford #{similar_elements(similar)}."
+    end      
+  end
+
+  def similar_elements(similar)
+    out=""
+    similar.each do |sim|
+      similar.delete_at(similar.index(sim)) and next if sim[0]=~/#{@name.upcase}[., )]/ 
+      out+="'#{sim[0].capitalize.gsub(/\s+/, " ")}'" + ","
+    end
+    out[0...-1]
+  end
+
 end
 
 #--------------------------------------
 
 search=PriceSearcher.new.find
-
-
-
