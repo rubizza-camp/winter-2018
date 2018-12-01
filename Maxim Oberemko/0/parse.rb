@@ -95,43 +95,40 @@ class PriceSearcher
 
   def check_denomination(table)
     date=get_date(table)
-    true if date[1].to_i<2017
+    true if date[1].to_i < 2017
   end
 
   def similar_price
     @rezult.each do |rez|
-      similar=[]
+      similar = []
       @last_table.each do |elem|
-        if !elem[14].nil? 
+        unless elem[14].nil?
           case elem[14].to_f
-          when rez[14]-0.25..rez[14]+0.25 then
-            similar<<elem if elem[14].to_f!=0
+          when rez[14] - 0.25..rez[14] + 0.25 then
+            similar << elem if elem[14].to_f != 0
           end
         end
       end
-      out_similar(rez,similar)
+      out_similar(rez, similar)
     end
   end
 
-  def out_similar(rez,similar)
-    if @rezult.length==1
+  def out_similar(rez, similar)
+    if @rezult.length == 1
       puts "For similar price you also can afford #{similar_elements(similar)}."
-    elsif @rezult.length>1
-      puts "For similar price as '#{rez[0].capitalize.gsub(/\s+/, " ")}' you also can afford #{similar_elements(similar)}."
-    end      
+    elsif @rezult.length > 1
+      puts "For similar price as '#{rez[0].capitalize.gsub(/\s+/, ' ')}' you also can afford #{similar_elements(similar)}."
+    end  
   end
 
   def similar_elements(similar)
-    out=""
+    out= ''
     similar.each do |sim|
-      similar.delete_at(similar.index(sim)) and next if sim[0]=~/#{@name.upcase}[., )]/ 
-      out+="'#{sim[0].capitalize.gsub(/\s+/, " ")}'" + ","
+      similar.delete_at(similar.index(sim)) && next if sim[0] =~ /#{@name.upcase}[., )]/
+      out += "'#{sim[0].capitalize.gsub(/\s+/, ' ')}'" + ','
     end
     out[0...-1]
   end
-
 end
 
-#--------------------------------------
-
-search=PriceSearcher.new.find
+PriceSearcher.new.find
