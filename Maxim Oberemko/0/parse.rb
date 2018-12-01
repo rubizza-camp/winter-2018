@@ -117,7 +117,7 @@ class PriceSearcher
     if @rezult.length==1
       puts "For similar price you also can afford #{similar_elements(similar)}."
     elsif @rezult.length>1
-      puts "For similar price as '#{rez[0].gsub(/\s+/, " ")}' you also can afford #{similar_elements(similar)}."
+      puts "For similar price as '#{rez[0].capitalize.gsub(/\s+/, " ")}' you also can afford #{similar_elements(similar)}."
     end      
   end
 
