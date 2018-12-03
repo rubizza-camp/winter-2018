@@ -3,3 +3,6 @@ raw_data/
 *.csv
 *.xl*
 
+.DS_Store
+*.mov
+.idea
