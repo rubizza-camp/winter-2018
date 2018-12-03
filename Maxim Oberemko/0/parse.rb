@@ -1,61 +1,76 @@
 require 'roo'
 require 'roo-xls'
+MINSK_COLUMN = 14
 class PriceSearcher
   def initialize
     @last_table = Roo::Excelx.new('./data/Average_prices(serv)-10-2018.xlsx')
+    @name = ''
+    @result = @minmax = []
+    @similar = {}
+  end
+
+  def input_name
     puts "\nThe price of what product are you looking for?"
     @name = gets.chomp
-    @rezult = []
-    @minmax = []
   end
 
-  def find
-    @last_table.each do |elem|
-      @rezult << elem if !elem[0].nil? && elem[0] =~ /#{@name.upcase}[., )]{1}/
+  def find_price
+    input_name
+    @last_table.select{|el| !el[0].nil? && el[0] =~ /#{@name.upcase}[., )]{1}/}.each do |elem|
+      @result << elem
     end
-    out
-    MinMax.new(@rezult, @name, @last_table).out && similar_price unless @rezult.empty?
+    out_price
+    unless @result.empty?
+      MinMax.new(@result, @name, @last_table).out
+      search_similar_price_elems
+      out_similar
+    end
   end
 
-  def out
-    case @rezult.length
+  def out_price
+    case @result.length
     when 0 then
       puts "'#{@name}' can not be found in database."
     when 1 then
-      puts "'#{@name}' is #{@rezult[0][14]} BYN in Minsk these days."
+      puts "'#{@name}' is #{@result[0][MINSK_COLUMN]} BYN in Minsk these days."
     else
-      @rezult.each do |elem|
-        puts "'#{@name}'(#{elem[0].capitalize.gsub(/\s+/, ' ')}) is #{elem[14]} BYN in Minsk these days."
+      @result.each do |elem|
+        puts "'#{@name}'(#{elem[0].capitalize.gsub(/\s+/, ' ')}) is #{elem[MINSK_COLUMN]} BYN in Minsk these days."
       end
     end
   end
 
-  def similar_price
-    @rezult.each do |rez|
-      similar = []
+  def search_similar_price_elems
+    @result.each do |res|
+      @similar[res[0].to_sym]=[]
       @last_table.each do |elem|
-        case elem[14].to_f
-        when rez[14] - 0.25..rez[14] + 0.25 then
-          similar << elem if elem[14].to_f != 0
-        end
+        @similar[res[0].to_sym] << elem if elem[MINSK_COLUMN].to_f != 0 && similar?(elem, res)
       end
-      out_similar(rez, similar)
     end
   end
 
-  def out_similar(rez, similar)
-    if @rezult.length == 1
-      puts "For similar price you also can afford #{similar_elements(similar)}."
-    elsif @rezult.length > 1
-      puts "For similar price as '#{rez[0].capitalize.gsub(/\s+/, ' ')}'\
-you also can afford #{similar_elements(similar)}."
+  def similar?(elem, res)
+    elem[MINSK_COLUMN].to_f > res[MINSK_COLUMN] - 0.25 && elem[MINSK_COLUMN].to_f < res[MINSK_COLUMN] + 0.25
+  end
+
+  def out_similar()
+    if @result.length == 1
+      puts "For similar price you also can afford #{similar_elements(@similar[@similar.keys[0]])}."
+    elsif @result.length > 1
+      @similar.each do |key, value|
+        puts "For similar price as '#{key.to_s.capitalize.gsub(/\s+/, ' ')}'\
+you also can afford #{similar_elements(value)}."
+      end
     end
   end
 
   def similar_elements(similar)
     out = ''
     similar.each do |sim|
-      similar.delete_at(similar.index(sim)) && next if sim[0] =~ /#{@name.upcase}[., )]/
+      if sim[0] =~ /#{@name.upcase}[., )]/
+        similar.delete_at(similar.index(sim))
+        next
+      end
       out += "'#{sim[0].capitalize.gsub(/\s+/, ' ')}'" + ','
     end
     out[0...-1]
@@ -63,8 +78,8 @@ you also can afford #{similar_elements(similar)}."
 end
 
 class MinMax
-  def initialize(rezults, name, last_table)
-    @rezults = rezults
+  def initialize(results, name, last_table)
+    @results = results
     @all_tables = []
     @name = name
     @last_table = last_table
@@ -85,28 +100,28 @@ class MinMax
 
   def out
     @all_tables = all_tables
-    @rezults.each do |rez|
-      out_minmax(find_min(rez), find_max(rez), rez)
+    @results.each do |res|
+      out_minmax(min_price(res), max_price(res), res)
     end
   end
 
-  def find_min(rez)
-    min = convert_date(@last_table) << rez[14]
+  def min_price(res)
+    min = convert_date(@last_table) << res[MINSK_COLUMN]
     @all_tables.each do |table|
       k = check_denomination(table)
       table.each do |row|
-        min = convert_date(table) << (k * row[14]).round(4) if correct_line?(rez, row) && check_min(row, min, k)
+        min = convert_date(table) << (k * row[MINSK_COLUMN]).round(4) if correct_line?(res, row) && check_min(row, min, k)
       end
     end
     min
   end
 
-  def find_max(rez)
-    max = convert_date(@last_table) << rez[14]
+  def max_price(res)
+    max = convert_date(@last_table) << res[MINSK_COLUMN]
     @all_tables.each do |table|
       k = check_denomination(table)
       table.each do |row|
-        max = convert_date(table) << (k * row[14]).round(4) if correct_line?(rez, row) && check_max(row, max, k)
+        max = convert_date(table) << (k * row[MINSK_COLUMN]).round(4) if correct_line?(res, row) && check_max(row, max, k)
       end
     end
     max
@@ -114,21 +129,21 @@ class MinMax
 
   def out_minmax(min, max, elem)
     el = elem[0].capitalize.gsub(/\s+/, ' ')
-    str = "of '#{el}' " if @rezults.length != 1
+    str = "of '#{el}' " if @results.length != 1
     puts "Lowest #{str}was on #{min[0]}/#{min[1]} at #{min[2]} BYN"
     puts "Hightest #{str}was on #{max[0]}/#{max[1]} at #{max[2]} BYN"
   end
 
-  def correct_line?(rez, row)
-    !row[0].nil? && row[0] == rez[0]
+  def correct_line?(res, row)
+    !row[0].nil? && row[0] == res[0]
   end
 
   def check_min(row, min, coefficient)
-    !row[14].nil? && coefficient * row[14] < min[2]
+    !row[14].nil? && coefficient * row[MINSK_COLUMN] < min[2]
   end
 
   def check_max(row, max, coefficient)
-    !row[14].nil? && coefficient * row[14] > max[2]
+    !row[14].nil? && coefficient * row[MINSK_COLUMN] > max[2]
   end
 
   def convert_date(table)
@@ -148,4 +163,4 @@ class MinMax
   end
 end
 
-PriceSearcher.new.find
+PriceSearcher.new.find_price
