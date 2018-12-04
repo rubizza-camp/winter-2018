@@ -1,4 +1,4 @@
-require 'open-url'
+require 'open-uri'
 require 'nokogiri'
 require 'pry'
 
@@ -11,18 +11,22 @@ module  BelStat
        'tseny/operativnaya-informatsiya_4/'\
        'srednie-tseny-na-potrebitelskie-tovary'\
        '-i-uslugi-po-respublike-belarus/'
+
+      @domain = 'http://www.belstat.gov.by'
     end
 
-    def download_excels
-      l = parse(@URL)
+    def download_excels(directory_name)
+      docs_urls = parse(@URL)
 
-      l.each do |a|
-        a = a.to_s
-        a = 'http://www.belstat.gov.by' + a unless a =~ /http(.*)/
-        puts a
-        puts generate_name a
+      docs_urls.each do |url|
+        url = url.to_s
+        url = @domain + url unless url =~ /http(.*)/
+
+        puts url
+        puts generate_name(url)
         puts '------------'
-        download(a, generate_name(a), './raw_data')
+
+        download(url, generate_name(url), "./#{directory_name}")
       end
     end
 
@@ -62,6 +66,12 @@ module  BelStat
       elsif digits.length == 8
         digits[2..3] + '.' + digits[4..-1]
       end
+      digits
     end
   end
+end
+
+if __FILE__==$0
+  m = BelStat::Downloader.new
+  m.download_excels 'lol_data'
 end
