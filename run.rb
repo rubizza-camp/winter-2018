@@ -4,10 +4,7 @@ require 'pry'
 def find_price(file_path, product)
   CSV.open(file_path, headers: true) do |goods|
     goods.each do |good|
-      if good[0] =~ /(.*)#{product}(.*)/i
-        # binding.pry
-        return good['Минская'].to_f
-      end
+      return good['Минская'].to_f if /(.*)#{product}(.*)/i.match?(good[0])
     end
   end
   -1
