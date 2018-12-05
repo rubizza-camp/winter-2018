@@ -77,7 +77,9 @@ class PriceStatistic
   end
 
   def count_sum(row)
-    row['C'].to_f + row['D'].to_f + row['E'].to_f + row['F'].to_f + row['G'].to_f + row['I'].to_f
+    s=0
+    ('C'..'G').each{ |i| s += row[i].to_f }
+    s + row['I'].to_f
   end
 end
 
