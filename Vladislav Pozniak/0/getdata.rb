@@ -14,7 +14,7 @@ links = page.css('a[href*="xls"]').map { |a| a['href'] }
 links.each do |link|
   link.prepend('http://www.belstat.gov.by') if link[0] == '/'
   link = Addressable::URI.escape(link) unless link.include? '%'
-  puts 'Processing' + link
+  puts 'Processing ' + link
   file = link.split('/')[-1]
   IO.copy_stream(URI.open(link), file)
   table = Roo::Spreadsheet.open(file, extension: File.extname(file))
