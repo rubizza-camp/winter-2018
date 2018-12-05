@@ -16,7 +16,7 @@ class PriceStatistic
     sum = 0.0
     kol = 0
     @creek.sheets.last.simple_rows.each do |row|
-      if row['A'] =~ /#{@product}/i
+      if row['A'].to_s.match?(/#{@product}/i)
         sum += row['G'].to_f
         kol += 1
       end
@@ -47,10 +47,14 @@ class PriceStatistic
   def count_total_price(row, mounth)
     avg_price = 0
     kol = 0
-    if row['A'] =~ /#{@product}/i
+    if row['A'].to_s.match?(/#{@product}/i)
       avg_price += row['C'].to_f + row['D'].to_f + row['E'].to_f + row['F'].to_f + row['G'].to_f + row['I'].to_f
       kol += 6
     end
+    set_average_price(kol, avg_price, mounth)
+  end
+
+  def set_average_price(kol, avg_price, mounth)
     kol *= 10_000 if mounth <= 96 && !kol.zero?
     if !kol.zero?
       @average_in_mounth[mounth] = avg_price / kol
@@ -68,13 +72,11 @@ class PriceStatistic
   end
 
   def products_for_similar_price
-    cheep_products = []
+    puts 'For similar price you also can afford:'
     @creek.sheets.last.simple_rows.each do |row|
       sum = row['C'].to_f + row['D'].to_f + row['E'].to_f + row['F'].to_f + row['G'].to_f + row['I'].to_f
-      cheep_products << row['A'] if row['A'] != ~ /@product/i && sum < @nowaday_price * 6
+      puts row['A'] << row['A'] if row['A'] != ~ /@product/i && sum < @nowaday_price * 6
     end
-    puts 'For similar price you also can afford:'
-    puts cheep_products
   end
 end
 
