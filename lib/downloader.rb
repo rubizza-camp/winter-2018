@@ -65,8 +65,9 @@ module  BelStat
         digits[0..1] + '.' + digits[2..5]
       elsif digits.length == 8
         digits[2..3] + '.' + digits[4..-1]
+      else
+        digits
       end
-      digits
     end
   end
 end

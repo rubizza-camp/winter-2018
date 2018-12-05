@@ -1,40 +1,36 @@
-require_relative 'lib/price_parser'
-require 'pry'
+require_relative 'lib/viewer'
+require_relative 'lib/converter'
+require_relative 'lib/downloader'
+require_relative 'lib/finder'
+require 'fileutils'
 
-curr_date = grab_actual_date
+WORK_DIR = 'csv_data'
+RAW_DIR = 'raw_data'
+
+REGION = 'Минская'
+
+if !Dir.exists?("./#{WORK_DIR}") || Dir.empty?("./#{WORK_DIR}")
+  FileUtils.mkdir_p("./#{WORK_DIR}")
+  FileUtils.mkdir_p("./#{RAW_DIR}")
+
+  downloader = BelStat::Downloader.new
+  downloader.download_excels RAW_DIR
+
+  converter = BelStat::Converter.new
+  converter.convert_data RAW_DIR, WORK_DIR
+end
 
 loop do
+  finder = BelStat::Finder.new(REGION, WORK_DIR)
+  viewer = BelStat::Viewer
+
+  puts 'What price are you looking for?'
   query = gets.chomp
 
-  min = 0
-  max = 0
-  curr = 0
-  min_date = max_date = '01.0000'
-
-  # puts find_price path, query unless query.empty?
-  Dir['./csv_data/*'].each do |path|
-    price = find_price(path, query)
-    next if price <= 0
-
-    date = path.split('/')[-1].split('.c')[0]
-
-    (curr = price) if date == curr_date
-
-    (price /= 10_000) if price > 1000
-    if price > max
-      max = price
-      max_date = date
-    end
-
-    if min.zero? || price < min
-      min_date = date
-      min = price
-    end
+  unless query.empty?
+    stat = finder.find_stat query
+    similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
+    #viewer.show_info(query, stat, similars)
+    viewer.show_similars similars
   end
-
-  similar_list = find_similar("./csv_data/#{curr_date}.csv", curr - 0.2, curr + 0.2)
-  similar_list.join(',')
-  puts '-------------'
-  puts "curr - #{curr}|||min #{min} -- #{min_date} |||
-   max -- #{max} #{max_date}} simmilar #{similar_list}"
 end
