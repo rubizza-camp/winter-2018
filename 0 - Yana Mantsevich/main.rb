@@ -16,8 +16,8 @@ class PriceStatistic
     sum = 0.0
     kol = 0
     @creek.sheets.last.simple_rows.each do |row|
-      if row['A'].downcase.include? "#{@product.downcase}"
-        sum += row['G']
+      if row['A'] =~ /#{@product}/i
+        sum += row['G'].to_f
         kol += 1
       end
     end
@@ -40,24 +40,30 @@ class PriceStatistic
       end
       mounth += 1
     end
-    min_max_output
+    min_output
+    max_output
   end
 
   def count_total_price(row, mounth)
     avg_price = 0
     kol = 0
-    if row['A'].downcase.include? "#{@product.downcase}"
+    if row['A'] =~ /#{@product}/i
       avg_price += row['C'].to_f + row['D'].to_f + row['E'].to_f + row['F'].to_f + row['G'].to_f + row['I'].to_f
       kol += 6
     end
     kol *= 10_000 if mounth <= 96 && !kol.zero?
-    @average_in_mounth[mounth] = avg_price / kol if !kol.zero?
+    if !kol.zero?
+      @average_in_mounth[mounth] = avg_price / kol
+    end
   end
 
-  def min_max_output
+  def min_output
     min = @average_in_mounth.key(@average_in_mounth.values.min)
+    puts "Lowest was on #{2009 + min / 12}/#{min % 12} at price #{@average_in_mounth.values.min}"
+  end
+
+  def max_output
     max = @average_in_mounth.key(@average_in_mounth.values.max)
-    puts "Lowest was on #{2009 + min / 12}/#{min % 12} at price  #{@average_in_mounth.values.min}"
     puts "Maximum was on #{2009 + max / 12}/#{max % 12} at #{@average_in_mounth.values.max}"
   end
 
