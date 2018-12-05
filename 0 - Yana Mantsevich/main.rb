@@ -1,5 +1,4 @@
 require 'creek'
-
 class PriceStatistic
   def initialize
     @creek = Creek::Book.new 'сборка.xlsx'
@@ -17,7 +16,7 @@ class PriceStatistic
     sum = 0.0
     kol = 0
     @creek.sheets.last.simple_rows.each do |row|
-      if /#{@product}/i.match(row['A'])
+      if row['A'].downcase.include? "#{@product.downcase}"
         sum += row['G']
         kol += 1
       end
@@ -47,7 +46,7 @@ class PriceStatistic
   def count_total_price(row, mounth)
     avg_price = 0
     kol = 0
-    if /#{@product}/i.match(row['A'])
+    if row['A'].downcase.include? "#{@product.downcase}"
       avg_price += row['C'].to_f + row['D'].to_f + row['E'].to_f + row['F'].to_f + row['G'].to_f + row['I'].to_f
       kol += 6
     end
