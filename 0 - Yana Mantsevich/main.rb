@@ -56,7 +56,7 @@ class PriceStatistic
 
   def set_average_price(kol, avg_price, mounth)
     kol *= 10_000 if mounth <= 96 && !kol.zero?
-    @average_in_mounth[mounth] = avg_price / kol if !kol.zero?
+    @average_in_mounth[mounth] = avg_price / kol unless kol.zero?
   end
 
   def min_output
@@ -72,7 +72,7 @@ class PriceStatistic
   def products_for_similar_price
     puts 'For similar price you also can afford:'
     @creek.sheets.last.simple_rows.each do |row|
-      puts row['A'] if row['A'] !=~ /@product/i && count_sum(row) < @nowaday_price * 6
+      puts row['A'] if row['A'] != ~ /@product/i && count_sum(row) < @nowaday_price * 6
     end
   end
 
