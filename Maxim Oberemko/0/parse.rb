@@ -15,8 +15,8 @@ class PriceSearcher
   end
 
   def find_price
-    input_name
-    @last_table.select { |el| !el[0].nil? && el[0] =~ /#{@name.upcase}[., )]{1}/ }.each do |elem|
+    name = input_name.upcase
+    @last_table.select { |el| !el[0].nil? && (el[0] =~ /#{name}[., )]{1}/ || el[0] == name) }.each do |elem|
       @result << elem
     end
   end
@@ -71,7 +71,7 @@ you also can afford #{similar_elements(value)}."
   def similar_elements(similar)
     out = ''
     similar.each do |sim|
-      if sim[0].match?(/#{@name.upcase}[., )]/)
+      if sim[0].match?(/#{@name.upcase}[., )]{1}/) || sim[0] == @name.upcase
         similar.delete_at(similar.index(sim))
         next
       end
