@@ -20,5 +20,6 @@ links.each do |link|
   table = Roo::Spreadsheet.open(file, extension: File.extname(file))
   year = table.cell(3, 'A').split(' ')[-2]
   month = months[table.cell(3, 'A').split(' ')[-3].to_sym]
+  Dir.mkdir 'data'
   File.rename(file, ('./data/' + year + '.' + month + File.extname(file)))
 end
