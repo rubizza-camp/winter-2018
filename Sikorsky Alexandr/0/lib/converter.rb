@@ -15,16 +15,14 @@ module BelStat
     private
 
     def convert_excel2csv(excel_file, csv_file)
-      begin
-        excel = create_excel(excel_file) 
+      excel = create_excel(excel_file)
 
-        output = File.open(csv_file, 'w')
-        7.upto(excel.last_row) do |line|
-          output.write CSV.generate_line excel.row(line)
-        end
-      rescue StandardError => exception
-        puts exception.message
+      output = File.open(csv_file, 'w')
+      7.upto(excel.last_row) do |line|
+        output.write CSV.generate_line excel.row(line)
       end
+    rescue StandardError => exception
+      puts exception.message
     end
 
     def create_excel(excel_file)
@@ -36,4 +34,3 @@ module BelStat
     end
   end
 end
-

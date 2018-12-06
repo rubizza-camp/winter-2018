@@ -5,7 +5,7 @@ require 'pry'
 module  BelStat
   class Downloader
     def initialize
-      @URL = 'http://www.belstat.gov.by/'\
+      @url = 'http://www.belstat.gov.by/'\
        'ofitsialnaya-statistika/'\
        'makroekonomika-i-okruzhayushchaya-sreda/'\
        'tseny/operativnaya-informatsiya_4/'\
@@ -16,7 +16,7 @@ module  BelStat
     end
 
     def download_excels(directory_name)
-      docs_urls = parse(@URL)
+      docs_urls = parse(@url)
 
       docs_urls.each do |url|
         url = url.to_s

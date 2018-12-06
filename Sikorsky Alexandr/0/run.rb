@@ -4,12 +4,12 @@ require_relative 'lib/downloader'
 require_relative 'lib/finder'
 require 'fileutils'
 
-WORK_DIR = 'csv_data'
-RAW_DIR = 'rav_data'
+WORK_DIR = 'csv_data'.freeze
+RAW_DIR = 'rav_data'.freeze
 
-REGION = 'Минская'
+REGION = 'Минская'.freeze
 
-if !Dir.exists?("./#{WORK_DIR}") || Dir.empty?("./#{WORK_DIR}")
+if !Dir.exist?("./#{WORK_DIR}") || Dir.empty?("./#{WORK_DIR}")
   FileUtils.mkdir_p("./#{WORK_DIR}")
   FileUtils.mkdir_p("./#{RAW_DIR}")
 
@@ -27,14 +27,14 @@ loop do
   puts 'What price are you looking for?'
   query = gets.chomp
 
-  if !query.empty?
-    stat = finder.find_stat query
-    if !stat[:curr].nil?
-      similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
-      similars.reject! {|prod| /.*#{query}.*/i.match?(prod)}
-      viewer.show_info(query, stat, similars)
-    else
-      puts "Sorry, nothing was found for '#{query}'\n\n"
-    end
+  next if query.empty?
+
+  stat = finder.find_stat query
+  if !stat[:curr].nil?
+    similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
+    similars.reject! { |prod| /.*#{query}.*/i.match?(prod) }
+    viewer.show_info(query, stat, similars)
+  else
+    puts "Sorry, nothing was found for '#{query}'\n\n"
   end
 end
