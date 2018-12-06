@@ -5,7 +5,7 @@ require_relative 'lib/finder'
 require 'fileutils'
 
 WORK_DIR = 'csv_data'
-RAW_DIR = 'raw_data'
+RAW_DIR = 'rav_data'
 
 REGION = 'Минская'
 
@@ -27,10 +27,14 @@ loop do
   puts 'What price are you looking for?'
   query = gets.chomp
 
-  unless query.empty?
+  if !query.empty?
     stat = finder.find_stat query
-    similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
-    #viewer.show_info(query, stat, similars)
-    viewer.show_similars similars
+    if !stat[:curr].nil?
+      similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
+      similars.reject! {|prod| /.*#{query}.*/i.match?(prod)}
+      viewer.show_info(query, stat, similars)
+    else
+      puts "Sorry, nothing was found for '#{query}'\n\n"
+    end
   end
 end

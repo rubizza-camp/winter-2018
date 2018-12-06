@@ -12,10 +12,13 @@ module BelStat
       @curr_date = file_path2date @actual_file
     end
 
-    def find_price(file_path, product_name)
+    def find_price(file_path, query)
+      pattern = /(.*)#{query}(\s|\z)+(.*)/i
       CSV.open(file_path, headers: true) do |products|
         products.each do |product|
-          return product[@region].to_f if /(.*)#{product_name}(\s|\z)+(.*)/i.match?(product[0])
+          if pattern.match?(product[0])
+            return product[@region].to_f
+          end
         end
       end
       nil
@@ -35,25 +38,14 @@ module BelStat
     end
 
     def find_stat query
-      stat = {min: 0, max: 0, curr: 0, min_date: '', max_date: ''}
-
+      stat = {min: 0, max: 0, curr: nil, min_date: '', max_date: ''}
       Dir["./#{@work_directory}/*"].each do |path|
         price = find_price(path, query)
-        next if price.nil?
+        next if price.nil? || price.zero?
 
         date = file_path2date path
-
         stat[:curr] = price if date == @curr_date
-
-        price /= 10_000 if price > 1000
-
-        if price > stat[:max]
-          stat[:max], stat[:max_date] = price, date
-        end
-
-        if stat[:min].zero? || price < stat[:min]
-          stat[:min], stat[:min_date] = price, date
-        end
+        add_min_max_value price, date, stat
       end
       stat
     end
@@ -72,18 +64,20 @@ module BelStat
         return curr_file if File.file? "./#{@work_directory}/#{curr_file}"
 
         month -= 1
-        if month.zero?
-          year -= 1
-          month = 12
-        end
+        month, year = 12, year - 1 if month.zero?
+      end
+    end
+
+    def add_min_max_value price, date, stat
+      price /= 10_000 if price > 1000
+
+      if price > stat[:max]
+        stat[:max], stat[:max_date] = price, date
+      end
+
+      if stat[:min].zero? || price < stat[:min]
+        stat[:min], stat[:min_date] = price, date
       end
     end
   end
-end
-
-if __FILE__==$0
-  finder = BelStat::Finder.new 'Минская', 'csv_data'
-  stat = finder.find_stat 'хлеб'
-  puts stat
-  puts finder.find_similar(stat[:curr] - 0.5, stat[:curr] + 0.5)
 end

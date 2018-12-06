@@ -37,7 +37,3 @@ module BelStat
   end
 end
 
-if __FILE__==$0
-  m = BelStat::Converter.new
-  m.convert_data('raw_data', 'lol_data')
-end

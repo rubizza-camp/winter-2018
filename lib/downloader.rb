@@ -23,7 +23,6 @@ module  BelStat
         url = @domain + url unless url =~ /http(.*)/
 
         puts url
-        puts generate_name(url)
         puts '------------'
 
         download(url, generate_name(url), "./#{directory_name}")
@@ -54,7 +53,6 @@ module  BelStat
       digits = sub_str.gsub(/\D/, '')
 
       date = digits2date(digits)
-
       date + '.' + sub_str.split('.')[-1]
     end
 
@@ -70,9 +68,4 @@ module  BelStat
       end
     end
   end
-end
-
-if __FILE__==$0
-  m = BelStat::Downloader.new
-  m.download_excels 'lol_data'
 end
