@@ -21,6 +21,7 @@ module BelStat
       7.upto(excel.last_row) do |line|
         output.write CSV.generate_line excel.row(line)
       end
+      puts "#{excel_file} - successfully converted "
     rescue StandardError => exception
       puts exception.message
     end

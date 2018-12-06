@@ -1,0 +1,5 @@
+source 'https://gems.example.com' do
+  gem 'nokogiri'
+  gem 'roo'
+  gem 'roo-xls'
+end

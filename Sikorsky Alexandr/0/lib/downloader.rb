@@ -1,6 +1,5 @@
 require 'open-uri'
 require 'nokogiri'
-require 'pry'
 
 module  BelStat
   class Downloader
