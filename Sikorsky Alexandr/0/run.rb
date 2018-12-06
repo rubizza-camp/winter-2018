@@ -5,7 +5,7 @@ require_relative 'lib/finder'
 require 'fileutils'
 
 WORK_DIR = 'csv_data'.freeze
-RAW_DIR = 'rav_data'.freeze
+RAW_DIR = 'raw_data'.freeze
 
 REGION = 'Минская'.freeze
 

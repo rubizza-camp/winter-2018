@@ -6,8 +6,8 @@ module BelStat
             --------------------------------------------------
             #{query.capitalize} is #{stat[:curr]} BYN in Minsk these days
             Lowest was on #{stat[:min_date]} at price #{stat[:min]} BYN
-            Maximum was on #{stat[:max_date]} at #{stat[:max]} BYN
-             #{similars2string(similars)}
+            Maximum was on #{stat[:max_date]} at #{stat[:max]} BYN\n
+            #{similars2string(similars)}
             --------------------------------------------------
           MESS
         end

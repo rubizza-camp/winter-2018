@@ -58,7 +58,7 @@ module BelStat
       date = { month: Time.now.month, year: Time.now.year }
 
       0.upto(Dir["./#{@work_directory}/*"].length) do
-        curr_file = date[:month].to_s + '.' + date[:year].to_s + '.csv'
+        curr_file = date2file_name(date)
         return curr_file if File.file? "./#{@work_directory}/#{curr_file}"
 
         to_next_month date
@@ -74,6 +74,10 @@ module BelStat
       date
     end
 
+    def date2file_name(date)
+      "#{date[:month]}.#{date[:year]}.csv"
+    end
+
     def add_min_max_value(price, date, stat)
       price /= 10_000 if price > 1000
 
@@ -82,10 +86,10 @@ module BelStat
         stat[:max_date] = date
       end
 
-      if stat[:min].zero? || price < stat[:min]
-        stat[:min] = price
-        stat[:min_date] = date
-      end
+      return unless stat[:min].zero? || price < stat[:min]
+
+      stat[:min] = price
+      stat[:min_date] = date
     end
   end
 end

@@ -34,8 +34,8 @@ module  BelStat
     def download(url, file_name, folder)
       path = folder + '/' + file_name
       begin
-        open(path, 'wb') do |file|
-          file << open(url).read
+        File.open(path, 'wb') do |file|
+          file << URI.parse(url).open.read
         end
       rescue StandardError => exception
         puts 'download ' + exception.message
@@ -43,7 +43,7 @@ module  BelStat
     end
 
     def parse(url)
-      page = Nokogiri::HTML(open(url))
+      page = Nokogiri::HTML(URI.parse(url).open)
       rows = page.xpath('//td//a/@href')
       rows.select { |r| r.to_s =~ /xls(.*)$/ }
     end
@@ -57,15 +57,12 @@ module  BelStat
     end
 
     def digits2date(digits)
-      if digits.length == 4
-        digits[0..1] + '.20' + digits[2, 3]
-      elsif digits.length == 6 || digits.length == 7
-        digits[0..1] + '.' + digits[2..5]
-      elsif digits.length == 8
-        digits[2..3] + '.' + digits[4..-1]
-      else
-        digits
-      end
+      len = digits.length
+      return "#{digits[0..1]}.20#{digits[2, 3]}" if len == 4
+      return "#{digits[0..1]}.#{digits[2..5]}" if [6, 7].include?(len)
+      return "#{digits[2..3]}.#{digits[4..-1]}" if len == 8
+
+      digits
     end
   end
 end
