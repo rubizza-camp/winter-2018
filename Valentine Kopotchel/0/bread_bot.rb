@@ -192,9 +192,9 @@ class BotHelper
 
   def write_minmax_info(hash)
     min, max, a, b = minmax_assign(hash)
-    puts "Lowest was on #{(split_key a)[1]}/#{(split_key a)[0]}"\
+    puts "Lowest was on #{(split_key a)[1]}/#{(split_key a)[0]} "\
 "at #{min.round(2)} BYN"
-    puts "Highest was on #{(split_key b)[1]}/#{(split_key b)[0]}"\
+    puts "Highest was on #{(split_key b)[1]}/#{(split_key b)[0]} "\
 "at #{max.round(2)} BYN"
   end
 end
@@ -316,5 +316,6 @@ class BreadBot
     end
   end
 end
+puts 'Loading database...'
 b = BreadBot.new
 b.run
