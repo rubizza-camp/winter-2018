@@ -1,11 +1,4 @@
-# some idea for lvl 3 or check files if there is no data folder.
-# try this http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx
-# require 'remote_table'
-# r = RemoteTable.new 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'
-# r.each do |row|
-#   puts row.inspect
-# end
-
+#!/usr/bin/env ruby
 SIMILAR_PRICE = 'For similar price you also can afford \''.freeze
 SIMILAR_STRING_NOT_FOUND = 'Similar prices can not be found in database.'.freeze
 MONTH = {
@@ -30,9 +23,9 @@ require 'roo-xls'
 # initialize in class
 class RooBookParser
   def initialize
-    # @xsl = Roo::Spreadsheet.open('data/Average_prices(serv)-10-2018.xlsx')
+    @xsl = Roo::Spreadsheet.open('data/Average_prices(serv)-10-2018.xlsx')
     # @xsl = Roo::Spreadsheet.open('data/prices_tov_0109.xls', extension: :xls)
-    @xsl = check_table_extension('data/prices_tov_0109.xls')
+    # @xsl = check_table_extension('data/prices_tov_0109.xls')
     @date = convert_month_and_year(@xsl)
     @result = []
     @similar_prices = []
@@ -99,10 +92,11 @@ class RooBookParser
   def search_similar_price_by_name(name)
     @similar_prices = search_price_by_name(name).collect { |elem| elem[14] }
     @xsl.each do |elem2|
-      next unless /^#{name.upcase}\b/.match?(elem2[0])
+      next if /^#{name.upcase}\b/.match?(elem2[0])
 
       @similar_result << search_similar_price_by_value(elem2, @similar_prices)
     end
+    @similar_result.uniq!.flatten!
     @similar_result.empty? ? puts(SIMILAR_STRING_NOT_FOUND) : similar_prices_output(@similar_result)
   end
 
@@ -119,7 +113,6 @@ class RooBookParser
       end
     puts SIMILAR_PRICE + out_string
   end
-
   # def open_xsl_table(path_and_name)
   #   if Dir.exist?('data')
   #     @xsl = Roo::Spreadsheet.open(path_and_name)
