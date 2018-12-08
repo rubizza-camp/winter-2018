@@ -39,10 +39,10 @@ class PriceSearcher
     puts 'What product are you looking for?'
     loop do
       input = gets.chomp
-      if ['', ' '].include?(input)
-        puts 'Please, write not empty request.'
-        next
-      end
+      return input unless ['', ' '].include?(input)
+
+      puts 'Please, write not empty request.'
+      next
     end
   end
 
