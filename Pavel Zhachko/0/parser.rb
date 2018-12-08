@@ -8,6 +8,20 @@
 
 SIMILAR_PRICE = 'For similar price you also can afford \''.freeze
 SIMILAR_STRING_NOT_FOUND = 'Similar prices can not be found in database.'.freeze
+MONTH = {
+  'январь' => '01',
+  'февраль' => '02',
+  'март' => '03',
+  'апрель' => '04',
+  'май' => '05',
+  'июнь' => '06',
+  'июль' => '07',
+  'август' => '08',
+  'сентябрь' => '09',
+  'откябрь' => '10',
+  'ноябрь' => '11',
+  'декабрь' => '12'
+}.freeze
 
 require 'pry'
 require 'pry-coolline'
@@ -19,26 +33,36 @@ class RooBookParser
     # @xsl = Roo::Spreadsheet.open('data/Average_prices(serv)-10-2018.xlsx')
     # @xsl = Roo::Spreadsheet.open('data/prices_tov_0109.xls', extension: :xls)
     @xsl = check_table_extension('data/prices_tov_0109.xls')
+    @date = convert_month_and_year(@xsl)
     @result = []
     @similar_prices = []
     @similar_result = []
     @s_p_result = []
   end
 
-  # def open_xsl_table(path_and_name)
-  #   if Dir.exist?('data')
-  #     @xsl = Roo::Spreadsheet.open(path_and_name)
-  #   else
-  #     Dir.mkdir('data')
-  #     Dir.chdir('data')
-  #   end
-  # end
-
   def check_table_extension(name)
     if /xls$/.match?(name)
       Roo::Spreadsheet.open(name, extension: :xls)
     elsif /.xlsx$/.match?(name)
       Roo::Spreadsheet.open(name, extension: :xlsx)
+    end
+  end
+
+  def get_month_and_year(filename)
+    filename.row(3)[0].split(' ').select { |el| /20[01][0-9]$/.match?(el) || MONTH.key?(el) }
+  end
+
+  def convert_month_and_year(filename)
+    date = get_month_and_year(filename)
+    date[0] = MONTH[date[0]]
+    date
+  end
+
+  def denomination_check(date)
+    if date[1].to_i >= 2017
+      'BYN in Minsk these days.'
+    elsif date[1].to_i < 2017
+      'BYR in Minsk these days.'
     end
   end
 
@@ -51,7 +75,7 @@ class RooBookParser
     return "\'#{input}\' can not be found in database." if prices.empty?
 
     prices.each do |elem|
-      puts "#{elem[0]} is #{elem[14]} BYN in Minsk these days."
+      puts "#{elem[0]} is #{elem[14]} " + denomination_check(@date)
     end
     # lvl 2
     # prices.each do |elem2|
@@ -95,6 +119,15 @@ class RooBookParser
       end
     puts SIMILAR_PRICE + out_string
   end
+
+  # def open_xsl_table(path_and_name)
+  #   if Dir.exist?('data')
+  #     @xsl = Roo::Spreadsheet.open(path_and_name)
+  #   else
+  #     Dir.mkdir('data')
+  #     Dir.chdir('data')
+  #   end
+  # end
 end
 
 r = RooBookParser.new
