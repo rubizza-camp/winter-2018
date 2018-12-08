@@ -1,9 +1,4 @@
-# using material from here
-# https://spin.atomicobject.com/2017/03/22/parsing-excel-files-ruby/
-# https://stackoverflow.com/questions/3321011/parsing-xls-and-xlsx-ms-excel-files-with-ruby
-# https://infinum.co/the-capsized-eight/how-to-efficiently-process-large-excel-files-using-ruby
-# https://steemit.com/utopian-io/@yuxid/how-to-parse-excel-spreadsheet-in-ruby-via-roo
-
+# some idea for lvl 3 or check files if there is no data folder.
 # try this http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx
 # require 'remote_table'
 # r = RemoteTable.new 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'
@@ -17,14 +12,34 @@ SIMILAR_STRING_NOT_FOUND = 'Similar prices can not be found in database.'.freeze
 require 'pry'
 require 'pry-coolline'
 require 'roo'
+require 'roo-xls'
 # initialize in class
 class RooBookParser
   def initialize
-    @xsl = Roo::Spreadsheet.open('data/Average_prices(serv)-10-2018.xlsx')
+    # @xsl = Roo::Spreadsheet.open('data/Average_prices(serv)-10-2018.xlsx')
+    # @xsl = Roo::Spreadsheet.open('data/prices_tov_0109.xls', extension: :xls)
+    @xsl = check_table_extension('data/prices_tov_0109.xls')
     @result = []
     @similar_prices = []
     @similar_result = []
     @s_p_result = []
+  end
+
+  # def open_xsl_table(path_and_name)
+  #   if Dir.exist?('data')
+  #     @xsl = Roo::Spreadsheet.open(path_and_name)
+  #   else
+  #     Dir.mkdir('data')
+  #     Dir.chdir('data')
+  #   end
+  # end
+
+  def check_table_extension(name)
+    if /xls$/.match?(name)
+      Roo::Spreadsheet.open(name, extension: :xls)
+    elsif /.xlsx$/.match?(name)
+      Roo::Spreadsheet.open(name, extension: :xlsx)
+    end
   end
 
   def search_price_by_name(input)
@@ -63,11 +78,7 @@ class RooBookParser
       next unless /^#{name.upcase}\b/.match?(elem2[0])
 
       @similar_result << search_similar_price_by_value(elem2, @similar_prices)
-      # @similar_prices.each do |sim_price|
-      #   @similar_result << converting_similar_name(elem2[0]) if elem2.include?(sim_price)
-      # end
     end
-    # p "#{@similar_result} v1"
     @similar_result.empty? ? puts(SIMILAR_STRING_NOT_FOUND) : similar_prices_output(@similar_result)
   end
 
