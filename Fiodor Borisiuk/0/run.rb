@@ -58,7 +58,9 @@ def find_similar(arr, name, price)
   eps = 0.05
   ans = []
   arr.each do |line|
-    if ((price - eps)..(price + eps)).cover?(line[-3].to_f) && (line[0] != name)
+    next if line[0] == name
+
+    if ((price - eps)..(price + eps)).cover?(line[-3].to_f)
       ans.append("'" + line[0] + "'")
     end
   end
@@ -86,7 +88,7 @@ while query != '^C'
   query = gets.chomp
   if query == ''
     query = 'Хлеб'
-    puts "Sample for '#{query}'"
+    puts "Sample for '#{query}':"
   end
   query = query.downcase.capitalize
   info = find_by_kwd(@table[today], query)
