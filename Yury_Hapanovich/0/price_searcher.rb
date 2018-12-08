@@ -23,7 +23,7 @@ class PriceSearcher
   end
 
   def analyze
-    input_request
+    @request = input_request
     table = Roo::Spreadsheet.open(@last_file,
                                   extension: File.extname(@last_file))
     find_product(table)
@@ -36,8 +36,14 @@ class PriceSearcher
   end
 
   def input_request
-    puts 'What price are you looking for?'
-    @request = gets.chomp
+    puts 'What product are you looking for?'
+    loop do
+      input = gets.chomp
+      if ['', ' '].include?(input)
+        puts 'Please, write not empty request.'
+        next
+      end
+    end
   end
 
   def find_product(table)

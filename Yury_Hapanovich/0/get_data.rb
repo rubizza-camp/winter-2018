@@ -49,11 +49,10 @@ end
 
 def download_data
   agent = Mechanize.new
-  Dir.mkdir('data')
+  Dir.mkdir('data') unless Dir.exist?(PATH_FOR_DATA)
   table = agent.get(URL).search(CSS_SELECTOR).first
   puts 'Creating links list.'
   links = create_links_list(table)
-  puts 'Done.'
   puts 'Creating and writing files.'
   links.each do |link|
     create_file_by_uri(link, true, new_path: PATH_FOR_DATA)
