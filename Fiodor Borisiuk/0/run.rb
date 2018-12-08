@@ -1,0 +1,130 @@
+require 'roo'
+
+file_list = Dir.entries('.')
+xls_list = []
+file_list.each do |file|
+  xls_list.append(file) if file.index('xls')
+end
+
+xls_table = []
+xls_list.each do |xls|
+  ind = xls.index('20')
+  xls_table.append([xls, xls[ind - 3..ind + 3]])
+end
+
+@table = {}
+
+xls_table.each do |xls|
+  name, date = xls
+
+  sheet = Roo::Excelx.new(name).sheet(0)
+
+  sheet.first_row.upto(sheet.last_row) do |i|
+    f = false
+    sheet.first_column.upto(sheet.last_column) do |j|
+      next if sheet.cell(i, j).to_s.index('ПРОДОВОЛЬСТВЕННЫЕ ТОВАРЫ').nil?
+
+      @frow = i + 1
+      f = true
+      break
+    end
+    break if f
+  end
+
+  price_arr = []
+  @frow.upto(sheet.last_row) do |i|
+    cur_price = []
+    1.upto(sheet.last_column) do |j|
+      cur_cell = sheet.cell(i, j)
+      cur_price.append(cur_cell) if cur_cell
+    end
+    if cur_price[-1].to_s == cur_price[-1].to_f.to_s
+      cur_price[0] = cur_price[0].downcase.capitalize
+      price_arr.append(cur_price)
+    end
+  end
+  @table[date] = price_arr
+end
+
+def find_by_kwd(arr, kwd)
+  ans = []
+  arr.each do |i|
+    ans.append([i[0], i[-3]]) if i[0].to_s.index(kwd)
+  end
+  ans
+end
+
+def find_similar(arr, name, price)
+  eps = 0.05
+  ans = []
+  arr.each do |line|
+    if ((price - eps)..(price + eps)).cover?(line[-3].to_f) && (line[0] != name)
+      ans.append("'" + line[0] + "'")
+    end
+  end
+  ans
+end
+
+def m_atoi(arr)
+  return 0 if arr == []
+
+  ans = arr[0]
+  1.upto(arr.length - 2) do |i|
+    ans += ', ' + arr[i]
+  end
+  ans += ' and ' + arr[-1] if arr[-1] != arr[0]
+  ans + '.'
+end
+
+def parse_date(dat)
+  dat[3..6] + '/' + dat[0..1]
+end
+
+today = '10-2018'
+query = ''
+while query != '^C'
+  query = gets.chomp
+  if query == ''
+    query = 'Хлеб'
+    puts "Sample for '#{query}'"
+  end
+  query = query.downcase.capitalize
+  info = find_by_kwd(@table[today], query)
+
+  puts "'#{query}' can not be found in database." if info == []
+
+  info.each do |i|
+    puts "'#{i[0]}' is #{i[1]} BYN in Minsk these days."
+
+    kwd = i[0]
+    min = i[1].to_f
+    min_d = today
+    max = i[1].to_f
+    max_d = today
+    @table.keys.each do |key|
+      arr = @table[key]
+      res = find_by_kwd(arr, kwd)[0]
+      next if res.nil?
+
+      price = res[1].to_f
+      if price < min
+        min = price
+        min_d = key
+      end
+      if price > max
+        max = price
+        max_d = key
+      end
+    end
+
+    puts "Lowest was on #{parse_date(min_d)} at price #{min}BYN"
+    puts "Maximum was on #{parse_date(max_d)} at #{max} BYN"
+
+    sim = m_atoi(find_similar(@table[today], i[0], i[1].to_f))
+
+    puts "For similar price you also can afford #{sim}" if sim != 0
+
+    puts "\n"
+  end
+  # break
+end
