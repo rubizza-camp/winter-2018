@@ -1,3 +1,7 @@
+require 'rake'
+require 'roo'
+require 'roo-xls'
+MINSK_CONSTATN_CELL_COL = 14
 ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'.freeze
 ERROE_NO_FILES_TO_CHECK = 'There is no file to check in data folder. So we take actual file from uri.'.freeze
 MONTH = {
@@ -14,10 +18,6 @@ MONTH = {
   'ноябрь' => '11',
   'декабрь' => '12'
 }.freeze
-
-require 'rake'
-require 'roo'
-require 'roo-xls'
 
 class RooBookParser
   def initialize
@@ -79,7 +79,7 @@ class RooBookParser
   def output_template(array_of_prices, name_of_item)
     puts("\'#{name_of_item}\' can not be found in database.") && return if array_of_prices.empty?
     array_of_prices.each do |elem|
-      puts "#{name_of_item} is #{elem[14]} BYN in these days."
+      puts "#{name_of_item} is #{elem[MINSK_CONSTATN_CELL_COL]} BYN in these days."
     end
   end
 
