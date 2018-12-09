@@ -4,7 +4,7 @@ require 'roo-xls'
 def get_file_instance(file_path)
   ext = file_path.split('.')[2]
   file_instance = nil
-  if ext == 'xls' || ext == 'xlsx'
+  if ext.include?('xls')
     Roo::Spreadsheet.open(file_path)
     file_instance = conditiona_load(ext, file_path)
   else
@@ -25,42 +25,37 @@ end
 
 def find_keys(word, products)
   result = []
-  products.keys.each { |key|
-    result.push(key) if key.include?(word)
-  }
+  products.keys.each { |key| result.push(key) if key.include?(word) }
   result
 end
 
 def fetch_products_data(file_instance, products, regions)
   for n in 9..file_instance.last_row
-    next if file_instance.cell('E', n) == nil
+    next if file_instance.cell('E', n).nil?
+
     year = file_instance.cell('A', 3).split(' ')[2]
     month = file_instance.cell('A', 3).split(' ')[1]
     key = file_instance.cell('A', n).strip.downcase
-    add_product(products, key, year, month, regions, file_instance, n)
+    meta = [key, year, month]
+    add_product(products, meta, regions, file_instance, n)
   end
 end
 
-def add_product(products, key, year, month, regions, file_instance, n)
+def add_product(products, meta, regions, file_instance, num)
+  key = meta[0]
+  year = meta[1]
+  month = meta[2]
   products[key] = {} unless products[key]
   products[key][year] = {} unless products[key][year]
-  products[key][year][month] = {
-    regions[0] => format_value(file_instance.cell('G', n), year),
-    regions[1] => format_value(file_instance.cell('I', n), year),
-    regions[2] => format_value(file_instance.cell('K', n), year),
-    regions[3] => format_value(file_instance.cell('M', n), year),
-    regions[4] => format_value(file_instance.cell('O', n), year),
-    regions[5] => format_value(file_instance.cell('Q', n), year),
-    regions[6] => format_value(file_instance.cell('S', n), year)
-  }
+  products[key][year][month] = { regions[4] => format_value(file_instance.cell('O', num), year) }
 end
 
 def format_value(val, year)
-  if val
-    result = val.to_f
-    result /= 10_000 if year.to_i < 2017
-    return result.round(2)
-  end
+  return if val.nil?
+
+  result = val.to_f
+  result /= 10_000 if year.to_i < 2017
+  result.round(2)
 end
 
 def get_recent_price_data(key, products, month_map)
@@ -114,6 +109,7 @@ def find_min_month(year_hash, min_month_price = 9_999_999_999_999, min_month = n
   year_hash.each do |month, month_hash|
     price = month_hash['Minsk']
     next unless price
+
     if price < min_month_price
       min_month_price = price
       min_month = month
@@ -149,6 +145,7 @@ def find_max_month(year_hash, max_month_price = 0, max_month = nil)
   year_hash.each do |month, month_hash|
     price = month_hash['Minsk']
     next unless price
+
     if price > max_month_price
       max_month_price = price
       max_month = month
@@ -185,11 +182,13 @@ end
 
 def form_similar_products_array(products, price, year, month, origin_product)
   result = []
-  products.each { |product, product_data|
+  products.each do |product, product_data|
     next unless product_data[year]
+
     next unless product_data[year][month]
+
     result.push(product) if product_data[year][month]['Minsk'] == price && product != origin_product
-  }
+  end
   result
 end
 
@@ -216,7 +215,7 @@ file_paths.each do |file_path|
 end
 loop do
   puts 'What price are you looking for?'
-  word = gets.chomp.downcase.encode('UTF-8')
+  word = gets.chomp.downcase # .encode('UTF-8')
   keys = find_keys(word, products)
   if keys.empty?
     puts word.capitalize + ' can not be found in database'
@@ -224,7 +223,7 @@ loop do
     keys.each do |key|
       recent_price_data = get_recent_price_data(key, products, month_map)
       puts ''
-      puts key.capitalize+' is '+recent_price_data['price'].to_s+' BYN in Minsk these days.'
+      puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
       min_price = get_min_price(products[key])
       puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
       print min_price['price'].to_s + ' BYN'
