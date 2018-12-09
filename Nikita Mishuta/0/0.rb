@@ -1,6 +1,5 @@
 require 'roo'
 require 'roo-xls'
-
 puts 'What price are you looking for?'
 @name = gets.chomp.encode('UTF-8')
 @number = 0
