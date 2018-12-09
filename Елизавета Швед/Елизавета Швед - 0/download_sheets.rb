@@ -20,12 +20,12 @@ class DownloadSheets
     response = Faraday.get(link)
     begin
       file = File.open("./data/#{date}.#{type}", "w")
-      file.write(response.body) 
+      file.write(response.body)
     rescue IOError => e
       puts e
       ensure
       file.close unless file.nil?
-    end    
+    end
   end
   
   def generate_links_2009
@@ -36,7 +36,7 @@ class DownloadSheets
       month_number = e < 10 ? '0' + e.to_s : e
       data_links["#{month_number}_2009"] = "#{beg_s}#{month_number}#{end_s}"
     end
-    data_links 
+    data_links
   end
   
   def generate_links_2010
@@ -58,7 +58,7 @@ class DownloadSheets
       month_number = e < 10 ? '0' + e.to_s : e
       data_links["#{month_number}_2011"] = "#{beg_s}#{month_number}#{end_s}"
     end
-    data_links    
+    data_links
   end
   
   def generate_links_2012
@@ -82,7 +82,7 @@ class DownloadSheets
     end
     data_links['11_2013'] = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2013/prices_1113new.xls'
     data_links['12_2013'] = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2013/prices_tov_1213.xls'
-    data_links 
+    data_links
   end
   
   def generate_links_2014
@@ -91,10 +91,10 @@ class DownloadSheets
     data_links = {}
     (1..11).each do |e|
       month_number = e < 10 ? '0' + e.to_s : e
-      data_links["#{month_number}_2014"] = "#{beg_s}#{month_number}#{end_s}" 
+      data_links["#{month_number}_2014"] = "#{beg_s}#{month_number}#{end_s}"
     end
     data_links['12_2014'] = 'http://www.belstat.gov.by/kscms/uploads/file/prices/average_prices/prises_cpi_12.xls'
-    data_links    
+    data_links
   end
   
   def generate_links_2015
@@ -142,10 +142,10 @@ class DownloadSheets
     data_links['07_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-07-2017.xlsx'
     data_links['08_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-08-2017.xlsx'
     data_links['09_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-09-2017.xls'
-    data_links['10_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2017.xlsx' 
+    data_links['10_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2017.xlsx'
     data_links['11_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-word/Oficial_statistika/Average%20prices(serv)-11-2017.xlsx'
     data_links['12_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average%20prices(serv)-12-2017.xlsx'
-    data_links    
+    data_links
   end
   
   def generate_links_2018
@@ -154,7 +154,7 @@ class DownloadSheets
     data_links = {}
     (1..4).each do |e|
       month_number = e < 10 ? '0' + e.to_s : e
-      data_links["#{month_number}_2018"] = "#{beg_s}#{month_number}#{end_s}" 
+      data_links["#{month_number}_2018"] = "#{beg_s}#{month_number}#{end_s}"
     end
     data_links['05_2018'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average%20prices(serv)-05-2018.xlsx'
     data_links['06_2018'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-06-2018.xlsx'
