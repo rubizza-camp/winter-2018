@@ -78,7 +78,7 @@ def get_closest_year(current_year, product_data)
   if product_data[current_year]
     year_key = current_year
   else
-    year_key = product_data.keys.max{ |a,b| a.to_i <=> b.to_i }
+    year_key = product_data.keys.max { |a, b| a.to_i <=> b.to_i }
   end
   year_key
 end
@@ -87,7 +87,7 @@ def get_closest_month(current_month, product_data, month_map)
   if product_data[current_month]
     month_key = current_month
   else
-    month_key = product_data.keys.max{ |a,b| month_map[a].to_i <=> month_map[b].to_i }
+    month_key = product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i }
   end
   month_key
 end
@@ -107,7 +107,7 @@ end
 def find_min_month(year_hash, min_month_price = 9_999_999_999_999, min_month = nil)
   year_hash.each do |month, month_hash|
     price = month_hash['Minsk']
-    next unless price 
+    next unless price
     if price < min_month_price
       min_month_price = price
       min_month = month
@@ -118,8 +118,8 @@ end
 
 def find_min_year(year, min_month_data, min_year_price)
   result = {}
-  min_month_price = min_month_data["price"]
-  result['month'] = min_month_data["month"]
+  min_month_price = min_month_data['price']
+  result['month'] = min_month_data['month']
   if min_month_price < min_year_price
     result['price'] = min_month_price
     result['year'] = year
@@ -142,7 +142,7 @@ end
 def find_max_month(year_hash, max_month_price = 0, max_month = nil)
   year_hash.each do |month, month_hash|
     price = month_hash['Minsk']
-    next unless price 
+    next unless price
     if price > max_month_price
       max_month_price = price
       max_month = month
@@ -153,8 +153,8 @@ end
 
 def find_max_year(year, max_month_data, max_year_price)
   result = {}
-  max_month_price = max_month_data["price"]
-  result['month'] = max_month_data["month"]
+  max_month_price = max_month_data['price']
+  result['month'] = max_month_data['month']
   if max_month_price > max_year_price
     result['price'] = max_month_price
     result['year'] = year
@@ -163,18 +163,22 @@ def find_max_year(year, max_month_data, max_year_price)
 end
 
 def actual_data(result, year_data)
-  result["month"] = year_data["month"]
-  result["price"] = year_data["price"] if year_data["price"]
-  result["year"] = year_data["year"] if year_data["year"]
+  result['month'] = year_data['month']
+  result['price'] = year_data['price'] if year_data['price']
+  result['year'] = year_data['year'] if year_data['year']
   result
 end
 
 def get_similar_price_products(data, products)
-  result = []
   price = data['price']
   year = data['year']
   month = data['month']
   origin_product = data['product']
+  return form_similar_products_array(products, price, year, month, origin_product)
+end
+
+def form_similar_products_array(products, price, year, month, origin_product)
+  result = []
   products.each { |product, product_data|
     next unless product_data[year]
     next unless product_data[year][month]
@@ -182,7 +186,6 @@ def get_similar_price_products(data, products)
   }
   result
 end
-
 
 month_map = {
   'январь' => 1,
@@ -196,7 +199,7 @@ month_map = {
   'сентябрь' => 9,
   'октябрь' => 10,
   'ноябрь' => 11,
-  'декабрь' => 12,
+  'декабрь' => 12
 }
 regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
 products = {}
@@ -217,9 +220,13 @@ loop do
       puts ''
       puts key.capitalize+' is '+recent_price_data['price'].to_s+' BYN in Minsk these days.'
       min_price = get_min_price(products[key])
-      puts 'Lowest was on '+min_price['year']+'/'+month_map[min_price['month']].to_s+' at price '+min_price['price'].to_s+' BYN'
+      puts 'Lowest was on '
+      print min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
+      print min_price['price'].to_s + ' BYN'
       max_price = get_max_price(products[key])
-      puts 'Maximum was on '+max_price['year']+'/'+month_map[max_price['month']].to_s+' at price '+max_price['price'].to_s+' BYN'
+      puts 'Maximum was on '
+      print max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
+      print max_price['price'].to_s + ' BYN'
       similar_products = get_similar_price_products(recent_price_data, products)
       if similar_products.empty?
         puts 'No products for similar price'
