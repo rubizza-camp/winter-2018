@@ -11,7 +11,7 @@ class Price
     @date = { 'январь': '01', 'февраль': '02', 'март': '03', 'апрель': '04',
               'май': '05', 'июнь': '06', 'июль': '07', 'август': '08',
               'сентябрь': '09', 'октябрь': '10', 'ноябрь': '11',
-              'декабрь': '12'}
+              'декабрь': '12' }
   end
 
   def find
@@ -19,9 +19,7 @@ class Price
     @l = 0
     @c.each_with_index do |mas, i|
       mas.each_with_index do |arr, j|
-        if mas[0] != nil && mas[0] == @name.upcase || mas[0] =~ /#{@name.upcase}[.,) ]{1}/
-          @l = i + 1
-        end
+        (@l = i + 1) if !mas[0].nil? && mas[0] == @name.upcase || mas[0] =~ /#{@name.upcase}[.,) ]{1}/
         (@k = j) if arr == 'г. Минск'
         @pr = @c.row(@l)[@k]
       end
@@ -33,7 +31,7 @@ class Price
     min = @pr
     all_files
     @all.each do |f|
-      if !f.nil?
+      unless f.nil?
         dat = get_date(f)
         old_price(f) ? coef = 0.0001 : coef = 1
         f.each_with_index do |_, i|
@@ -53,7 +51,7 @@ class Price
     max = @pr
     all_files
     @all.each do |f|
-      if !f.nil?
+      unless f.nil?
         dat = get_date(f)
         old_price(f) ? coef = 0.0001 : coef = 1
         f.each_with_index do |_, i|
@@ -73,9 +71,7 @@ class Price
     a = []
     @c.each do |mas|
       mas.each do |arr|
-        if arr == @pr && mas[0] !~ /#{@name.upcase}[.,) ]{1}/ && mas[0] != @name.upcase && !arr.nil?
-          a << mas[0]
-        end
+        (a << mas[0]) if arr == @pr && mas[0] !~ /#{@name.upcase}[.,) ]{1}/ && mas[0] != @name.upcase && !arr.nil?
       end
     end
     a = a.uniq
@@ -92,7 +88,7 @@ class Price
 
   def old_price(file)
     date = get_date(file)
-    (true) if date[1].to_i < 2017
+    true if date[1].to_i < 2017
   end
 
   def all_files
@@ -111,10 +107,10 @@ class Price
     if @pr.nil? && @l.zero?
       puts "No #{@name} in table"
     else
-      puts"'#{@name.capitalize}' is #{@pr} BYN in Minsk in these days"
-      min()
-      max()
-      similar()
+      puts "'#{@name.capitalize}' is #{@pr} BYN in Minsk in these days"
+      min
+      max
+      similar
     end
   end
 
@@ -126,11 +122,11 @@ class Price
     puts"Highest price was on #{max_dat[0]}/#{max_dat[1]} at #{max_v} BYN"
   end
 
-  def similar_out(a)
-    if a.empty?
-      puts"No product with similar price"
+  def similar_out(arr)
+    if arr.empty?
+      puts 'No product with similar price'
     else
-      str = a.map { |r| "#{r.to_s.capitalize.gsub(/\s+/, " ")}" }.join(', ')
+      str = arr.map { |r| r.to_s.capitalize.gsub(/\s+/, ' ') }.join(', ')
       puts "For similar price u can buy #{str}"
     end
   end
