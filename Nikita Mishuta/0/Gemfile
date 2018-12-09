@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'roo', 
+gem 'roo'
 gem 'roo-xls'
