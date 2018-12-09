@@ -3,8 +3,15 @@ module Validation
   def validate_users_input(products)
     puts 'What do you want to see?'
     view_all_products(products)
+    handle_choice_input(products)
+  end
+
+  def handle_choice_input(products)
     loop do
       index_choice = gets.chomp!
+      begin Integer(index_choice)
+      rescue ArgumentError
+        nil end
       return [products[index_choice.to_s.to_i]] if
         validate_index_choice(index_choice, products.size)
 
@@ -14,7 +21,8 @@ module Validation
 
   def validate_index_choice(index_choice, products_size)
     index_choice.to_s.to_i.positive? &&
-      index_choice.to_s.to_i < products_size
+      index_choice.to_s.to_i < products_size ||
+      index_choice.to_s.to_i.zero?
   end
 end
 
@@ -24,8 +32,11 @@ class Menu
   require 'rubyXL'
   include Validation
 
-  def initialize(previous_files = %w(data/Average_prices(serv)-09-2018.xlsx
-                                     data/Average_prices(serv)-08-2018.xlsx),
+  LAST_ROW = 359
+  FIRST_ROW = 8
+  PRICE_CELL_INDEX = 14
+
+  def initialize(previous_files = Dir['data**/*.xlsx'],
                  current_file = 'data/Average_prices(serv)-10-2018.xlsx')
     @files = previous_files
     @current_file = current_file
@@ -41,7 +52,7 @@ class Menu
     products = []
     date = get_date_from_file_name(file_to_parse)
     get_first_sheet(file_to_parse).each_with_index do |row, row_index|
-      next if row_index > 359 || row_index < 8
+      next if row_index > LAST_ROW || row_index < FIRST_ROW
 
       row.cells.each_with_index do |cell, cell_index|
         next if cell_index.positive?
@@ -65,7 +76,7 @@ class Menu
       date = get_date_from_file_name(file)
       sheet = get_first_sheet(file)
       sheet.each_with_index do |row, row_index|
-        next if row_index > 359 || row_index < 8
+        next if row_index > LAST_ROW || row_index < FIRST_ROW
 
         find_products_by_price(products, price, date, row)
       end
@@ -88,9 +99,8 @@ class Menu
     prices = []
     max_min_price = []
     products.each { |product| prices.push [product[1], product[2]] }
-    prices.sort_by!
-    max_min_price.push prices.first
-    max_min_price.push prices.last
+    max_min_price.push(prices.max_by { |price, _| [price] })
+    max_min_price.push(prices.min_by { |price, _| [price] })
     max_min_price
   end
 
@@ -114,7 +124,7 @@ class Menu
   end
 
   def find_products_by_price(products, price, date, row)
-    products.push([row[0].value, date]) if row[14].value == price
+    products.push([row[0].value, date]) if row[PRICE_CELL_INDEX].value == price
   end
 
   def empty?(products)
