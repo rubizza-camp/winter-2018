@@ -57,20 +57,6 @@ class RooBookParser
   def convert_date(array)
     array.join('/')
   end
-  # def test_temp(name)
-  #   # puts ERROE_NO_FILES_TO_CHECK if collect_all_files.empty?
-  #   if collect_all_files.empty?
-  #     puts ERROE_NO_FILES_TO_CHECK
-  #     search_price_by_name(name)
-  #   else
-  #     collect_all_files.each { |file| search_price_by_name(name, file) }
-  #   end
-  # end
-  #
-  # def lvl2_out(name)
-  #   prices = test_temp(name)
-  #   prices.each { |price| p price }
-  # end
 
   def search_price_by_name(input_name, table = @actual_table)
     table.select { |elem| regexp_template_for_item(input_name).match?(elem[0]) }
@@ -99,8 +85,4 @@ end
 r = RooBookParser.new
 puts 'What price are you looking for?'
 input_name = gets.chomp
-# lvl 1
 r.output_parser(input_name)
-# lvl 2
-# r.test_temp(input_name)
-# r.lvl2_out(input_name)
