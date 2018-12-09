@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'sqlite3'
-require 'pry'
 
 class DbRequester
   def initialize(product_name)
@@ -20,7 +19,7 @@ class DbRequester
         puts "#{@product_name} can not be found in database."
       end       
     rescue SQLite3::Exception => e 
-      puts "Exception occurred"
+      puts 'Exception occurred'
       puts e
     ensure
       @db.close if @db
@@ -75,4 +74,5 @@ class DbRequester
   def revert_unix_date(unix_date)
     Time.at(unix_date)
   end
-end        
+end 
+       

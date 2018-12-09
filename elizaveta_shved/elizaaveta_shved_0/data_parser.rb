@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'roo'
 require 'roo-xls'
-require 'pry'
 require 'sqlite3'
 require 'logger'
 
@@ -12,8 +11,8 @@ AMOUNT_FOR_DENOMOZATION = 10000.0
 
 class DataParser
   def perform_files
-    xls_files = Dir["./data/*.xls"]
-    xlsx_files = Dir["./data/*.xlsx"]
+    xls_files = Dir['./data/*.xls']
+    xlsx_files = Dir['./data/*.xlsx']
     puts 'Perform data:'
     xlsx_files.each do |path|
       print '.'
@@ -84,11 +83,11 @@ class DataParser
     begin
       File.new('test.db', 'a')
       @db = SQLite3::Database.open 'test.db'
-      @db.execute "CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        Name Text, Region TEXT, Price REAL, Date INTEGER )"
+      @db.execute 'CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        Name Text, Region TEXT, Price REAL, Date INTEGER )'
       perform_files
     rescue SQLite3::Exception => e 
-      puts "Exception occurred"
+      puts 'Exception occurred'
       puts e
     ensure
       @db.close if @db
