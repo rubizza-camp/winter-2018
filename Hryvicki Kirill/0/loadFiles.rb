@@ -5,7 +5,7 @@ require 'webrick'
 
 agent = Mechanize.new
 page = agent.get('http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus')
-page.links_with(:href => /.xls/).each do |link|
+page.links_with(href: /.xls/).each do |link|
   str_link = link.href.to_s
   str_link = WEBrick::HTTPUtils.unescape(str_link)
   str_link = WEBrick::HTTPUtils.escape(str_link)
