@@ -1,6 +1,4 @@
 # frozen_string_literal: true
 
-gem 'pry'
-gem 'pry-coolline'
 gem 'roo'
 gem 'roo-xls'
