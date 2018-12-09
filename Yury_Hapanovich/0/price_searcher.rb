@@ -5,7 +5,7 @@ require './region_setter'
 
 # Main class of this app.
 class PriceSearcher
-  REGIONS = { 'РБ' => 'E', 'Брестская' => 'G', 'Витебская' => 'I',
+  REGIONS = { 'Рб' => 'E', 'Брестская' => 'G', 'Витебская' => 'I',
               'Гомельская' => 'K', 'Гродненская' => 'M', 'Минск' => 'O',
               'Минская' => 'Q', 'Могилёвская' => 'S' }.freeze
 
@@ -13,7 +13,7 @@ class PriceSearcher
     @current_region = 'Минск'
     puts "Current region is #{@current_region}. Select another? (y/n)"
     if %w[y Y д Д].include?(gets.chomp)
-      @current_region = RegionSetter.new(REGIONS).set_current_region
+      @current_region = RegionSelector.new(REGIONS).select_region
       puts "Current region is #{@current_region}"
     end
     @products = {} # {product => [price, min, min_date, max, max_date]}

@@ -1,27 +1,25 @@
-# The class helps you to change current region.
-class RegionSetter
+# The class helps you to select region.
+class RegionSelector
   def initialize(regions)
     @regions = regions
   end
 
-  def set_current_region
+  def select_region
     puts 'Please, select a region: '
-    write_regions_list
-    select_region
+    display_regions_list
+    input_region
   end
 
-  def write_regions_list
+  def display_regions_list
     @regions.each_key do |region|
       puts region.to_s
     end
   end
 
-  def select_region
-    loop do
-      region = gets.chomp.capitalize
-      return region if @regions.key?(region)
-
+  def input_region
+    until @regions.key?(region = gets.chomp.capitalize)
       puts 'Please, select correct region!'
     end
+    region
   end
 end
