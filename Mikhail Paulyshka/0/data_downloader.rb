@@ -31,16 +31,15 @@ class DataDownloader
       link.prepend('http://www.belstat.gov.by') if link.start_with? '/'
       filename = link.split('/').last
       fileext = File.extname(filename)
-      filetype = ''
 
       # getting file type
-      if (filename.include? 'tov') || (filename.include? 'goods')
-        filetype = 'goods'
-      elsif filename.include? 'serv'
-        filetype = 'services'
-      else
-        filetype = 'unknown'
-      end
+      filetype = if (filename.include? 'tov') || (filename.include? 'goods')
+                   'goods'
+                 elsif filename.include? 'serv'
+                   'services'
+                 else
+                   'unknown'
+                 end
 
       # getting file date
       parsed = false
