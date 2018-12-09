@@ -19,4 +19,3 @@ end
 if @number.zero?
   puts "'#{@name}' can not be found in database"
 end
-
