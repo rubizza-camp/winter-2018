@@ -9,7 +9,7 @@ class Menu
   end
 
   def ask_for_input
-    puts 'What product are you looking for? (Wright EXIT to break)'
+    puts 'What product are you looking for? (Write EXIT to break)'
     input = gets.chomp!
     input.to_s
   end
@@ -31,9 +31,7 @@ class Menu
         end
       end
     end
-    if products.empty?
-      puts "Nothing is found:("
-    end
+    puts "Nothing is found:(" if products.empty?
     products
   end
 
@@ -44,7 +42,7 @@ class Menu
     products
   end
 
-  def find_products_with_same_prise(price, files_to_parce = @files)
+  def find_products_with_same_price(price, files_to_parce = @files)
     products = []
     files_to_parce.each do |file|
       date = file.to_s.reverse[5..11]
@@ -60,12 +58,13 @@ class Menu
     products
   end
 
-  def view_products_found(products, min_max_price, products_with_same_price)
-    puts "#{products[0][0]} cost #{products[0][1]} in Minsk at #{products[0][2]}"
-    puts "Lowest is #{min_max_price[1][0]} at #{min_max_price[1][1]}"
-    puts "Highest is #{min_max_price[0][0]} at #{min_max_price[0][1]}"
+  def view_products_found(products, min_max_price, with_same_price)
+    puts "#{products[0][0]} cost #{products[0][1]} in Minsk at #{products[0][2]}
+Lowest is #{min_max_price[1][0]} at #{min_max_price[1][1]}
+Highest is #{min_max_price[0][0]} at #{min_max_price[0][1]}"
+
     print "For the same prise you could afford "
-    products_with_same_price.each { |product| print "#{product[0]} at #{product[1]}\n"}
+    with_same_price.each {|product| puts "#{product[0]} at #{product[1]}"}
   end
 
   def choose_product_to_show(products)
@@ -75,7 +74,7 @@ class Menu
 
       loop do
         index_choice = gets.chomp!
-        if index_choice.to_s.to_i < 0 || index_choice.to_s.to_i >= products.size
+        if index_choice.to_s.to_i.negative? || index_choice.to_s.to_i >= products.size
           puts "Wrong input! Chose again wisely..."
         else
           return [products[index_choice.to_s.to_i]]
