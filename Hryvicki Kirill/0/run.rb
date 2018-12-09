@@ -66,7 +66,7 @@ end
 def get_recent_price_data(key, products, month_map)
   current_year = Time.now.strftime('%Y').to_s
   current_month = parse_month(month_map)
-  product_year_data = products[key];
+  product_year_data = products[key]
   year_key = get_closest_year(current_year, product_year_data)
   product_month_data = product_year_data[year_key]
   month_key = get_closest_month(current_month, product_month_data, month_map)
