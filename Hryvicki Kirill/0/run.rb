@@ -5,7 +5,7 @@ def get_file_instance(file_path)
   ext = file_path.split('.')[2]
   file_instance = nil
   if ext == 'xls' || ext == 'xlsx'
-    file_instance = Roo::Spreadsheet.open(file_path)
+    Roo::Spreadsheet.open(file_path)
     file_instance = conditiona_load(ext, file_path)
   else
     puts 'unsupported file type: ' + file_path
@@ -43,22 +43,22 @@ end
 
 def add_product(products, key, year, month, regions, file_instance, n)
   products[key] = {} unless products[key]
-    products[key][year] = {} unless products[key][year]
-    products[key][year][month] = {
-      regions[0] => format_value(file_instance.cell('G', n), year),
-      regions[1] => format_value(file_instance.cell('I', n), year),
-      regions[2] => format_value(file_instance.cell('K', n), year),
-      regions[3] => format_value(file_instance.cell('M', n), year),
-      regions[4] => format_value(file_instance.cell('O', n), year),
-      regions[5] => format_value(file_instance.cell('Q', n), year),
-      regions[6] => format_value(file_instance.cell('S', n), year)
-    }
+  products[key][year] = {} unless products[key][year]
+  products[key][year][month] = {
+    regions[0] => format_value(file_instance.cell('G', n), year),
+    regions[1] => format_value(file_instance.cell('I', n), year),
+    regions[2] => format_value(file_instance.cell('K', n), year),
+    regions[3] => format_value(file_instance.cell('M', n), year),
+    regions[4] => format_value(file_instance.cell('O', n), year),
+    regions[5] => format_value(file_instance.cell('Q', n), year),
+    regions[6] => format_value(file_instance.cell('S', n), year)
+  }
 end
 
 def format_value(val, year)
   if val
     result = val.to_f
-    result = result / 10_000 if year.to_i < 2017
+    result /= 10_000 if year.to_i < 2017
     return result.round(2)
   end
 end
@@ -71,25 +71,24 @@ def get_recent_price_data(key, products, month_map)
   year_key = get_closest_year(current_year, product_year_data)
   product_month_data = product_year_data[year_key]
   month_key = get_closest_month(current_month, product_month_data, month_map)
-  return { 'price' => product_month_data[month_key]['Minsk'], 'year' => year_key, 'month' => month_key, 'product' => key } 
+  return { 'price' => product_month_data[month_key]['Minsk'], 'year' => year_key, 
+    'month' => month_key, 'product' => key } 
 end
 
 def get_closest_year(current_year, product_data)
   if product_data[current_year]
-    year_key = current_year
+    return year_key = current_year
   else
-    year_key = product_data.keys.max { |a, b| a.to_i <=> b.to_i }
+    return year_key = product_data.keys.max { |a, b| a.to_i <=> b.to_i }
   end
-  year_key
 end
 
 def get_closest_month(current_month, product_data, month_map)
   if product_data[current_month]
-    month_key = current_month
+    return month_key = current_month
   else
-    month_key = product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i }
+    return month_key = product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i }
   end
-  month_key
 end
 
 def get_min_price(hash)
@@ -98,7 +97,7 @@ def get_min_price(hash)
   hash.each do |year, year_hash|
     min_month_data = find_min_month(year_hash)
     min_year_data = find_min_year(year, min_month_data, min_year_price)
-    min_year_price = min_year_data['price']
+    min_year_price = min_year_data['price'] if min_year_data['price']
     result = actual_data(result, min_year_data)
   end
   result
@@ -133,7 +132,7 @@ def get_max_price(hash)
   hash.each do |year, year_hash|
     max_month_data = find_max_month(year_hash)
     max_year_data = find_max_year(year, max_month_data, max_year_price)
-    max_year_price = max_year_data['price']
+    max_year_price = max_year_data['price'] if max_year_data['price']
     result = actual_data(result, max_year_data)
   end
   result
@@ -174,7 +173,7 @@ def get_similar_price_products(data, products)
   year = data['year']
   month = data['month']
   origin_product = data['product']
-  return form_similar_products_array(products, price, year, month, origin_product)
+  form_similar_products_array(products, price, year, month, origin_product)
 end
 
 def form_similar_products_array(products, price, year, month, origin_product)
@@ -206,7 +205,7 @@ products = {}
 file_paths = Dir['./data/*']
 file_paths.each do |file_path|
   file_instance = get_file_instance(file_path)
-  fetch_products_data(file_instance, products, regions) if file_instance 
+  fetch_products_data(file_instance, products, regions) if file_instance
 end
 loop do
   puts 'What price are you looking for?'
@@ -220,12 +219,10 @@ loop do
       puts ''
       puts key.capitalize+' is '+recent_price_data['price'].to_s+' BYN in Minsk these days.'
       min_price = get_min_price(products[key])
-      puts 'Lowest was on '
-      print min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
+      puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
       print min_price['price'].to_s + ' BYN'
       max_price = get_max_price(products[key])
-      puts 'Maximum was on '
-      print max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
+      puts 'Maximum was on ' + max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
       print max_price['price'].to_s + ' BYN'
       similar_products = get_similar_price_products(recent_price_data, products)
       if similar_products.empty?
