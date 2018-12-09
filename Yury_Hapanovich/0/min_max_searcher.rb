@@ -1,12 +1,10 @@
 require 'roo'
 require 'roo-xls'
+require './services'
 
 # The class is used to search for min and max values.
 class MinMaxSearcher
-  FIRST_PRODUCT_ROW = 9
-  DENOMINATION_RATE = 0.0001
-  DENOMINATION_YEAR = 2017
-
+  include Services
   def initialize(products, region, regions)
     @products = products
     @current_region = region
@@ -14,7 +12,7 @@ class MinMaxSearcher
   end
 
   def find_min_max
-    Dir['./data/*'].each do |file|
+    Dir[PATH_FOR_DATA + '/*'].each do |file|
       table = Roo::Spreadsheet.open(file, extension: File.extname(file))
       scan_table(file, table)
     end
@@ -23,24 +21,26 @@ class MinMaxSearcher
 
   def scan_table(file, table)
     (FIRST_PRODUCT_ROW..table.last_row).each do |row|
-      next unless check_product_name(row, table)
+      next unless check_product_name(table, row)
 
       price = fix_denominated_prices(table, row)
-      compare_prices(price, table.cell(row, 'A').to_s,
+      compare_prices(price, parse_product_name(table, row),
                      File.basename(file, '.*'))
     end
   end
 
-  def check_product_name(row, table)
-    @products.key?(table.cell(row, 'A').to_s)
+  def check_product_name(table, row)
+    @products.key?(parse_product_name(table, row))
   end
 
   def fix_denominated_prices(table, row)
-    year = table.cell(3, 'A').split(' ')[-2].to_i
+    year = parse_year_of_table(table).to_i
     price = table.cell(row, @regions[@current_region]).to_f
-    return (DENOMINATION_RATE * price).round(2) if year < DENOMINATION_YEAR
-
-    price.round(2)
+    if year < DENOMINATION_YEAR
+      (DENOMINATION_RATE * price).round(2)
+    else
+      price.round(2)
+    end
   end
 
   def compare_prices(price, product, date)

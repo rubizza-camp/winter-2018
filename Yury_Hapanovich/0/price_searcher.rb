@@ -2,25 +2,25 @@ require 'roo'
 require 'roo-xls'
 require './min_max_searcher'
 require './region_setter'
+require './services'
 
 # Main class of this app.
 class PriceSearcher
+  include Services
   REGIONS_COLOMNS_LINK = { 'Рб' => 'E', 'Брестская' => 'G', 'Витебская' => 'I',
                            'Гомельская' => 'K', 'Гродненская' => 'M',
                            'Минск' => 'O', 'Минская' => 'Q',
                            'Могилёвская' => 'S' }.freeze
-  FIRST_PRODUCT_ROW = 9
-
   def initialize
     @current_region = 'Минск'
     puts "Current region is #{@current_region}. Select another? (y/n)"
-    if %w[y Y д Д].include?(gets.chomp)
+    if Services.user_input_check
       @current_region = RegionSelector.new(REGIONS_COLOMNS_LINK).select_region
       puts "Current region is #{@current_region}"
     end
     @products = {} # {product => [price, min, min_date, max, max_date]}
     @request = ''
-    @last_file = Dir['./data/*'].max
+    @last_file = Dir[PATH_FOR_DATA + '/*'].max
     @similar = {}
   end
 
@@ -50,10 +50,10 @@ class PriceSearcher
 
   def find_product(table)
     (FIRST_PRODUCT_ROW..table.last_row).each do |row|
-      next unless table.cell(row, 'A').to_s.split(/[-,'"()\s]/)
-                       .include?(@request.upcase)
+      next unless parse_product_name(table, row).split(/[-,'"()\s]/)
+                                                .include?(@request.upcase)
 
-      product = table.cell(row, 'A')
+      product = parse_product_name(table, row)
       price = table.cell(row, REGIONS_COLOMNS_LINK[@current_region])
       @products[product] = [price, price, File.basename(@last_file, '.*'),
                             price, File.basename(@last_file, '.*')]
@@ -63,12 +63,12 @@ class PriceSearcher
   def find_similar_products(table)
     @products.each_key do |product|
       @similar[product] = []
-      (9..table.last_row).each do |row|
-        tmp = table.cell(row, 'A').to_s
+      (FIRST_PRODUCT_ROW..table.last_row).each do |row|
+        tmp_product = parse_product_name(table, row)
         next unless compare_price(table, row, product) &&
-                    product != tmp
+                    product != tmp_product
 
-        @similar[product] << tmp
+        @similar[product] << tmp_product
       end
     end
   end

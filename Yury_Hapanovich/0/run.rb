@@ -1,21 +1,17 @@
-require './get_data.rb'
+require './get_data'
 require './price_searcher'
+require './services'
 
-PATH_FOR_DATA = './data'.freeze
-
-def user_input_check
-  %w[y Y д Д].include?(gets.chomp)
-end
-
-until Dir.exist?(PATH_FOR_DATA) && !Dir['./data/*'].empty?
+until Dir.exist?(Services::PATH_FOR_DATA) &&
+      !Dir[Services::PATH_FOR_DATA + '/*'].empty?
   puts 'You need to download data files'
   puts 'Do you want to download them? (y/n)'
-  DataParser.download_data if user_input_check
+  DataParser.download_data if Services.user_input_check
 end
 
 answer = true
 while answer
   PriceSearcher.new.analyze
   puts 'Do you want to look for something else? (y/n)'
-  answer = user_input_check
+  answer = Services.user_input_check
 end
