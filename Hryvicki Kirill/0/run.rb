@@ -22,7 +22,7 @@ def conditional_load(ext, file_path)
   sheet
 end
 
-def fetch_products_data(file_instance)
+def fetch_products_data(file_instance, products, regions)
   (9..file_instance.last_row).each do |n|
     next if file_instance.cell('E', n).nil?
 
@@ -30,17 +30,17 @@ def fetch_products_data(file_instance)
     month = file_instance.cell('A', 3).split(' ')[1]
     key = file_instance.cell('A', n).strip.downcase
     meta = [key, year, month]
-    add_product(meta, file_instance, n)
+    add_product(products, meta, regions, file_instance, n)
   end
 end
 
-def add_product(meta, file_instance, num)
+def add_product(products, meta, regions, file_instance, num)
   key = meta[0]
   year = meta[1]
   month = meta[2]
-  $products[key] = {} unless $products[key]
-  $products[key][year] = {} unless $products[key][year]
-  $products[key][year][month] = { $regions[4] => format_value(file_instance.cell('O', num), year) }
+  products[key] = {} unless products[key]
+  products[key][year] = {} unless products[key][year]
+  products[key][year][month] = { regions[4] => format_value(file_instance.cell('O', num), year) }
 end
 
 def format_value(val, year)
@@ -51,13 +51,13 @@ def format_value(val, year)
   result.round(2)
 end
 
-def get_recent_price_data(key)
+def get_recent_price_data(key, products, month_map)
   current_year = Time.now.strftime('%Y').to_s
-  current_month = parse_month
-  product_year_data = $products[key]
+  current_month = parse_month(month_map)
+  product_year_data = products[key]
   year_key = get_closest_year(current_year, product_year_data)
   product_month_data = product_year_data[year_key]
-  month_key = get_closest_month(current_month, product_month_data)
+  month_key = get_closest_month(current_month, product_month_data, month_map)
   form_recent_price_data(product_month_data[month_key]['Minsk'], year_key, month_key, key)
 end
 
@@ -70,9 +70,9 @@ def form_recent_price_data(price, year, month, product)
   }
 end
 
-def parse_month
+def parse_month(month_map)
   current_month = Time.now.strftime('%m')
-  $month_map.each { |month, month_number| current_month = month if month_number == current_month }
+  month_map.each { |month, month_number| current_month = month if month_number == current_month }
   current_month
 end
 
@@ -81,9 +81,9 @@ def get_closest_year(current_year, product_data)
   product_data.keys.max_by(&:to_i) unless product_data[current_year]
 end
 
-def get_closest_month(current_month, product_data)
+def get_closest_month(current_month, product_data, month_map)
   current_month if product_data[current_month]
-  product_data.keys.max { |a, b| $month_map[a].to_i <=> $month_map[b].to_i } unless product_data[current_month]
+  product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i } unless product_data[current_month]
 end
 
 def get_min_price(hash)
@@ -165,17 +165,17 @@ def actual_data(result, year_data)
   result
 end
 
-def get_similar_price_products(data)
+def get_similar_price_products(data, products)
   price = data['price']
   year = data['year']
   month = data['month']
   origin_product = data['product']
-  form_similar_products_array( price, year, month, origin_product)
+  form_similar_products_array(products, price, year, month, origin_product)
 end
 
-def form_similar_products_array( price, year, month, origin_product)
+def form_similar_products_array(products, price, year, month, origin_product)
   result = []
-  $products.each do |product, product_data|
+  products.each do |product, product_data|
     next unless product_data[year]
 
     next unless product_data[year][month]
@@ -185,8 +185,52 @@ def form_similar_products_array( price, year, month, origin_product)
   result
 end
 
-def init_variables
-  $month_map = {
+def first_level(key, recent_price_data)
+  puts ''
+  puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
+end
+
+def second_level_min_price(product_data, month_map)
+  min_price = get_min_price(product_data)
+  puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
+  print min_price['price'].to_s + ' BYN'
+end
+
+def second_level_max_price(product_data, month_map)
+  max_price = get_max_price(product_data)
+  puts 'Maximum was on ' + max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
+  print max_price['price'].to_s + ' BYN'
+end
+
+def third_level(recent_price_data, products)
+  similar_products = get_similar_price_products(recent_price_data, products)
+  if similar_products.empty?
+    puts 'No products for similar price'
+  else
+    puts 'For similar price you also can afford'
+    puts similar_products
+  end
+end
+
+def make_products_container
+  regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
+  products = {}
+  file_paths = Dir['./data/*']
+  file_paths.each do |file_path|
+    file_instance = get_file_instance(file_path)
+    fetch_products_data(file_instance, products, regions) if file_instance
+  end
+  products
+end
+
+def user_wish(products)
+  puts 'What price are you looking for?'
+  word = gets.chomp.downcase.encode('UTF-8')
+  products.keys.select { |key| key.include?(word) }
+end
+
+def month_map_former
+  {
     'январь' => 1,
     'февраль' => 2,
     'март' => 3,
@@ -200,59 +244,23 @@ def init_variables
     'ноябрь' => 11,
     'декабрь' => 12
   }
-  $regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
-  $products = {}
-  file_paths = Dir['./data/*']
-  file_paths.each do |file_path|
-    file_instance = get_file_instance(file_path)
-    fetch_products_data(file_instance) if file_instance
-  end
 end
 
-def first_level(key, recent_price_data)
-  puts ''
-  puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
-end
-
-def second_level_min_price(key)
-  min_price = get_min_price($products[key])
-  puts 'Lowest was on ' + min_price['year'] + '/' + $month_map[min_price['month']].to_s + ' at price '
-  print min_price['price'].to_s + ' BYN'
-end
-
-def second_level_max_price(key)
-  max_price = get_max_price($products[key])
-  puts 'Maximum was on ' + max_price['year'] + '/' + $month_map[max_price['month']].to_s + ' at price '
-  print max_price['price'].to_s + ' BYN'
-end
-
-def third_level(recent_price_data)
-  similar_products = get_similar_price_products(recent_price_data)
-  if similar_products.empty?
-    puts 'No products for similar price'
-  else
-    puts 'For similar price you also can afford'
-    puts similar_products
-  end
+def process_request(products, key, month_map)
+  recent_price_data = get_recent_price_data(key, products, month_map)
+  first_level(key, recent_price_data)
+  second_level_min_price(products[key], month_map)
+  second_level_max_price(products[key], month_map)
+  third_level(recent_price_data, products)
 end
 
 def main
-  init_variables
+  month_map = month_map_former
+  products = make_products_container
   loop do
-    puts 'What price are you looking for?'
-    word = gets.chomp.downcase.encode('UTF-8')
-    keys = $products.keys.select { |key| key.include?(word) }
-    if keys.empty?
-      puts word.capitalize + ' can not be found in database'
-    else
-      keys.each do |key|
-        recent_price_data = get_recent_price_data(key)
-        first_level(key, recent_price_data)
-        second_level_min_price(key)
-        second_level_max_price(key)
-        third_level(recent_price_data)
-      end
-    end
+    keys = user_wish(products)
+    puts word.capitalize + ' can not be found in database' if keys.empty?
+    keys.each { |key| process_request(products, key, month_map) } unless keys.empty?
   end
 end
 
