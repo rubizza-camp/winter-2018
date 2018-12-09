@@ -75,6 +75,6 @@ if arr_seek.empty?
   puts 'nothing'
 else
   arr_seek.to_s
-  puts "#{arr_seek.to_s}"
+  puts arr_seek.to_s
 end
 puts "#{count_files} files were found"
