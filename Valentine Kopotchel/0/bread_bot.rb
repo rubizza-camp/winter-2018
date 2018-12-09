@@ -316,6 +316,6 @@ class BreadBot
     end
   end
 end
-puts 'Loading database...'
+puts 'Loading data...'
 b = BreadBot.new
 b.run
