@@ -3,6 +3,10 @@ require 'roo-xls'
 
 # The class is used to search for min and max values.
 class MinMaxSearcher
+  FIRST_PRODUCT_ROW = 9
+  DENOMINATION_RATE = 0.0001
+  DENOMINATION_YEAR = 2017
+
   def initialize(products, region, regions)
     @products = products
     @current_region = region
@@ -18,11 +22,12 @@ class MinMaxSearcher
   end
 
   def scan_table(file, table)
-    (9..table.last_row).each do |row|
+    (FIRST_PRODUCT_ROW..table.last_row).each do |row|
       next unless check_product_name(row, table)
 
-      price = fix_big_prices(table, row)
-      chek_min_max(price, table.cell(row, 'A').to_s, File.basename(file, '.*'))
+      price = fix_denominated_prices(table, row)
+      compare_prices(price, table.cell(row, 'A').to_s,
+                     File.basename(file, '.*'))
     end
   end
 
@@ -30,15 +35,15 @@ class MinMaxSearcher
     @products.key?(table.cell(row, 'A').to_s)
   end
 
-  def fix_big_prices(table, row)
+  def fix_denominated_prices(table, row)
     year = table.cell(3, 'A').split(' ')[-2].to_i
     price = table.cell(row, @regions[@current_region]).to_f
-    return (0.0001 * price).round(2) if year < 2017
+    return (DENOMINATION_RATE * price).round(2) if year < DENOMINATION_YEAR
 
     price.round(2)
   end
 
-  def chek_min_max(price, product, date)
+  def compare_prices(price, product, date)
     if price < @products[product][1] && price != 0
       @products[product][1] = price
       @products[product][2] = date
