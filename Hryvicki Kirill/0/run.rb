@@ -38,9 +38,13 @@ def add_product(products, meta, regions, file_instance, num)
   key = meta[0]
   year = meta[1]
   month = meta[2]
+  parse_product(products, key, year)
+  products[key][year][month] = { regions[4] => format_value(file_instance.cell('O', num), year) }
+end
+
+def parse_product(products, key, year)
   products[key] = {} unless products[key]
   products[key][year] = {} unless products[key][year]
-  products[key][year][month] = { regions[4] => format_value(file_instance.cell('O', num), year) }
 end
 
 def format_value(val, year)
