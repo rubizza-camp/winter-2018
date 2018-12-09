@@ -22,9 +22,9 @@ end
 seek = price_to_seek
 count_files = 0
 num_rows = 0
-arr_name = Array.new
-arr_price = Array.new
-arr_date = Array.new
+arr_name []
+arr_price []
+arr_date []
 Find.find('./data/') do |file|
   next if file =~ /\b.xlsx$\b/
 
@@ -60,7 +60,7 @@ arr_price.each_index do |i|
     ind_min = i
   end
 end
-arr_seek = Array.new
+arr_seek []
 if num_rows != 0
   puts "Lowest #{min} #{arr_date[ind_min]}"
   puts ", highest was #{max} #{arr_date[ind_max]}"
