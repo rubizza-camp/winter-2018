@@ -6,8 +6,9 @@
 
 ## Usage
 
-bundle install
-ruby parcer.rb
+1. bundle install
+2. ruby parcer.rb
+3. Enter what you want find.
 
 Examples
 
