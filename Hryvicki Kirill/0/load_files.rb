@@ -9,7 +9,7 @@ page.links_with(href: /.xls/).each do |link|
   str_link = link.href.to_s
   str_link = WEBrick::HTTPUtils.unescape(str_link)
   str_link = WEBrick::HTTPUtils.escape(str_link)
-  f_link = if %r{http:\/\/www.belstat.gov.by}.match?(str_link)
+  f_link = if str_link.start_with?('/')
              str_link
            else
              'http://www.belstat.gov.by' + str_link

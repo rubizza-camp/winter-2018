@@ -5,15 +5,14 @@ def get_file_instance(file_path)
   ext = file_path.split('.')[2]
   file_instance = nil
   if ext.include?('xls')
-    Roo::Spreadsheet.open(file_path)
-    file_instance = conditiona_load(ext, file_path)
+    file_instance = conditional_load(ext, file_path)
   else
     puts 'unsupported file type: ' + file_path
   end
   file_instance
 end
 
-def conditiona_load(ext, file_path)
+def conditional_load(ext, file_path)
   case ext
   when 'xls'
     sheet = Roo::Excel.new(file_path)
@@ -23,14 +22,8 @@ def conditiona_load(ext, file_path)
   sheet
 end
 
-def find_keys(word, products)
-  result = []
-  products.keys.each { |key| result.push(key) if key.include?(word) }
-  result
-end
-
 def fetch_products_data(file_instance, products, regions)
-  for n in 9..file_instance.last_row
+  (9..file_instance.last_row).each do |n|
     next if file_instance.cell('E', n).nil?
 
     year = file_instance.cell('A', 3).split(' ')[2]
@@ -94,7 +87,7 @@ def get_closest_month(current_month, product_data, month_map)
 end
 
 def get_min_price(hash)
-  min_year_price = 9_999_999_999_999
+  min_year_price = Float::INFINITY
   result = {}
   hash.each do |year, year_hash|
     min_month_data = find_min_month(year_hash)
@@ -105,7 +98,7 @@ def get_min_price(hash)
   result
 end
 
-def find_min_month(year_hash, min_month_price = 9_999_999_999_999, min_month = nil)
+def find_min_month(year_hash, min_month_price = Float::INFINITY, min_month = nil)
   year_hash.each do |month, month_hash|
     price = month_hash['Minsk']
     next unless price
@@ -192,51 +185,55 @@ def form_similar_products_array(products, price, year, month, origin_product)
   result
 end
 
-month_map = {
-  'январь' => 1,
-  'февраль' => 2,
-  'март' => 3,
-  'апрель' => 4,
-  'май' => 5,
-  'июнь' => 6,
-  'июль' => 7,
-  'авуст' => 8,
-  'сентябрь' => 9,
-  'октябрь' => 10,
-  'ноябрь' => 11,
-  'декабрь' => 12
-}
-regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
-products = {}
-file_paths = Dir['./data/*']
-file_paths.each do |file_path|
-  file_instance = get_file_instance(file_path)
-  fetch_products_data(file_instance, products, regions) if file_instance
-end
-loop do
-  puts 'What price are you looking for?'
-  word = gets.chomp.downcase # .encode('UTF-8')
-  keys = find_keys(word, products)
-  if keys.empty?
-    puts word.capitalize + ' can not be found in database'
-  else
-    keys.each do |key|
-      recent_price_data = get_recent_price_data(key, products, month_map)
-      puts ''
-      puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
-      min_price = get_min_price(products[key])
-      puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
-      print min_price['price'].to_s + ' BYN'
-      max_price = get_max_price(products[key])
-      puts 'Maximum was on ' + max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
-      print max_price['price'].to_s + ' BYN'
-      similar_products = get_similar_price_products(recent_price_data, products)
-      if similar_products.empty?
-        puts 'No products for similar price'
-      else
-        puts 'For similar price you also can afford'
-        puts similar_products
+def main()
+  month_map = {
+    'январь' => 1,
+    'февраль' => 2,
+    'март' => 3,
+    'апрель' => 4,
+    'май' => 5,
+    'июнь' => 6,
+    'июль' => 7,
+    'авуст' => 8,
+    'сентябрь' => 9,
+    'октябрь' => 10,
+    'ноябрь' => 11,
+    'декабрь' => 12
+  }
+  regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
+  products = {}
+  file_paths = Dir['./data/*']
+  file_paths.each do |file_path|
+    file_instance = get_file_instance(file_path)
+    fetch_products_data(file_instance, products, regions) if file_instance
+  end
+  loop do
+    puts 'What price are you looking for?'
+    word = gets.chomp.downcase.encode('UTF-8')
+    keys = products.keys.select { |key| key.include?(word) }
+    if keys.empty?
+      puts word.capitalize + ' can not be found in database'
+    else
+      keys.each do |key|
+        recent_price_data = get_recent_price_data(key, products, month_map)
+        puts ''
+        puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
+        min_price = get_min_price(products[key])
+        puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s + ' at price '
+        print min_price['price'].to_s + ' BYN'
+        max_price = get_max_price(products[key])
+        puts 'Maximum was on ' + max_price['year'] + '/' + month_map[max_price['month']].to_s + ' at price '
+        print max_price['price'].to_s + ' BYN'
+        similar_products = get_similar_price_products(recent_price_data, products)
+        if similar_products.empty?
+          puts 'No products for similar price'
+        else
+          puts 'For similar price you also can afford'
+          puts similar_products
+        end
       end
     end
   end
 end
+
+main
