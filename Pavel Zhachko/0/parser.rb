@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'.freeze
 MONTH = {
   'январь' => '01',

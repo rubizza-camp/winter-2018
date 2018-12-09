@@ -7,8 +7,7 @@
 ## Usage
 
 bundle install
-ruby parcer.rb  same as ./parcer.rb -- file have permision for execute
-
+ruby parcer.rb
 
 Examples
 
