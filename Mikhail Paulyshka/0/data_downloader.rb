@@ -13,7 +13,7 @@ class DataDownloader
     FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
 
     File.open(path, 'wb') do |file|
-      file.write(open(uri).read)
+      file.write(URI.parse(uri).open.read)
     end
   end
 
@@ -22,7 +22,7 @@ class DataDownloader
   end
 
   def self.download_data
-    page = Nokogiri::HTML(open(URL))
+    page = Nokogiri::HTML(URI.parse(URL).open)
 
     page.css('a[href*="xls"]').each do |link|
       link = link['href']
