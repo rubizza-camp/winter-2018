@@ -51,13 +51,17 @@ month_max = File.basename(current, File.extname(current))
       end
     end
   end
-  puts "Lowest for '#{products[prod].capitalize}' was on #{month_min} \
-at price #{prices_min[prod]} BYN"
-  puts "Maximum for '#{products[prod].capitalize}' was on #{month_max} \
-at price #{prices_max[prod]} BYN"
+  puts <<~LOWEST
+    Lowest for '#{products[prod].capitalize}' was on #{month_min} at price #{prices_min[prod]} BYN
+  LOWEST
+  puts <<~MAXIMUM
+    Maximum for '#{products[prod].capitalize}' was on #{month_max} \at price #{prices_max[prod]} BYN
+  MAXIMUM
 end
 
 # Level 3
+DELTA = 0.25 # delta for searching any similar prices
+DELTA.freeze
 (0...prices.length).each do |price|
   similar = []
   found_similar = 0
@@ -65,7 +69,7 @@ end
     next if table.cell(row, 'A').to_s == products[price]
     next if table.cell(row, 7).nil?
 
-    if (prices[price] - table.cell(row, 7)).abs <= 0.25
+    if (prices[price] - table.cell(row, 7)).abs <= DELTA
       similar << table.cell(row, 'A').capitalize
       found_similar += 1
     end
