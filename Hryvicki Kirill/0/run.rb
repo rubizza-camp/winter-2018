@@ -65,7 +65,6 @@ end
 
 def get_recent_price_data(key, products, month_map)
   current_year = Time.now.strftime('%Y').to_s
-  current_month = Time.now.strftime('%m')
   current_month = parse_month(month_map)
   product_year_data = products[key];
   year_key = get_closest_year(current_year, product_year_data)
@@ -84,6 +83,7 @@ def form_recent_price_data(price, year, month, product)
 end
 
 def parse_month(month_map)
+  current_month = Time.now.strftime('%m')
   month_map.each { |month, month_number| current_month = month if month_number == current_month }
   current_month
 end
