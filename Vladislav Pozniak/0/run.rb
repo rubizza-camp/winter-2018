@@ -1,6 +1,9 @@
 require 'roo'
 require 'roo-xls'
 
+REGION = 7 # Tab for Minsk
+GOODS = 'A'.freeze # Tab for products' names
+
 # Level 1
 current = Dir.glob('./data/*').max
 table = Roo::Spreadsheet.open(current, extension: File.extname(current))
@@ -8,76 +11,73 @@ table = Roo::Spreadsheet.open(current, extension: File.extname(current))
 print "What price are you looking for?\n>\s"
 item = gets.chomp
 
-found = 0
-products = []
-prices = []
-(9..table.last_row).each do |row|
-  next unless table.cell(row, 'A').to_s.start_with? item.upcase
+products = (9..table.last_row).each_with_object({}) do |row, products|
+  next unless table.cell(row, GOODS).to_s =~ /\b#{item.upcase}\b/
 
-  products << product = table.cell(row, 'A')
-  prices << price = table.cell(row, 7)
-  puts "'#{product.capitalize}' is #{price} BYN in Minsk these days."
-  found += 1
+  name = table.cell(row, GOODS)
+  price = table.cell(row, REGION)
+  products[name] = price
+  puts "'#{name.capitalize}' is #{price} BYN in Minsk these days."
 end
 
-if found.zero?
+if products.size.zero?
   puts "'#{item}' can not be found in database."
   exit
 end
 
 # Level 2
-prices_min = [].replace(prices)
-prices_max = [].replace(prices)
 month_min = File.basename(current, File.extname(current))
 month_max = File.basename(current, File.extname(current))
-(0...products.length).each do |prod|
+products.each do |name, price|
+  price_min = price
+  price_max = price
   Dir.glob('./data/*').each do |file|
     sheet = Roo::Spreadsheet.open(file, extension: File.extname(file))
     (9..sheet.last_row).each do |row|
-      next unless sheet.cell(row, 'A').to_s == products[prod]
+      next unless sheet.cell(row, GOODS).to_s == name
 
-      price = if File.basename(file, File.extname(file)) > '2017'
-                sheet.cell(row, 7)
-              else
-                sheet.cell(row, 7) / 10_000
-              end
-      if prices_min[prod] > price
-        prices_min[prod] = price
+      chk_price = if file > './data/2017' # Check for denomination
+                    sheet.cell(row, REGION)
+                  else
+                    sheet.cell(row, REGION) / 10_000
+                  end
+      if chk_price > price
+        price_min = chk_price
         month_min = File.basename(file, File.extname(file))
       end
-      if prices_max[prod] < price
-        prices_max[prod] = price
+      if chk_price < price
+        price_max = chk_price
         month_max = File.basename(file, File.extname(file))
       end
     end
   end
   puts <<~LOWEST
-    Lowest for '#{products[prod].capitalize}' was on #{month_min} at price #{prices_min[prod]} BYN
+    Lowest for '#{name.capitalize}' was on #{month_min} at price #{price_min} BYN
   LOWEST
   puts <<~MAXIMUM
-    Maximum for '#{products[prod].capitalize}' was on #{month_max} \at price #{prices_max[prod]} BYN
+    Maximum for '#{name.capitalize}' was on #{month_max} \at price #{price_max} BYN
   MAXIMUM
 end
 
 # Level 3
-DELTA = 0.25 # delta for searching any similar prices
+DELTA = 0.25 # delta for searching for similar prices
 DELTA.freeze
-(0...prices.length).each do |price|
-  similar = []
-  found_similar = 0
-  (9..table.last_row).each do |row|
-    next if table.cell(row, 'A').to_s == products[price]
-    next if table.cell(row, 7).nil?
+products.each do |name, price|
+  sim_prod = []
+  similar = (9..table.last_row).each_with_object({}) do |row, similar|
+    next if table.cell(row, GOODS).to_s == name
+    next if table.cell(row, REGION).nil?
 
-    if (prices[price] - table.cell(row, 7)).abs <= DELTA
-      similar << table.cell(row, 'A').capitalize
-      found_similar += 1
+    if (price - table.cell(row, REGION)).abs <= DELTA
+      sim_prod << table.cell(row, GOODS).capitalize
+      similar[name] = sim_prod
     end
   end
-  if found_similar.zero?
+  if similar.length.zero?
     puts 'No products with similar price found.'
   else
-    puts "For similar price as '#{products[price].capitalize}' \
-you also can afford: #{similar.map { |sim| "'#{sim}'" }.join(', ')}."
+    puts <<~SIMILAR
+      For similar price as '#{name.capitalize}' you also can afford: #{similar[name].map { |sim| "'#{sim}'" }.join(', ')}.
+    SIMILAR
   end
 end
