@@ -2,7 +2,7 @@
 
 Scripts for the implementation of [Homework 0](https://github.com/rubizza-survival-camp/winter-2018#homework-0).
 
-## Usage:
+## Usage
 
 `bundle install`
 
