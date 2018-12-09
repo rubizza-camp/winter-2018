@@ -1,6 +1,7 @@
 require 'roo'
 require 'roo-xls'
 
+# application constants
 FIRST_SHEET = 0
 NAME_COL = 0
 AREA_COL = 6
@@ -23,10 +24,13 @@ end
 
 # collection of products
 class ProductsAnalyzer
-  attr_accessor :latest_date
+  attr_accessor :latest_date, :latest_dictionary
 
-  def initialize(dictionary = Hash.new([]), latest_date = Date.new)
+  # @dictionary contains all data from tables
+  # @latest dictionary contains data from the last month
+  def initialize(dictionary = Hash.new([]), latest_dictionary = Hash.new(ProductData), latest_date = Date.new)
     @dictionary = dictionary
+    @latest_dictionary = latest_dictionary
     @latest_date = latest_date
 
     @months = { 'январь' => 1, 'февраль' => 2, 'март' => 3, 'апрель' => 4,
@@ -35,6 +39,7 @@ class ProductsAnalyzer
                 'декабрь' => 12 }
   end
 
+  # parses date from table row
   def get_date(string)
     values = string.to_s.chomp.split(' ')
 
@@ -52,8 +57,13 @@ class ProductsAnalyzer
     date
   end
 
-  def add_entry(product_name, date_str, price)
-    date = get_date(date_str)
+  # clears latest info, in case of obsoleteness
+  def update_latest_product(latest)
+    @latest_dictionary = Hash.new(ProductData) if latest
+  end
+
+  # adds product to all-data dictionary. Optionally adds product to latest data dictionary
+  def add_entry(product_name, date, price, latest)
     new_entry = ProductData.new(price, date)
 
     new_entry.price /= DENOM_BYN if date.year < DENOM_YEAR
@@ -63,45 +73,33 @@ class ProductsAnalyzer
     product_name = product_name.gsub(reg_exp, '')
     @dictionary[product_name] = [] unless @dictionary.key?(product_name)
     @dictionary[product_name] << new_entry
+    @latest_dictionary[product_name] = new_entry if latest
   end
 
-  def get_similar(latest_product)
-    @dictionary.each_with_object([]) do |(name, products), result|
-      products.each do |product|
-        price = latest_product.price
-        next unless product.date == latest_date &&
-                    product.price.between?(price - DELTA, price + DELTA)
+  # finds similar items by price from latest dictionary
+  def get_similar(latest_product, product_data)
+    @latest_dictionary.each_with_object([]) do |(name, product), result|
+      next if latest_product == name || !product.price.between?(product_data.price - DELTA, product_data.price + DELTA)
 
-        result << "#{name.capitalize} with price #{product.price} BYN"
-      end
+      result << "#{name.capitalize} with price #{product.price} BYN"
     end
   end
 
+  # processes user input.
+  # searches for product in latest dictionary
+  # searches min\max price in all-data dictionary
+  # searches for similar proce in latest dictionary
   def process_request(input)
     processed = false
-    @dictionary.each do |product_name, products|
+
+    @latest_dictionary.each do |product_name, product|
       next unless product_name.downcase.split(/[\s,]+/).include? input.downcase
 
-      latest_product = get_latest_product(products)
-      next unless latest_product
-
       processed = true
-      print_request(product_name, latest_product, products.min_by(&:price),
-                    products.max_by(&:price), get_similar(latest_product))
+      print_request(product_name, product, @dictionary[product_name].min_by(&:price),
+                    @dictionary[product_name].max_by(&:price), get_similar(product_name, product))
     end
     puts 'Nothing found.' unless processed
-  end
-
-  def get_latest_product(products)
-    latest_product = nil
-    products.each do |product|
-      next unless product.date.year == latest_date.year &&
-                  product.date.month == latest_date.month
-
-      latest_product = product
-      break
-    end
-    latest_product
   end
 
   def print_latest(product_name, latest_product)
@@ -122,7 +120,7 @@ class ProductsAnalyzer
   end
 
   def print_same_price(products)
-    puts "For the same price (+/- #{DELTA} BYN) you can get: "
+    puts "\nFor the same price (+/- #{DELTA} BYN) you can get: "
     puts products
   end
 
@@ -144,26 +142,32 @@ class Application
     collect_data
   end
 
+  # collects data from all tables found in /data folder
   def collect_data
     puts 'Collecting data...'
 
     @files.each do |file|
       parse_table(file) if File.extname(file) == '.xlsx' || File.extname(file) == '.xls'
     end
+    puts 'Collecting data...Done'
   end
 
+  # parses current table
   def parse_table(file)
     xlsx = Roo::Spreadsheet.open("#{DATA_FOLDER}#{file}", extension: File.extname(file))
     sheet = xlsx.sheet(FIRST_SHEET)
-    date = sheet.row(DATE_ROW)
+    date = @analyzer.get_date(sheet.row(DATE_ROW))
+
+    latest = date == @analyzer.latest_date
+    @analyzer.update_latest_product(latest)
 
     sheet.drop(TABLE_HEADER).each do |row|
-      @analyzer.add_entry(row[NAME_COL], date, row[AREA_COL]) if row[AREA_COL]
+      @analyzer.add_entry(row[NAME_COL], date, row[AREA_COL], latest) if row[AREA_COL]
     end
   end
 
+  # use this to start application
   def start_application
-    puts 'Collecting data...Done'
     sleep(1)
     loop do
       puts "\nWhat price are you looking for?"
