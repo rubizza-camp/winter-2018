@@ -1,112 +1,34 @@
 require 'roo'
 require 'spreadsheet'
 
+FIRST_SHEET = 0
+NAME_COL = 0
+AREA_COL = 6
+DATE_ROW = 3
+TABLE_HEADER = 8
+DENOM_BYN = 10_000
+DENOM_YEAR = 2017
+DELTA = 0.2
+DATA_FOLDER = './data/'.freeze
+
 # product properties
 class ProductData
-  attr_reader :date, :price
-  attr_writer :date, :price
+  attr_accessor :date, :price
 
-  def initialize
-    @price = 0
-    @date = Date.new
+  def initialize(price = 0, date = Date.new)
+    @price = price
+    @date = date
   end
 end
 
 # collection of products
-class Products
-  def initialize
-    @dictionary = {}
-  end
+class ProductsAnalyzer
+  attr_accessor :latest_date
 
-  def add_entry(product_name, date, price)
-    new_entry = ProductData.new
-    new_entry.date = date
-    new_entry.price = price
+  def initialize(dictionary = Hash.new([]), latest_date = Date.new)
+    @dictionary = dictionary
+    @latest_date = latest_date
 
-    new_entry.price /= 10_000 if date.year < 2017
-
-    product_name = product_name.to_s.squeeze(' ')
-    reg_exp = /^[\dA-Z_]+$/
-    product_name = product_name.gsub(reg_exp, '')
-
-    @dictionary[product_name] = [] unless @dictionary.key?(product_name)
-    @dictionary[product_name] << new_entry
-  end
-
-  def get_same_price_products(latest_product)
-    result = []
-    @dictionary.each do |name, products|
-      products.each do |product|
-        price = latest_product.price
-        next unless product.date == Date.new(2018, 10, 1) &&
-                    product.price.between?(price - 0.2, price + 0.2)
-
-        result << "#{name.capitalize} with price #{product.price} BYN"
-      end
-    end
-    result
-  end
-
-  def process_request(input)
-    @dictionary.each do |key, value|
-      next unless key.downcase.include? input.downcase
-
-      min_product = value.min_by(&:price)
-      max_product = value.max_by(&:price)
-
-      latest_product = get_latest_product(value)
-
-      next unless latest_product
-
-      print_request(key, latest_product, min_product, max_product)
-    end
-  end
-
-  def get_latest_product(value)
-    latest_product = nil
-    value.each do |product|
-      next unless product.date.year == 2018 && product.date.month == 10
-
-      latest_product = product
-      break
-    end
-    latest_product
-  end
-
-  def print_latest(key, latest_product)
-    puts "#{key.capitalize} is "\
-      "#{latest_product.price} BYN these days"
-  end
-
-  def print_min(min_product)
-    puts 'Lowest was on '\
-      "#{min_product.date.year}/#{min_product.date.month}"\
-      " at price #{min_product.price} BYN"
-  end
-
-  def print_max(max_product)
-    puts 'Highest was on '\
-      "#{max_product.date.year}/#{max_product.date.month}"\
-      " at price #{max_product.price} BYN"
-  end
-
-  def print_same_price(latest_product)
-    puts 'For the same price (+/- 0.2 BYN) you can get: '
-    puts get_same_price_products(latest_product)
-  end
-
-  def print_request(key, latest_product, min_product, max_product)
-    puts '======================================================'
-    print_latest(key, latest_product)
-    print_min(min_product)
-    print_max(max_product)
-    print_same_price(latest_product)
-  end
-end
-
-# use to parse date
-class DateUtil
-  def initialize
     @months = { 'январь' => 1, 'февраль' => 2, 'март' => 3, 'апрель' => 4,
                 'май' => 5, 'июнь' => 6, 'июль' => 7, 'август' => 8,
                 'сентябрь' => 9, 'октябрь' => 10, 'ноябрь' => 11,
@@ -115,16 +37,110 @@ class DateUtil
 
   def get_date(string)
     values = string.to_s.chomp.split(' ')
-    Date.new(values[2].to_i, @months[values[1]], 1)
+
+    year = nil
+    month = nil
+
+    values.each do |token|
+      month = @months[token] if @months.include? token.downcase
+      year = token.to_i if token =~ /^[-+]?[1-9]([0-9]*)?$/
+    end
+
+    # use 1st day of month for initializing
+    date = Date.new(year, month, 1)
+    @latest_date = date if latest_date < date
+    date
+  end
+
+  def add_entry(product_name, date_str, price)
+    date = get_date(date_str)
+    new_entry = ProductData.new(price, date)
+
+    new_entry.price /= DENOM_BYN if date.year < DENOM_YEAR
+
+    product_name = product_name.to_s.squeeze(' ')
+    reg_exp = /^[\dA-Z_]+$/
+    product_name = product_name.gsub(reg_exp, '')
+    @dictionary[product_name] = [] unless @dictionary.key?(product_name)
+    @dictionary[product_name] << new_entry
+  end
+
+  def get_similar(latest_product)
+    @dictionary.each_with_object([]) do |(name, products), result|
+      products.each do |product|
+        price = latest_product.price
+        next unless product.date == latest_date &&
+                    product.price.between?(price - DELTA, price + DELTA)
+
+        result << "#{name.capitalize} with price #{product.price} BYN"
+      end
+    end
+  end
+
+  def process_request(input)
+    processed = false
+    @dictionary.each do |product_name, products|
+      next unless product_name.downcase.split(/[\s,]+/).include? input.downcase
+
+      latest_product = get_latest_product(products)
+      next unless latest_product
+
+      processed = true
+      print_request(product_name, latest_product, products.min_by(&:price),
+                    products.max_by(&:price), get_similar(latest_product))
+    end
+    puts 'Nothing found.' unless processed
+  end
+
+  def get_latest_product(products)
+    latest_product = nil
+    products.each do |product|
+      next unless product.date.year == latest_date.year &&
+                  product.date.month == latest_date.month
+
+      latest_product = product
+      break
+    end
+    latest_product
+  end
+
+  def print_latest(product_name, latest_product)
+    puts "#{product_name.capitalize} is "\
+      "#{latest_product.price.round(2)} BYN these days"
+  end
+
+  def print_min(min_product)
+    puts 'Lowest was on '\
+      "#{min_product.date.year}/#{min_product.date.month}"\
+      " at price #{min_product.price.round(2)} BYN"
+  end
+
+  def print_max(max_product)
+    puts 'Highest was on '\
+      "#{max_product.date.year}/#{max_product.date.month}"\
+      " at price #{max_product.price.round(2)} BYN"
+  end
+
+  def print_same_price(products)
+    puts "For the same price (+/- #{DELTA} BYN) you can get: "
+    puts products
+  end
+
+  def print_request(key, latest_product, min_product, max_product, products)
+    puts '=' * 80
+    print_latest(key, latest_product)
+    print_min(min_product)
+    print_max(max_product)
+    print_same_price(products)
   end
 end
 
 # use this to run application
 class Application
-  def initialize
-    @util = DateUtil.new
-    @dict = Products.new
-    @files = Dir.entries('./data/')
+  def initialize(analyzer = ProductsAnalyzer.new,
+                 files = Dir.entries(DATA_FOLDER))
+    @analyzer = analyzer
+    @files = files
     collect_data
   end
 
@@ -132,35 +148,32 @@ class Application
     puts 'Collecting data...'
 
     @files.each do |file|
-      if file.include? '.xls'
-        if file.slice(file.length - 1) == 'x'
-          collect_xlsx(file)
-        elsif file.slice(file.length - 1) == 's'
-          collect_xls(file)
-        end
+      if File.extname(file) == '.xlsx'
+        collect_xlsx(file)
+      elsif File.extname(file) == '.xls'
+        collect_xls(file)
       end
     end
   end
 
   def collect_xls(file)
-    xls = Spreadsheet.open "./data/#{file}"
-    sheet = xls.worksheet 0
+    xls = Spreadsheet.open "#{DATA_FOLDER}#{file}"
+    sheet = xls.worksheet(FIRST_SHEET)
+    # zero indexing
+    date = sheet.row(DATE_ROW - 1)
 
-    date = @util.get_date(sheet.row(2)[0])
-
-    sheet.drop(8).each do |row|
-      @dict.add_entry(row[0], date, row[6]) if row[6]
+    sheet.drop(TABLE_HEADER).each do |row|
+      @analyzer.add_entry(row[NAME_COL], date, row[AREA_COL]) if row[AREA_COL]
     end
   end
 
   def collect_xlsx(file)
-    xlsx = Roo::Spreadsheet.open("./data/#{file}")
-    sheet = xlsx.sheet(0)
+    xlsx = Roo::Spreadsheet.open("#{DATA_FOLDER}#{file}")
+    sheet = xlsx.sheet(FIRST_SHEET)
+    date = sheet.row(DATE_ROW)
 
-    date = @util.get_date(sheet.row(3))
-
-    sheet.drop(8).each do |row|
-      @dict.add_entry(row[0], date, row[6]) if row[6]
+    sheet.drop(TABLE_HEADER).each do |row|
+      @analyzer.add_entry(row[NAME_COL], date, row[AREA_COL]) if row[AREA_COL]
     end
   end
 
@@ -168,10 +181,11 @@ class Application
     puts 'Collecting data...Done'
     sleep(1)
     loop do
-      puts ''
-      puts 'What price are you looking for?'
+      puts "\nWhat price are you looking for?"
       input = gets.chomp
-      @dict.process_request(input)
+      next if input.empty?
+
+      @analyzer.process_request(input)
     end
   end
 end
