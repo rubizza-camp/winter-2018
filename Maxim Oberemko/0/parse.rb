@@ -3,9 +3,9 @@ require 'roo-xls'
 MINSK_COL = 14
 class PriceSearcher
   def initialize
-    @last_table = Roo::Excelx.new('./data/Average_prices(serv)-10-2018.xlsx')
+    @last_table = Roo::Spreadsheet.open('./data/Average_prices(serv)-10-2018.xlsx')
     @name = ''
-    @result = @minmax = []
+    @result = []
     @similar = {}
   end
 
@@ -91,63 +91,42 @@ class MinMax
 
   def all_tables
     minmax = []
-    Dir.foreach('./data') do |file|
-      case File.extname(file)
-      when '.xlsx' then
-        minmax << Roo::Excelx.new("./data/#{file}")
-      when '.xls' then
-        minmax << Roo::Excel.new("./data/#{file}")
-      end
-    end
+    Dir.glob('./data/*').each { |file| minmax << Roo::Spreadsheet.open(file) }
     minmax.compact
   end
 
   def out
     @all_tables = all_tables
-    @results.each do |res|
-      out_minmax(min_price(res), max_price(res), res)
+    @results.each do |product|
+      dates, prices = all_prices_for_product(product)
+      min = prices.min
+      max = prices.max
+      out_minmax(min, dates[prices.index(min)], max, dates[prices.index(max)], product)
     end
   end
 
-  def min_price(res)
-    min = convert_date(@last_table) << res[MINSK_COL]
+  def all_prices_for_product(product)
+    dates = []
+    prices = []
     @all_tables.each do |table|
       k = check_denomination(table)
+      dates << convert_date(table)
       table.each do |row|
-        min = convert_date(table) << (k * row[MINSK_COL]).round(4) if correct_line?(res, row) && check_min(row, min, k)
+        prices << (k * row[MINSK_COL]).round(4) if correct_line?(product, row)
       end
     end
-    min
+    [dates, prices]
   end
 
-  def max_price(res)
-    max = convert_date(@last_table) << res[MINSK_COL]
-    @all_tables.each do |table|
-      k = check_denomination(table)
-      table.each do |row|
-        max = convert_date(table) << (k * row[MINSK_COL]).round(4) if correct_line?(res, row) && check_max(row, max, k)
-      end
-    end
-    max
-  end
-
-  def out_minmax(min, max, elem)
+  def out_minmax(min, min_dt, max, max_dt, elem)
     el = elem[0].capitalize.gsub(/\s+/, ' ')
     str = "of '#{el}' " if @results.length != 1
-    puts "Lowest #{str}was on #{min[0]}/#{min[1]} at #{min[2]} BYN"
-    puts "Hightest #{str}was on #{max[0]}/#{max[1]} at #{max[2]} BYN"
+    puts "Lowest #{str}was on #{min_dt[0]}/#{min_dt[1]} at #{min} BYN"
+    puts "Hightest #{str}was on #{max_dt[0]}/#{max_dt[1]} at #{max} BYN"
   end
 
   def correct_line?(res, row)
-    !row[0].nil? && row[0] == res[0]
-  end
-
-  def check_min(row, min, coefficient)
-    !row[14].nil? && coefficient * row[MINSK_COL] < min[2]
-  end
-
-  def check_max(row, max, coefficient)
-    !row[14].nil? && coefficient * row[MINSK_COL] > max[2]
+    !row[0].nil? && row[0] == res[0] && !row[14].nil?
   end
 
   def convert_date(table)
