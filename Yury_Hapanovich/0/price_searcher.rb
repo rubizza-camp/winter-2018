@@ -5,15 +5,17 @@ require './region_setter'
 
 # Main class of this app.
 class PriceSearcher
-  REGIONS = { 'Рб' => 'E', 'Брестская' => 'G', 'Витебская' => 'I',
-              'Гомельская' => 'K', 'Гродненская' => 'M', 'Минск' => 'O',
-              'Минская' => 'Q', 'Могилёвская' => 'S' }.freeze
+  REGIONS_COLOMNS_LINK = { 'Рб' => 'E', 'Брестская' => 'G', 'Витебская' => 'I',
+                           'Гомельская' => 'K', 'Гродненская' => 'M',
+                           'Минск' => 'O', 'Минская' => 'Q',
+                           'Могилёвская' => 'S' }.freeze
+  FIRST_PRODUCT_ROW = 9
 
   def initialize
     @current_region = 'Минск'
     puts "Current region is #{@current_region}. Select another? (y/n)"
     if %w[y Y д Д].include?(gets.chomp)
-      @current_region = RegionSelector.new(REGIONS).select_region
+      @current_region = RegionSelector.new(REGIONS_COLOMNS_LINK).select_region
       puts "Current region is #{@current_region}"
     end
     @products = {} # {product => [price, min, min_date, max, max_date]}
@@ -29,8 +31,8 @@ class PriceSearcher
     find_product(table)
     return puts "#{@request} can not be found in database." if @products.empty?
 
-    @products = MinMaxSearcher.new(@products, @current_region, REGIONS)
-                              .find_min_max
+    @products = MinMaxSearcher.new(@products, @current_region,
+                                   REGIONS_COLOMNS_LINK).find_min_max
     find_similar_products(table)
     display_results
   end
@@ -47,12 +49,12 @@ class PriceSearcher
   end
 
   def find_product(table)
-    (9..table.last_row).each do |row|
+    (FIRST_PRODUCT_ROW..table.last_row).each do |row|
       next unless table.cell(row, 'A').to_s.split(/[-,'"()\s]/)
                        .include?(@request.upcase)
 
       product = table.cell(row, 'A')
-      price = table.cell(row, REGIONS[@current_region])
+      price = table.cell(row, REGIONS_COLOMNS_LINK[@current_region])
       @products[product] = [price, price, File.basename(@last_file, '.*'),
                             price, File.basename(@last_file, '.*')]
     end
@@ -72,7 +74,7 @@ class PriceSearcher
   end
 
   def compare_price(table, row, product)
-    table.cell(row, REGIONS[@current_region]).to_f.round(1) ==
+    table.cell(row, REGIONS_COLOMNS_LINK[@current_region]).to_f.round(1) ==
       @products[product][0].to_f.round(1)
   end
 
