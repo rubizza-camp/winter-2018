@@ -1,5 +1,7 @@
 # I just wanted to make Menu class shorter
 module Validation
+  DATE_OF_DENOMINATION = '6102-60'.freeze
+
   def validate_users_input(products)
     puts 'What do you want to see?'
     view_all_products(products)
@@ -25,9 +27,20 @@ module Validation
       index_choice.to_s.to_i < products_size ||
       index_choice.to_s.to_i.zero?
   end
+
+  def convert_outdated_price(price, date)
+    begin Float(price.to_s)
+    rescue ArgumentError
+      nil
+    end
+    if (date.reverse <=> DATE_OF_DENOMINATION).negative? || (date.reverse <=> DATE_OF_DENOMINATION).zero?
+      price /= 10_000.0
+    end
+    price.round(2)
+  end
 end
 
-# Class is used for operating excel data from belstat
+# Class is used for operating excel data from Belstat
 # You need that files to be put into data/ folder
 class Menu
   require 'rubyXL'
@@ -120,8 +133,10 @@ class Menu
   end
 
   def add_product_to_array(cell, products, row, user_input, date)
-    products.push([cell.value, row[14].value, date]) if
-        cell.value.to_s.upcase.include? user_input
+    price = row[PRICE_CELL_INDEX].value.to_s.to_f
+    price = convert_outdated_price(price, date)
+    products.push([cell.value, price, date]) if
+      cell.value.to_s.upcase.include? user_input
   end
 
   def find_products_by_price(products, price, date, row)
