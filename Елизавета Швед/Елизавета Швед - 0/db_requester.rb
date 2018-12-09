@@ -50,7 +50,8 @@ class DbRequester
 
   def similar_price
     str = @product_name.downcase
-    response = @db.execute "SELECT DISTINCT Name FROM Items WHERE Price < '#{@last_time_cost + 0.5}' AND Price > '#{@last_time_cost - 0.5}' LIMIT(2)"
+    response = @db.execute "SELECT DISTINCT Name FROM Items WHERE Price < '#{@last_time_cost + 0.5}' 
+    AND Price > '#{@last_time_cost - 0.5}' LIMIT(2)"
     record = response.last
     puts "For similar price you also can afford #{response[1][0].capitalize} and #{response[0][0].capitalize}"
   end

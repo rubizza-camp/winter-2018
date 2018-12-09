@@ -15,19 +15,19 @@ class DownloadSheets
   end
 
   private
-  
+
   def download_file(date, link, type)
     response = Faraday.get(link)
     begin
       file = File.open("./data/#{date}.#{type}", "w")
       file.write(response.body)
-    rescue IOError => e
+      rescue IOError => e
       puts e
       ensure
       file.close unless file.nil?
     end
   end
-  
+
   def generate_links_2009
     beg_s = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2009/prices_tov_'
     end_s = '09.xls'
@@ -38,7 +38,7 @@ class DownloadSheets
     end
     data_links
   end
-  
+
   def generate_links_2010
     beg_s = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2010/prices_tov_'
     end_s = '10.xls'
@@ -49,7 +49,7 @@ class DownloadSheets
     end
     data_links
   end
-  
+
   def generate_links_2011
     beg_s = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2011/prices_tov_'
     end_s = '11.xls'
@@ -60,7 +60,7 @@ class DownloadSheets
     end
     data_links
   end
-  
+
   def generate_links_2012
     beg_s = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2012/prices_tov_'
     end_s = '12.xls'
@@ -71,7 +71,7 @@ class DownloadSheets
     end
     data_links
   end
-  
+
   def generate_links_2013
     beg_s = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2013/prices_tov_'
     end_s = '13.xls'
@@ -84,7 +84,7 @@ class DownloadSheets
     data_links['12_2013'] = 'http://www.belstat.gov.by/uploads/file/prices/average_prices/2013/prices_tov_1213.xls'
     data_links
   end
-  
+
   def generate_links_2014
     beg_s = 'http://www.belstat.gov.by/kscms/uploads/file/prices/average_prices/2014/prices_tov_'
     end_s = '14.xls'
@@ -96,7 +96,7 @@ class DownloadSheets
     data_links['12_2014'] = 'http://www.belstat.gov.by/kscms/uploads/file/prices/average_prices/prises_cpi_12.xls'
     data_links
   end
-  
+
   def generate_links_2015
     data_links = {}
     data_links['01_2015'] = 'http://www.belstat.gov.by/kscms/uploads/file/prices/average_prices/2015/prices_tov_01_2015.xls'
@@ -113,7 +113,7 @@ class DownloadSheets
     data_links['12_2015'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/prices_goods_2-2015_16_02.xlsx'
     data_links
   end
-  
+
   def generate_links_2016
     data_links = {}
     data_links['01_2016'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/prices_tov-01-2016.xlsx'
@@ -130,7 +130,7 @@ class DownloadSheets
     data_links['12_2016'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-word/Oficial_statistika/prices_tov-12-2016.xlsx'
     data_links
   end
-  
+
   def generate_links_2017
     data_links = {}
     data_links['01_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/price-01-2017.xlsx'
@@ -147,7 +147,7 @@ class DownloadSheets
     data_links['12_2017'] = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average%20prices(serv)-12-2017.xlsx'
     data_links
   end
-  
+
   def generate_links_2018
     beg_s = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-'
     end_s = '-2018.xlsx'
