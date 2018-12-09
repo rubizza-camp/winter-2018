@@ -16,7 +16,7 @@ def parse_month_of_table(spreadsheet)
 end
 
 # Class parses belstat's site and downloads price tables
-class DataGetter
+class DataParser
   URL = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika'\
   '-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny'\
   '-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus/'.freeze

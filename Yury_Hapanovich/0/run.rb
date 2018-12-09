@@ -1,15 +1,21 @@
 require './get_data.rb'
 require './price_searcher'
 
-def answer_checker
+PATH_FOR_DATA = './data'.freeze
+
+def user_input_check
   %w[y Y д Д].include?(gets.chomp)
 end
 
-puts 'Please, download data files if you run application first.'
-puts 'Do you want to download data files? (y/n)'
-DataGetter.download_data if answer_checker
-loop do
+until Dir.exist?(PATH_FOR_DATA) && !Dir['./data/*'].empty?
+  puts 'You need to download data files'
+  puts 'Do you want to download them? (y/n)'
+  DataParser.download_data if user_input_check
+end
+
+answer = true
+while answer
   PriceSearcher.new.analyze
   puts 'Do you want to look for something else? (y/n)'
-  break unless answer_checker
+  answer = user_input_check
 end
