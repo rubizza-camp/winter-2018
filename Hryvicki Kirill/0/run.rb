@@ -71,24 +71,26 @@ def get_recent_price_data(key, products, month_map)
   year_key = get_closest_year(current_year, product_year_data)
   product_month_data = product_year_data[year_key]
   month_key = get_closest_month(current_month, product_month_data, month_map)
-  return { 'price' => product_month_data[month_key]['Minsk'], 'year' => year_key, 
-    'month' => month_key, 'product' => key } 
+  form_recent_price_data(product_month_data[month_key]['Minsk'], year_key, month_key, key)
+end
+
+def form_recent_price_data(price, year, month, product)
+  { 
+    'price' => price,
+    'year' => year,
+    'month' => month,
+    'product' => product
+  }
 end
 
 def get_closest_year(current_year, product_data)
-  if product_data[current_year]
-    return year_key = current_year
-  else
-    return year_key = product_data.keys.max { |a, b| a.to_i <=> b.to_i }
-  end
+  current_year if product_data[current_year]
+  product_data.keys.max_by(&:to_i) unless product_data[current_year]
 end
 
 def get_closest_month(current_month, product_data, month_map)
-  if product_data[current_month]
-    return month_key = current_month
-  else
-    return month_key = product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i }
-  end
+  current_month if product_data[current_month]
+  product_data.keys.max { |a, b| month_map[a].to_i <=> month_map[b].to_i } unless product_data[current_month]
 end
 
 def get_min_price(hash)

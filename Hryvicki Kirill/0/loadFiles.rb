@@ -10,10 +10,10 @@ page.links_with(:href => /.xls/).each do |link|
   str_link = WEBrick::HTTPUtils.unescape(str_link)
   str_link = WEBrick::HTTPUtils.escape(str_link)
   f_link = if %r{http:\/\/www.belstat.gov.by}.match?(str_link)
-    str_link
-  else
-    'http://www.belstat.gov.by' + str_link
-  end
+             str_link
+           else
+             'http://www.belstat.gov.by' + str_link
+           end
   download = URI.open(f_link)
   IO.copy_stream(download, "./data/#{download.base_uri.to_s.split('/')[-1]}")
 end
