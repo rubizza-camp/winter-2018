@@ -11,7 +11,8 @@ module Validation
       index_choice = gets.chomp!
       begin Integer(index_choice)
       rescue ArgumentError
-        nil end
+        nil
+      end
       return [products[index_choice.to_s.to_i]] if
         validate_index_choice(index_choice, products.size)
 
