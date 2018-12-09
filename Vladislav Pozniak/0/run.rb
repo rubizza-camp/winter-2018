@@ -11,12 +11,12 @@ table = Roo::Spreadsheet.open(current, extension: File.extname(current))
 print "What price are you looking for?\n>\s"
 item = gets.chomp
 
-products = (9..table.last_row).each_with_object({}) do |row, products|
+products = (9..table.last_row).each_with_object({}) do |row, hash|
   next unless table.cell(row, GOODS).to_s =~ /\b#{item.upcase}\b/
 
   name = table.cell(row, GOODS)
   price = table.cell(row, REGION)
-  products[name] = price
+  hash[name] = price
   puts "'#{name.capitalize}' is #{price} BYN in Minsk these days."
 end
 
@@ -64,13 +64,13 @@ DELTA = 0.25 # delta for searching for similar prices
 DELTA.freeze
 products.each do |name, price|
   sim_prod = []
-  similar = (9..table.last_row).each_with_object({}) do |row, similar|
+  similar = (9..table.last_row).each_with_object({}) do |row, hash|
     next if table.cell(row, GOODS).to_s == name
     next if table.cell(row, REGION).nil?
 
     if (price - table.cell(row, REGION)).abs <= DELTA
       sim_prod << table.cell(row, GOODS).capitalize
-      similar[name] = sim_prod
+      hash[name] = sim_prod
     end
   end
   if similar.length.zero?
