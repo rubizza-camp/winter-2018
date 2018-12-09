@@ -13,7 +13,7 @@ LINK = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruz
 YEAR_POS = -2 # Year position in string
 MONTH_POS = -3 # Month position in string
 
-page = Nokogiri::HTML(open(LINK))
+page = Nokogiri::HTML(URI.open(LINK))
 links = page.css('a[href*="xls"]').map { |a| a['href'] }
 
 Dir.mkdir('data') unless File.directory?('data')
