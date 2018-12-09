@@ -1,5 +1,5 @@
 require 'roo'
-require 'spreadsheet'
+require 'roo-xls'
 
 FIRST_SHEET = 0
 NAME_COL = 0
@@ -148,27 +148,12 @@ class Application
     puts 'Collecting data...'
 
     @files.each do |file|
-      if File.extname(file) == '.xlsx'
-        collect_xlsx(file)
-      elsif File.extname(file) == '.xls'
-        collect_xls(file)
-      end
+      parse_table(file) if File.extname(file) == '.xlsx' || File.extname(file) == '.xls'
     end
   end
 
-  def collect_xls(file)
-    xls = Spreadsheet.open "#{DATA_FOLDER}#{file}"
-    sheet = xls.worksheet(FIRST_SHEET)
-    # zero indexing
-    date = sheet.row(DATE_ROW - 1)
-
-    sheet.drop(TABLE_HEADER).each do |row|
-      @analyzer.add_entry(row[NAME_COL], date, row[AREA_COL]) if row[AREA_COL]
-    end
-  end
-
-  def collect_xlsx(file)
-    xlsx = Roo::Spreadsheet.open("#{DATA_FOLDER}#{file}")
+  def parse_table(file)
+    xlsx = Roo::Spreadsheet.open("#{DATA_FOLDER}#{file}", extension: File.extname(file))
     sheet = xlsx.sheet(FIRST_SHEET)
     date = sheet.row(DATE_ROW)
 
