@@ -1,7 +1,7 @@
 require 'roo'
 require 'roo-xls'
 
-def getFileInstance(file_path)
+def get_file_instance(file_path)
   ext = file_path.split('.')[2]
   file_instance = nil
   
@@ -16,19 +16,18 @@ def getFileInstance(file_path)
   else
     puts 'unsupported file type: ' + file_path
   end
-
-  return file_instance
+  file_instance
 end
 
-def findKeys(word, products)
+def find_keys(word, products)
   result = []
   products.keys.each { |key|
     result.push(key) if(key.include?(word))
   }
-  return result
+  result
 end
 
-def fetchProductsData(file_instance, products, regions)
+def fetch_products_data(file_instance, products, regions)
   for n in 9..file_instance.last_row
     next if file_instance.cell('E', n) == nil
 
@@ -36,30 +35,40 @@ def fetchProductsData(file_instance, products, regions)
     month = file_instance.cell('A', 3).split(' ')[1]
     key = file_instance.cell('A', n).strip.downcase
 
-    products[key] = {} if !products[key]
-    products[key][year] = {} if !products[key][year]
+    products[key] = {} unless products[key]
+    products[key][year] = {} unless products[key][year]
 
     products[key][year][month] = {
-      regions[0] => formatValue(file_instance.cell('G', n), year),
-      regions[1] => formatValue(file_instance.cell('I', n), year),
-      regions[2] => formatValue(file_instance.cell('K', n), year),
-      regions[3] => formatValue(file_instance.cell('M', n), year),
-      regions[4] => formatValue(file_instance.cell('O', n), year),
-      regions[5] => formatValue(file_instance.cell('Q', n), year),
-      regions[6] => formatValue(file_instance.cell('S', n), year)
+      regions[0] => format_value(file_instance.cell('G', n), year),
+      regions[1] => format_value(file_instance.cell('I', n), year),
+      regions[2] => format_value(file_instance.cell('K', n), year),
+      regions[3] => format_value(file_instance.cell('M', n), year),
+      regions[4] => format_value(file_instance.cell('O', n), year),
+      regions[5] => format_value(file_instance.cell('Q', n), year),
+      regions[6] => format_value(file_instance.cell('S', n), year)
     }
   end
 end
 
-def formatValue(val, year)
+def format_value(val, year)
   if val
     result = val.to_f
-    result = result / 10000 if year.to_i < 2017
+    result = result / 10_000 if year.to_i < 2017
     return result.round(2)
   end
 end
 
-def getRecentPriceData(key, products, month_map)
+{
+  товар => {
+    год => {
+      месяц => {
+        регион => цена
+      }
+    }
+  }
+}
+
+def get_recent_price_data(key, products, month_map)
   current_year = Time.now.strftime('%Y').to_s
   current_month = Time.now.strftime('%m')
 
@@ -91,15 +100,14 @@ def getRecentPriceData(key, products, month_map)
   } 
 end
 
-def getMinPrice(hash)
+def get_min_price(hash)
   result = {}
-  min_year_price = 9999999999999
-
+  min_year_price = 9_999_999_999_999
   hash.each do |year, year_hash|
-    min_month_price = 9999999999999
+    min_month_price = 9_999_999_999_999
     year_hash.each do |month, month_hash|
       price = month_hash['Minsk']
-      next if !price 
+      next unless price 
       if price < min_month_price
         min_month_price = price
         result['month'] = month
@@ -111,10 +119,10 @@ def getMinPrice(hash)
       result['price'] = min_year_price
     end
   end
-  return result
+  result
 end
 
-def getMaxPrice(hash)
+def get_max_price(hash)
   result = {}
   max_year_price = 0
 
@@ -122,7 +130,7 @@ def getMaxPrice(hash)
     max_month_price = 0
     year_hash.each do |month, month_hash|
       price = month_hash['Minsk']
-      next if !price
+      next unless price
 
       if price > max_month_price
         max_month_price = price
@@ -135,10 +143,10 @@ def getMaxPrice(hash)
       result['price'] = max_year_price
     end
   end
-  return result
+  result
 end
 
-def getSimilarPriceProducts(data, products)
+def get_similar_price_products(data, products)
   result = []
   price = data['price']
   year = data['year']
@@ -146,11 +154,11 @@ def getSimilarPriceProducts(data, products)
   origin_product = data['product']
 
   products.each { |product, product_data|
-    next if !product_data[year]
-    next if !product_data[year][month]
+    next unless product_data[year]
+    next unless product_data[year][month]
     result.push(product) if product_data[year][month]['Minsk'] == price && product != origin_product
   }
-  return result
+  result
 end
 
 def main
@@ -168,37 +176,32 @@ def main
     'ноябрь' => 11,
     'декабрь' => 12,
   }
-  
   regions = ['Brest', 'Vitebsk', 'Gomel', 'Grodno', 'Minsk', 'Minsk Region', 'Mogilyov']
   products = {}
   file_paths = Dir['./data/*']
-  
   file_paths.each do |file_path|
-    file_instance = getFileInstance(file_path)
-    fetchProductsData(file_instance, products, regions) if file_instance 
+    file_instance = get_file_instance(file_path)
+    fetch_products_data(file_instance, products, regions) if file_instance 
   end
-
   loop do
     puts 'What price are you looking for?'
     word = gets.chomp.downcase # .encode('UTF-8')
-    keys = findKeys(word, products)
+    keys = find_keys(word, products)
     if keys.empty?
       puts word.capitalize + ' can not be found in database'
     else
       keys.each do |key|
-        recent_price_data = getRecentPriceData(key, products, month_map)
+        recent_price_data = get_recent_price_data(key, products, month_map)
         puts ''
-        puts key.capitalize + ' is ' + recent_price_data['price'].to_s + ' BYN in Minsk these days.'
+        puts key.capitalize+' is '+recent_price_data['price'].to_s+' BYN in Minsk these days.'
 
-        min_price = getMinPrice(products[key])
-        puts 'Lowest was on ' + min_price['year'] + '/' + month_map[min_price['month']].to_s +
-        ' at price ' + min_price['price'].to_s + ' BYN'
+        min_price = get_min_price(products[key])
+        puts 'Lowest was on '+min_price['year']+'/'+month_map[min_price['month']].to_s +' at price '+min_price['price'].to_s+' BYN'
 
-        max_price = getMaxPrice(products[key])
-        puts 'Maximum was on ' + max_price['year'] + '/' + month_map[max_price['month']].to_s +
-        ' at price ' + max_price['price'].to_s + ' BYN'
+        max_price = get_max_price(products[key])
+        puts 'Maximum was on '+max_price['year']+'/'+month_map[max_price['month']].to_s+' at price '+ max_price['price'].to_s+' BYN'
 
-        similar_products = getSimilarPriceProducts(recent_price_data, products)
+        similar_products = get_similar_price_products(recent_price_data, products)
         if similar_products.empty?
           puts 'No products for similar price'
         else
