@@ -15,6 +15,4 @@ spread_sheet = Roo::Spreadsheet.open('./Data/Average.xlsx')
   @number += 1
 end
 
-if @number.zero?
-  puts "'#{@name}' can not be found in database"
-end
+puts "'#{@name}' can not be found in database" if @number.zero?
