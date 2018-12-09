@@ -27,7 +27,7 @@ end
 
 # Level 2
 month_min = File.basename(current, File.extname(current))
-month_max = File.basename(current, File.extname(current))
+month_max = month_min
 products.each do |name, price|
   price_min = price
   price_max = price
@@ -61,7 +61,6 @@ end
 
 # Level 3
 DELTA = 0.25 # delta for searching for similar prices
-DELTA.freeze
 products.each do |name, price|
   sim_prod = []
   similar = (9..table.last_row).each_with_object({}) do |row, hash|
