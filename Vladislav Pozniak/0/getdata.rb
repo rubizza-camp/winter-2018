@@ -8,8 +8,10 @@ require 'uri'
 MONTHS = { 'январь': '01', 'февраль': '02', 'март': '03', 'апрель': '04',
            'май': '05', 'июнь': '06', 'июль': '07', 'август': '08',
            'сентябрь': '09', 'октябрь': '10', 'ноябрь': '11', 'декабрь': '12' }
+MONTHS.freeze
 
 PAGE = Nokogiri::HTML(open('http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus/'))
+PAGE.freeze
 links = PAGE.css('a[href*="xls"]').map { |a| a['href'] }
 
 Dir.mkdir('data') unless File.directory?('data')
