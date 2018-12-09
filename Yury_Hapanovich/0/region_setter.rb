@@ -18,8 +18,8 @@ class RegionSetter
 
   def select_region
     loop do
-      region = gets.chomp
-      return region if @regions.key?(region.capitalize)
+      region = gets.chomp.capitalize
+      return region if @regions.key?(region)
 
       puts 'Please, select correct region!'
     end

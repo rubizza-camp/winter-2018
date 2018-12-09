@@ -16,7 +16,7 @@ class PriceSearcher
       @current_region = RegionSetter.new(REGIONS).set_current_region
       puts "Current region is #{@current_region}"
     end
-    @products = {}
+    @products = {} # {product => [price, min, min_date, max, max_date]}
     @request = ''
     @last_file = Dir['./data/*'].max
     @similar = {}
@@ -82,6 +82,7 @@ class PriceSearcher
       puts "Lowest was on #{value[2]} at price #{value[1]} BYN"
       puts "Maximum was on #{value[4]} at price #{value[3]} BYN"
       display_similar(product)
+      puts ''
     end
   end
 
