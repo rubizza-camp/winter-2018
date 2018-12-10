@@ -28,7 +28,7 @@ class ProductPrice
 end
 
 class PriceCollector
-  MONTHS = %w(январь февраль март апрель май июнь июль август сентябрь октябрь ноябрь декабрь)
+  MONTHS = %w(январь февраль март апрель май июнь июль август сентябрь октябрь ноябрь декабрь).freeze
   attr_accessor :products
 
   def initialize
@@ -38,7 +38,11 @@ class PriceCollector
   def start
     collect_data
     found = search_product(ask_product)
-    show_found_products(found)
+    found.each do |product|
+      show_found_product(product)
+      show_same_price_products(found, product)
+      puts
+    end
   end
 
   private
@@ -56,13 +60,13 @@ class PriceCollector
     puts
   end
 
-  def collect_from_xls(f)
-    xls = Roo::Excel.new(f)
+  def collect_from_xls(file)
+    xls = Roo::Excel.new(file)
     sheet = xls.worksheets.first
     date = parse_date(sheet.rows[2].compact.first)
-    puts "Can't parse date in #{f}" unless date
+    puts "Can't parse date in #{file}" unless date
 
-    sheet.rows.each_with_index do |row,i|
+    sheet.rows.each_with_index do |row, i|
       next if i < 8 || row[0].nil?
       name = clean_name(row[0])
       price = row[6]
@@ -70,10 +74,10 @@ class PriceCollector
     end
   end
 
-  def collect_from_xlsx(f)
-    xlsx = Roo::Excelx.new(f)
+  def collect_from_xlsx(file)
+    xlsx = Roo::Excelx.new(file)
     date = parse_date(xlsx.sheet(0).row(3).compact.first)
-    puts "Can't parse date in #{f}" unless date
+    puts "Can't parse date in #{file}" unless date
 
     xlsx.sheet(0).each_row_streaming(offset: 7) do |row|
     name = clean_name(row[0].cell_value)
@@ -99,7 +103,8 @@ class PriceCollector
     month = MONTHS.find{|m| date_str.include?(m)}
     return unless month
     month_number = MONTHS.index(month) + 1
-    year = $1 if date_str.match(/(\d{4})/)
+    match_data = date_str.match(/(\d{4})/)
+    year = match_data[1] if match_data
     return unless year
     "#{year}/#{month_number.to_s.rjust(2, '0')}"
   end
@@ -116,22 +121,22 @@ class PriceCollector
 
   def search_product(user_product)
     products.keys.select do |name|
-      name.downcase.gsub(/[^(а-я)]/, ' ').split(/\s+/).include?(user_product) && products[name].last_price
+      name.downcase.gsub(%r/[^(а-я)]/, ' ').split(/\s+/).include?(user_product) && products[name].last_price
     end
-
   end
 
-  def show_found_products(found)
-    found.each do |p|
-      product_price = products[p]
-      puts "#{p} is #{product_price.last_price} BYN in Minsk these days."
-      puts "Lowest was on #{product_price.min_price_date} at price #{product_price.min_price} BYN"
-      puts "Maximum was on #{product_price.max_price_date} at price #{product_price.max_price} BYN"
-      same_price_products = find_same_price(found, product_price.last_price)
-      unless same_price_products.empty?
-        puts "For similar price you also can afford #{same_price_products.join(' and ')}."
-      end
-      puts
+  def show_found_product(product_name)
+    product_price = products[product_name]
+    puts "#{product_name} is #{product_price.last_price} BYN in Minsk these days."
+    puts "Lowest was on #{product_price.min_price_date} at price #{product_price.min_price} BYN"
+    puts "Maximum was on #{product_price.max_price_date} at price #{product_price.max_price} BYN"
+  end
+
+  def show_same_price_products(found, product_name)
+    product_price = products[product_name]
+    same_price_products = find_same_price(found, product_price.last_price)
+    unless same_price_products.empty?
+      puts "For similar price you also can afford #{same_price_products.join(' and ')}."
     end
   end
 
@@ -146,6 +151,5 @@ class PriceCollector
     same
   end
 end
-
 
 PriceCollector.new.start
