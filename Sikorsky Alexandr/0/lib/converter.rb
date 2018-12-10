@@ -30,7 +30,7 @@ module BelStat
         date = table.row(DATE_LINE).compact.first.squeeze(' ').split(' ')
         date = "#{MONTH2DIGITAL[date[MONTH_NUM]]}.#{date[YEAR_NUM]}"
 
-        File.rename(file, "#{File.dirname(file)}/#{date}.#{file.split('.').last}")
+        File.rename(file, gener_new_name(file, date))
       end
     end
 
@@ -46,10 +46,9 @@ module BelStat
       end
       puts "#{excel_file} - successfully converted "
     end
-  end
-end
 
-if $PROGRAM_NAME == __FILE__
-  converter = BelStat::Converter.new
-  converter.rename2date('raw_data')
+    def gener_new_name(old_name, date)
+      "#{File.dirname(old_name)}/#{date}.#{old_name.split('.').last}"
+    end
+  end
 end

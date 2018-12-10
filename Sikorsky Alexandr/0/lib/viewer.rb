@@ -11,8 +11,6 @@ module BelStat
       MESS
     end
 
-    private
-
     def self.similars2string(similars)
       message = 'For similar price you also can afford: '
       similars.map! do |str|

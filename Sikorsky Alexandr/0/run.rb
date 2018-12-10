@@ -17,7 +17,11 @@ if !Dir.exist?("./#{WORK_DIR}") || Dir.empty?("./#{WORK_DIR}")
   downloader.download_excels RAW_DIR
 
   converter = BelStat::Converter.new
+  puts 'renaming...'
+  converter.rename2date RAW_DIR
+  puts 'converting...'
   converter.convert_data RAW_DIR, WORK_DIR
+  puts "READY\n\n"
 end
 
 loop do
@@ -33,7 +37,7 @@ loop do
   if !stat[:curr].nil?
     similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
     similars.reject! { |prod| /.*#{query}.*/i.match?(prod) }
-    viewer::show_info(query, stat, similars)
+    viewer.show_info(query, stat, similars)
   else
     puts "Sorry, nothing was found for '#{query}'\n\n"
   end

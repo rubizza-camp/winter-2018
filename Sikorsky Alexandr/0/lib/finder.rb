@@ -1,4 +1,5 @@
 require 'csv'
+require 'pry'
 
 module BelStat
   class Finder
@@ -43,7 +44,8 @@ module BelStat
 
         date = file_path2date path
         stat[:curr] = price if date == @curr_date
-        add_min_max_value price, date, stat
+        min_max_hash = return_min_max price, date, stat
+        stat.merge!(min_max_hash)
       end
       stat
     end
@@ -78,18 +80,14 @@ module BelStat
       "#{date[:month]}.#{date[:year]}.csv"
     end
 
-    def add_min_max_value(price, date, stat)
+    def return_min_max(price, date, stat)
       price /= 10_000 if price > 1000
 
-      if price > stat[:max]
-        stat[:max] = price
-        stat[:max_date] = date
-      end
+      (return { max: price, max_date: date }) if price > stat[:max]
 
-      return unless stat[:min].zero? || price < stat[:min]
+      (return {}) unless stat[:min].zero? || price < stat[:min]
 
-      stat[:min] = price
-      stat[:min_date] = date
+      { min: price, min_date: date }
     end
   end
 end
