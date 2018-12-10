@@ -3,7 +3,6 @@ require 'roo'
 require 'roo-xls'
 MINSK_CONSTATN_CELL_COL = 14
 ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'.freeze
-ERROE_NO_FILES_TO_CHECK = 'There is no file to check in data folder. So we take actual file from uri.'.freeze
 MONTH = {
   'январь' => '01',
   'февраль' => '02',
@@ -25,18 +24,10 @@ class RooBookParser
     @all_files = []
   end
 
-  def check_table_extension(name)
-    if /xls$/.match?(name)
-      Roo::Spreadsheet.open(name, extension: :xls)
-    elsif /.xlsx$/.match?(name)
-      Roo::Spreadsheet.open(name, extension: :xlsx)
-    end
-  end
-
-  def collect_all_files(*)
+  def collect_all_files
     Dir.chdir('data') unless Dir.pwd.match?('data')
-    FileList.new('*.xls*').map! do |filename|
-      check_table_extension(filename)
+    FileList.new('*.xls*').map do |filename|
+      Roo::Spreadsheet.open(filename)
     end
   end
 
@@ -72,7 +63,7 @@ class RooBookParser
   def output_parser(input_name)
     prices =
       if collect_all_files.empty?
-        puts ERROE_NO_FILES_TO_CHECK
+        puts 'There is no file to check in data folder. So we take actual file from uri.'
         search_price_by_name(input_name)
       else
         collect_all_files.each { |file| @all_files << [convert_date(convert_month_and_year(file)), file] }
