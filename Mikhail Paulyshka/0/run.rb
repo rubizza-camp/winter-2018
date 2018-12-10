@@ -69,24 +69,10 @@ def search(goods, item_name)
 
   # level 2
   # get min/max prices
-  max_price = 0.0
-  max_date = ''
-  min_price = Float::INFINITY
-  min_date = ''
-
-  prices_found.each do |k, v|
-    if v > max_price
-      max_date = k
-      max_price = v
-    end
-
-    if v < min_price
-      min_date = k
-      min_price = v
-    end
-  end
-  print "Lowest was on #{min_date} at price #{min_price} BYN\n"
-  print "Maximum was on #{max_date} at price #{max_price} BYN\n"
+  min = prices_found.min_by { |_k, v| v }
+  max = prices_found.max_by { |_k, v| v }
+  print "Lowest was on #{min[0]} at price #{min[1]} BYN\n"
+  print "Maximum was on #{max[0]} at price #{max[1]} BYN\n"
 
   # level 3
   # get products with similar price
