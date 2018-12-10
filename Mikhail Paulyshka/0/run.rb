@@ -26,7 +26,7 @@ def load_files
       next
     end
     year = regex_result[0][0].to_i
-    month = regex_result[0][1]
+    month = regex_result[0][1].to_i
 
     # parsing data
     goods_file = {}
