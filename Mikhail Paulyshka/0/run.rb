@@ -17,7 +17,7 @@ def load_files
   files = DataDownloader.filenames
   files.each do |file|
     print('.')
-      spreadsheet = Roo::Spreadsheet.open(file, extension: File.extname(file))
+    spreadsheet = Roo::Spreadsheet.open(file, extension: File.extname(file))
 
     # getting year and month
     regex_result = file.scan(/([0-9]{4})_([0-9]{2})/) # 2018_02
@@ -104,7 +104,7 @@ def search(goods, item_name)
 end
 
 print "Downloading files. Please wait\n"
-DataDownloader.download_data
+download_data
 
 print "\nParsing files. Please wait\n"
 goods = load_files

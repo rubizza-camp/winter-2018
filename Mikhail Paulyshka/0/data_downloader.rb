@@ -18,7 +18,7 @@ module DataDownloader
   end
 
   def filenames
-    Dir.entries(DIRECTORY).reject { |f| File.directory? f }.map { |f| File.join(DIRECTORY,f) }
+    Dir.entries(DIRECTORY).reject { |f| File.directory? f }.map { |f| File.join(DIRECTORY, f) }
   end
 
   def download_data
