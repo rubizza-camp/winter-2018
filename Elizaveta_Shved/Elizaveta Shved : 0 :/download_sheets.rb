@@ -19,11 +19,11 @@ class DownloadSheets
   def download_file(date, link, type)
     response = Faraday.get(link)
     begin
-      file = File.open("./data/#{date}.#{type}", "w")
+      file = File.open("./data/#{date}.#{type}", 'w')
       file.write(response.body)
     rescue IOError => e
       puts e
-      ensure
+    ensure
       file.close unless file.nil?
     end
   end
