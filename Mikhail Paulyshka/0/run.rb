@@ -17,13 +17,7 @@ def load_files
   files = DataDownloader.filenames
   files.each do |file|
     print('.')
-
-    # Files could be broken, so switch to next if it occurs
-    begin
       spreadsheet = Roo::Spreadsheet.open(file, extension: File.extname(file))
-    rescue RuntimeError
-      next
-    end
 
     # getting year and month
     regex_result = file.scan(/([0-9]{4})_([0-9]{2})/) # 2018_02
