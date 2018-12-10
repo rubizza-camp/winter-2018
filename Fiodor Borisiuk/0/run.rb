@@ -1,9 +1,67 @@
 require 'roo'
+require 'roo-xls'
+require 'open-uri'
+require 'nokogiri'
+require 'net/http'
+
+puts 'Please wait until the data is loaded.'
+
+url = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus'
+html = URI.parse(url).open.read
+
+doc = Nokogiri::HTML(html).to_s
+ind_low = doc.index('СРЕДНИЕ ЦЕНЫ НА ТОВАРЫ, РЕАЛИЗУЕМЫЕ В РОЗНИЧНОЙ СЕТИ')
+ind_high_def = doc.index('Средние цены (тарифы) на отдельные виды платных')
+doc = doc[ind_low..ind_high_def]
+
+months = %w[янв фев мар апр май июн июл авг сен окт ноя дек]
+url_table = {}
+f = true
+while f
+  ind_low = doc.index('<a href="')
+  ind_high = doc.index('</a>')
+  if ind_low && ind_high
+    str = doc[ind_low..ind_high]
+    ind = str.index('за')
+    break if ind.nil?
+
+    month = months.index(str[ind + 3..ind + 5]) + 1
+
+    ind = str.index('200')
+    ind = str.index('201') if ind.nil?
+    break if ind.nil?
+
+    year = str[ind..ind + 3]
+    date = if month < 10
+             '0'
+           else
+             ''
+           end
+    date += month.to_s + '-' + year
+    url = str[str.index('"') + 1..str.index('>') - 2]
+    url_table[date] = url
+    doc = doc[ind_high + 2..ind_high_def]
+  else
+    f = false
+  end
+end
+
+url_table.keys.each do |key|
+  Net::HTTP.start('www.belstat.gov.by') do |http|
+    resp = http.get(url_table[key])
+    xls_format = if url_table[key].index('xlsx').nil?
+                   'xls'
+                 else
+                   'xlsx'
+                 end
+    open("ex#{key}.#{xls_format}", 'wb') { |file| file.write(resp.body) }
+  end
+end
 
 file_list = Dir.entries('.')
 xls_list = []
-file_list.each do |file|
-  xls_list.append(file) if file.index('xls')
+file_list.each_with_object(xls_list) do |file, arr|
+  arr.append(file) if file.index('xls')
 end
 
 xls_table = []
@@ -14,28 +72,40 @@ end
 
 @table = {}
 
-xls_table.each do |xls|
-  name, date = xls
-
-  sheet = Roo::Excelx.new(name).sheet(0)
-
+def find_frow(sheet)
   sheet.first_row.upto(sheet.last_row) do |i|
-    f = false
+    # f = false
     sheet.first_column.upto(sheet.last_column) do |j|
       next if sheet.cell(i, j).to_s.index('ПРОДОВОЛЬСТВЕННЫЕ ТОВАРЫ').nil?
 
       @frow = i + 1
-      f = true
-      break
+      return @frow
     end
-    break if f
   end
+  @frow
+end
+
+xls_table.each do |xls|
+  name, date = xls
+
+  sheet = Roo::Spreadsheet.open(name).sheet(0)
+
+  @frow = find_frow(sheet)
 
   price_arr = []
   @frow.upto(sheet.last_row) do |i|
     cur_price = []
     1.upto(sheet.last_column) do |j|
-      cur_cell = sheet.cell(i, j)
+      cur_cell = sheet.cell(i, j).to_s
+      next if cur_cell.nil?
+
+      cur_cell = (cur_cell.to_f / 10_000).to_s\
+        if cur_cell.to_f != 0.0 && date[5..6].to_f <= 16
+
+      if cur_cell.length && cur_cell.index('.')
+        cur_cell = cur_cell[0..cur_cell.index('.') + 2]\
+          if cur_cell.length - cur_cell.index('.') >= 2
+      end
       cur_price.append(cur_cell) if cur_cell
     end
     if cur_price[-1].to_s == cur_price[-1].to_f.to_s
@@ -82,6 +152,8 @@ def parse_date(dat)
   dat[3..6] + '/' + dat[0..1]
 end
 
+puts "Done.\n\nEnter the query:"
+
 today = '10-2018'
 query = ''
 while query != '^C'
@@ -119,7 +191,7 @@ while query != '^C'
       end
     end
 
-    puts "Lowest was on #{parse_date(min_d)} at price #{min}BYN"
+    puts "Lowest was on #{parse_date(min_d)} at price #{min} BYN"
     puts "Maximum was on #{parse_date(max_d)} at #{max} BYN"
 
     sim = m_atoi(find_similar(@table[today], i[0], i[1].to_f))
