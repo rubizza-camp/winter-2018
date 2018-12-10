@@ -4,11 +4,11 @@ require 'open-uri'
 require 'fileutils'
 require 'uri'
 
-class DataDownloader
+module DataDownloader
   DIRECTORY = './data/'.freeze
   URL = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus/'.freeze
 
-  def self.download_file(uri, path)
+  def download_file(uri, path)
     dirname = File.dirname(path)
     FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
 
@@ -17,11 +17,11 @@ class DataDownloader
     end
   end
 
-  def self.filenames
+  def filenames
     Dir.entries(DIRECTORY).reject { |f| File.directory? f }.map { |f| DIRECTORY + f }
   end
 
-  def self.download_data
+  def download_data
     page = Nokogiri::HTML(URI.parse(URL).open)
 
     page.css('a[href*="xls"]').each do |link|

@@ -3,6 +3,7 @@ require 'roo'
 require 'roo-xls'
 
 require './data_downloader'
+include DataDownloader
 
 PRICE_DELTA = 0.2
 NAME_COLUMN = 1
