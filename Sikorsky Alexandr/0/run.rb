@@ -33,7 +33,7 @@ loop do
   if !stat[:curr].nil?
     similars = finder.find_similar(stat[:curr] - 0.2, stat[:curr] + 0.2)
     similars.reject! { |prod| /.*#{query}.*/i.match?(prod) }
-    viewer.show_info(query, stat, similars)
+    viewer::show_info(query, stat, similars)
   else
     puts "Sorry, nothing was found for '#{query}'\n\n"
   end

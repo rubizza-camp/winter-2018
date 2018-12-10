@@ -3,39 +3,32 @@ require 'nokogiri'
 
 module  BelStat
   class Downloader
-    def initialize
-      @url = 'http://www.belstat.gov.by/'\
-       'ofitsialnaya-statistika/'\
-       'makroekonomika-i-okruzhayushchaya-sreda/'\
-       'tseny/operativnaya-informatsiya_4/'\
-       'srednie-tseny-na-potrebitelskie-tovary'\
-       '-i-uslugi-po-respublike-belarus/'
+    MAIN_URL = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus/'.freeze
 
-      @domain = 'http://www.belstat.gov.by'
-    end
+    DOMAIN = 'http://www.belstat.gov.by'.freeze
 
     def download_excels(directory_name)
-      docs_urls = parse(@url)
+      docs_urls = parse(MAIN_URL)
 
       docs_urls.each do |url|
         url = url.to_s
-        url = @domain + url unless url =~ /http(.*)/
+        url = DOMAIN + url unless url.start_with? 'http'
 
         puts url
         puts '------------'
 
-        download(url, generate_name(url), "./#{directory_name}")
+        download(url, url.split('/').last, "./#{directory_name}")
       end
     end
 
     private
 
     def download(url, file_name, folder)
-      path = folder + '/' + file_name
+      path = File.join(folder, file_name)
       begin
-        File.open(path, 'wb') do |file|
-          file << URI.parse(url).open.read
-        end
+        content = URI.parse(url).open.read
+        File.write(path, content)
+        
       rescue StandardError => exception
         puts 'download ' + exception.message
       end
@@ -44,15 +37,15 @@ module  BelStat
     def parse(url)
       page = Nokogiri::HTML(URI.parse(url).open)
       rows = page.xpath('//td//a/@href')
-      rows.select { |r| r.to_s =~ /xls(.*)$/ }
+      rows.select { |r| r.to_s.include? 'xls' }
     end
 
     def generate_name(url)
       sub_str = url.split('/')[-1]
-      digits = sub_str.gsub(/\D/, '')
+      digits = sub_str.scan(/\d/).join
 
       date = digits2date(digits)
-      date + '.' + sub_str.split('.')[-1]
+      "#{date}.#{sub_str.split('.')[-1]}"
     end
 
     def digits2date(digits)
@@ -64,4 +57,9 @@ module  BelStat
       digits
     end
   end
+end
+
+if $PROGRAM_NAME == __FILE__
+  downloader = BelStat::Downloader.new
+  downloader.download_excels 'raw_data'
 end
