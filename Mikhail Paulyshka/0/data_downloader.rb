@@ -18,7 +18,7 @@ module DataDownloader
   end
 
   def filenames
-    Dir.entries(DIRECTORY).reject { |f| File.directory? f }.map { |f| DIRECTORY + f }
+    Dir.entries(DIRECTORY).reject { |f| File.directory? f }.map { |f| File.join(DIRECTORY,f) }
   end
 
   def download_data
@@ -76,7 +76,7 @@ module DataDownloader
       filename = "#{year}_#{month}_#{filetype}#{fileext}"
 
       # perform file loading only if does not exists
-      download_path = DIRECTORY + filename
+      download_path = File.join(DIRECTORY, filename)
       unless File.exist?(download_path)
         print('.')
         download_file(URI.escape(link).gsub('%25', '%'), download_path)
