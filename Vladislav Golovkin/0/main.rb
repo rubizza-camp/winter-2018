@@ -49,7 +49,7 @@ class ProductsAnalyzer
   # parses date from table row
   def get_date(string)
     values = string.to_s.chomp.split(' ')
-    month = MONTHS[values.detect { |token| MONTHS.key?(token.downcase) }]
+    month = values.map { |token| MONTHS[token.downcase] }.compact.first
     year = values.find { |token| /\d{4}/ =~ token }
     date = Date.new(year.to_i, month)
     @latest_date = date if latest_date < date
