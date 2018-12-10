@@ -7,10 +7,22 @@ NAME_COL = 0
 AREA_COL = 6
 DATE_ROW = 3
 TABLE_HEADER = 8
-DENOM_BYN = 10_000
-DENOM_YEAR = 2017
+DENOMINATION_RATE = 10_000
+DENOMINATION_YEAR = 2017
 DELTA = 0.2
 DATA_FOLDER = './data/'.freeze
+MONTHS = { 'январь' => 1,
+           'февраль' => 2,
+           'март' => 3,
+           'апрель' => 4,
+           'май' => 5,
+           'июнь' => 6,
+           'июль' => 7,
+           'август' => 8,
+           'сентябрь' => 9,
+           'октябрь' => 10,
+           'ноябрь' => 11,
+           'декабрь' => 12 }.freeze
 
 # product properties
 class ProductData
@@ -32,27 +44,14 @@ class ProductsAnalyzer
     @dictionary = dictionary
     @latest_dictionary = latest_dictionary
     @latest_date = latest_date
-
-    @months = { 'январь' => 1, 'февраль' => 2, 'март' => 3, 'апрель' => 4,
-                'май' => 5, 'июнь' => 6, 'июль' => 7, 'август' => 8,
-                'сентябрь' => 9, 'октябрь' => 10, 'ноябрь' => 11,
-                'декабрь' => 12 }
   end
 
   # parses date from table row
   def get_date(string)
     values = string.to_s.chomp.split(' ')
-
-    year = nil
-    month = nil
-
-    values.each do |token|
-      month = @months[token] if @months.include? token.downcase
-      year = token.to_i if token =~ /^[-+]?[1-9]([0-9]*)?$/
-    end
-
-    # use 1st day of month for initializing
-    date = Date.new(year, month, 1)
+    month = MONTHS[values.detect { |token| MONTHS.key?(token.downcase) }]
+    year = values.find { |token| /\d{4}/ =~ token }
+    date = Date.new(year.to_i, month)
     @latest_date = date if latest_date < date
     date
   end
@@ -66,7 +65,7 @@ class ProductsAnalyzer
   def add_entry(product_name, date, price, latest)
     new_entry = ProductData.new(price, date)
 
-    new_entry.price /= DENOM_BYN if date.year < DENOM_YEAR
+    new_entry.price /= DENOMINATION_RATE if date.year < DENOMINATION_YEAR
 
     product_name = product_name.to_s.squeeze(' ')
     reg_exp = /^[\dA-Z_]+$/
@@ -88,7 +87,7 @@ class ProductsAnalyzer
   # processes user input.
   # searches for product in latest dictionary
   # searches min\max price in all-data dictionary
-  # searches for similar proce in latest dictionary
+  # searches for similar price in latest dictionary
   def process_request(input)
     processed = false
 
@@ -177,6 +176,11 @@ class Application
       @analyzer.process_request(input)
     end
   end
+end
+
+trap 'SIGINT' do
+  puts 'Exiting'
+  exit 0
 end
 
 app = Application.new
