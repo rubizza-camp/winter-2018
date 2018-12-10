@@ -27,7 +27,7 @@ class DataParser
       print '.'
       date = convert_to_unix_date(path)
       table = Roo::Excel.new(path)
-      perform_rows(table, date) 
+      perform_rows(table, date)
     rescue Zip::Error => e
       logger.warn "Problem with parser, error: #{e}, file - #{path} "
     rescue SQLite3::SQLException => e
@@ -51,7 +51,7 @@ class DataParser
       minsk = row[14]
       minsk_region = row[16]
       mogilev_region = row[18]
-      
+
       if date < DATE_FOR_DENOMIZATION
         brest_region = brest_region / AMOUNT_FOR_DENOMOZATION if !brest_region.nil?
         vitebsk_region = vitebsk_region / AMOUNT_FOR_DENOMOZATION if !vitebsk_region.nil?
@@ -71,7 +71,7 @@ class DataParser
       @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Могилевская область',#{mogilev_region}, #{date})"
     end
   end
-  
+
   def convert_to_unix_date(path)
     date_keys = File.basename(path, ".*").split('_')
     month = date_keys[0].to_i
@@ -83,7 +83,7 @@ class DataParser
     begin
       File.new('test.db', 'a')
       @db = SQLite3::Database.open 'test.db'
-      @db.execute 'CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      @db.execute 'CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT,
         Name Text, Region TEXT, Price REAL, Date INTEGER )'
       perform_files
     rescue SQLite3::Exception => e

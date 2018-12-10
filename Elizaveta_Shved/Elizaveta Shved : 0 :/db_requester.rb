@@ -17,14 +17,14 @@ class DbRequester
         similar_price
       else
         puts "#{@product_name} can not be found in database."
-      end       
-    rescue SQLite3::Exception => e 
+      end
+    rescue SQLite3::Exception => e
       puts 'Exception occurred'
       puts e
     ensure
       @db.close if @db
     end
-  end    
+  end
 
   private
 
@@ -35,7 +35,7 @@ class DbRequester
     date = revert_unix_date(record.last)
     cost = record[COST_INDEX]
     region = record[REGION_INDEX]
-    puts "Lowest was on #{date.year}/#{date.month} at price #{cost} BYN in #{region}" 
+    puts "Lowest was on #{date.year}/#{date.month} at price #{cost} BYN in #{region}"
   end
 
   def maximim_cost_item
@@ -45,7 +45,7 @@ class DbRequester
     date = revert_unix_date(record.last)
     cost = record[COST_INDEX]
     region = record[REGION_INDEX]
-    puts "Maximum was on #{date.year}/#{date.month} at price #{cost} BYN in #{region}" 
+    puts "Maximum was on #{date.year}/#{date.month} at price #{cost} BYN in #{region}"
   end
 
   def similar_price
@@ -60,7 +60,7 @@ class DbRequester
     response = @db.execute "SELECT * FROM Items WHERE Name LIKE '#{str} %' ORDER BY Date DESC LIMIT(1)"
     response.first.nil? ? false : true
   end
-    
+
   def last_time
     str = @product_name.downcase
     response = @db.execute "SELECT * FROM Items WHERE Name LIKE '#{str} %' ORDER BY Date DESC LIMIT(1)"
@@ -68,11 +68,10 @@ class DbRequester
     date = revert_unix_date(record.last)
     @last_time_cost = record[COST_INDEX]
     region = record[REGION_INDEX]
-    puts "'#{@product_name.capitalize}' is #{@last_time_cost} BYN in #{region} these days." 
+    puts "'#{@product_name.capitalize}' is #{@last_time_cost} BYN in #{region} these days."
   end
-  
+
   def revert_unix_date(unix_date)
     Time.at(unix_date)
   end
-end 
-       
+end
