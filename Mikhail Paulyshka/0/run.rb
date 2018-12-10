@@ -32,10 +32,10 @@ def load_files
     goods_file = {}
     (START_ROW..spreadsheet.last_row).each do |row|
       # get name
-      name = spreadsheet.cell(row, 1).to_s.downcase.strip.gsub(/\s.+/, '')
+      name = spreadsheet.cell(row, NAME_COLUMN).to_s.downcase.strip.gsub(/\s.+/, '')
 
       # get price, if file <2017, then perform conversion from BYR to BYN
-      price = spreadsheet.cell(row, 7).to_f
+      price = spreadsheet.cell(row, PRICE_COLUMN).to_f
       price /= 10_000 if year < 2017
 
       goods_file[name] = price
