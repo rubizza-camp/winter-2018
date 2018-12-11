@@ -1,5 +1,8 @@
 require 'roo'
 require 'roo-xls'
+require 'nokogiri'
+require 'open-uri'
+require 'addressable/uri'
 
 # application constants
 FIRST_SHEET = 0
@@ -23,6 +26,7 @@ MONTHS = { 'январь' => 1,
            'октябрь' => 10,
            'ноябрь' => 11,
            'декабрь' => 12 }.freeze
+SOURCE_LINK = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus/'.freeze
 
 # product properties
 class ProductData
@@ -31,6 +35,34 @@ class ProductData
   def initialize(price = 0, date = Date.new)
     @price = price
     @date = date
+  end
+end
+
+class DataDownloader
+  def initialize
+    Dir.mkdir(DATA_FOLDER) unless File.directory?(DATA_FOLDER)
+    process_download
+  end
+
+  def process_download
+    page = Nokogiri::HTML(URI.open(SOURCE_LINK))
+    links = page.css('a[href*="xls"]').map { |a| a['href'] }
+
+    links.each do |link|
+      link.prepend('http://www.belstat.gov.by') unless link.start_with? 'http://'
+      link = Addressable::URI.escape(link) unless link.include? '%'
+      file_name = Addressable::URI.unescape(link.split('/').last)
+      download_file(file_name, link)
+    end
+  end
+
+  def download_file(file_name, link)
+    if File.exist?("#{DATA_FOLDER}#{file_name}")
+      puts "File #{file_name} already exists"
+    else
+      puts "Downloading #{file_name}"
+      IO.copy_stream(URI.open(link), "#{DATA_FOLDER}#{file_name}") unless File.exist?("#{DATA_FOLDER}#{file_name}")
+    end
   end
 end
 
@@ -183,5 +215,6 @@ trap 'SIGINT' do
   exit 0
 end
 
+DataDownloader.new
 app = Application.new
 app.start_application
