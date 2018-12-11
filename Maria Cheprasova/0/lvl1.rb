@@ -12,9 +12,9 @@ worksheets.each do |worksheet_rows|
     next if row[0].value.include?(ans)
 
     item_name = row[0].value
-      price = row[14].value || 'unknown'
-      price_to_seek = price
-      puts " #{item_name}: #{price}"
+    price = row[14].value || 'unknown'
+    price_to_seek = price
+    puts " #{item_name}: #{price}"
   end
 end
 count_files = 0
