@@ -12,7 +12,7 @@ spread_sheet = Roo::Spreadsheet.open('./Data/Average.xlsx')
   item = spread_sheet.cell(row, 'A')
   price = spread_sheet.cell(row, 'O')
   puts "'#{item.capitalize}' is #{price} BYN in Minsk these days."
-  @number += 1
+  number += 1
 end
 
 puts "'#{name}' can not be found in database" if number.zero?
