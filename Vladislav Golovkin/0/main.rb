@@ -39,10 +39,12 @@ class ProductData
 end
 
 class DataDownloader
-  def initialize
+  def call
     Dir.mkdir(DATA_FOLDER) unless File.directory?(DATA_FOLDER)
     process_download
   end
+
+  private
 
   def process_download
     page = Nokogiri::HTML(URI.open(SOURCE_LINK))
@@ -72,15 +74,15 @@ class ProductsAnalyzer
 
   # @dictionary contains all data from tables
   # @latest dictionary contains data from the last month
-  def initialize(dictionary = Hash.new([]), latest_dictionary = Hash.new(ProductData), latest_date = Date.new)
+  def initialize(dictionary = Hash.new { [] }, latest_dictionary = Hash.new { [] }, latest_date = Date.new)
     @dictionary = dictionary
     @latest_dictionary = latest_dictionary
     @latest_date = latest_date
   end
 
   # parses date from table row
-  def get_date(string)
-    values = string.to_s.chomp.split(' ')
+  def get_date(row_data)
+    values = row_data.to_s.chomp.split(' ')
     month = values.map { |token| MONTHS[token.downcase] }.compact.first
     year = values.find { |token| /\d{4}/ =~ token }
     date = Date.new(year.to_i, month)
@@ -90,7 +92,7 @@ class ProductsAnalyzer
 
   # clears latest info, in case of obsoleteness
   def update_latest_product(latest)
-    @latest_dictionary = Hash.new(ProductData) if latest
+    @latest_dictionary = Hash.new { ProductData.new } if latest
   end
 
   # adds product to all-data dictionary. Optionally adds product to latest data dictionary
@@ -121,46 +123,46 @@ class ProductsAnalyzer
   # searches min\max price in all-data dictionary
   # searches for similar price in latest dictionary
   def process_request(input)
-    processed = false
-
+    output = []
     @latest_dictionary.each do |product_name, product|
       next unless product_name.downcase.split(/[\s,]+/).include? input.downcase
 
-      processed = true
-      print_request(product_name, product, @dictionary[product_name].min_by(&:price),
-                    @dictionary[product_name].max_by(&:price), get_similar(product_name, product))
+      output += get_request_result(product_name, product, @dictionary[product_name].min_by(&:price),
+                                   @dictionary[product_name].max_by(&:price), get_similar(product_name, product))
     end
-    puts 'Nothing found.' unless processed
+    puts output.empty? ? 'Nothing found!' : output
   end
 
   def print_latest(product_name, latest_product)
-    puts "#{product_name.capitalize} is "\
+    "#{product_name.capitalize} is "\
       "#{latest_product.price.round(2)} BYN these days"
   end
 
   def print_min(min_product)
-    puts 'Lowest was on '\
+    'Lowest was on '\
       "#{min_product.date.year}/#{min_product.date.month}"\
       " at price #{min_product.price.round(2)} BYN"
   end
 
   def print_max(max_product)
-    puts 'Highest was on '\
+    'Highest was on '\
       "#{max_product.date.year}/#{max_product.date.month}"\
       " at price #{max_product.price.round(2)} BYN"
   end
 
-  def print_same_price(products)
-    puts "\nFor the same price (+/- #{DELTA} BYN) you can get: "
-    puts products
+  def print_same_price
+    "\nFor the same price (+/- #{DELTA} BYN) you can get: "
   end
 
-  def print_request(key, latest_product, min_product, max_product, products)
-    puts '=' * 80
-    print_latest(key, latest_product)
-    print_min(min_product)
-    print_max(max_product)
-    print_same_price(products)
+  def get_request_result(key, latest_product, min_product, max_product, products)
+    output = []
+    output << '=' * 80
+    output << print_latest(key, latest_product)
+    output << print_min(min_product)
+    output << print_max(max_product)
+    output << print_same_price
+    output += products
+    output
   end
 end
 
@@ -215,6 +217,6 @@ trap 'SIGINT' do
   exit 0
 end
 
-DataDownloader.new
+DataDownloader.new.call
 app = Application.new
 app.start_application
