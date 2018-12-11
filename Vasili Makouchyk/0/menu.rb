@@ -11,7 +11,9 @@ module Validation
   def handle_choice_input(products)
     loop do
       index_choice = gets.chomp!
-      begin Integer(index_choice)
+      index_choice =
+      begin
+        Integer(index_choice)
       rescue ArgumentError
         nil
       end
