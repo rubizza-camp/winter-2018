@@ -11,12 +11,10 @@ module Validation
   def handle_choice_input(products)
     loop do
       index_choice = gets.chomp!
-      index_choice =
-      begin
-        Integer(index_choice)
-      rescue ArgumentError
-        nil
-      end
+      index_choice = begin Integer(index_choice)
+                     rescue ArgumentError
+                       nil
+                     end
       return [products[index_choice.to_s.to_i]] if
         validate_index_choice(index_choice, products.size)
 
