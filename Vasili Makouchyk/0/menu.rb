@@ -22,10 +22,8 @@ module Validation
     end
   end
 
-  def validate_index_choice(index_choice, products_size)
-    index_choice.to_s.to_i.positive? &&
-      index_choice.to_s.to_i < products_size ||
-      index_choice.to_s.to_i.zero?
+  def validate_index_choice(index_choice, product_count)
+    index_choice && index_choice >= 0 && index_choice < product_count
   end
 
   def convert_outdated_price(price, date)
@@ -59,7 +57,11 @@ class Menu
   def ask_for_input
     puts 'What product are you looking for? (Write EXIT to break)'
     input = gets.chomp!
-    input.to_s.upcase!
+    input = begin String(input)
+    rescue ArgumentError
+      nil
+    end
+    input
   end
 
   def find_product_in_current_file(user_input, file_to_parse = @current_file)
