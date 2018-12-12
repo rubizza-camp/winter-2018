@@ -73,9 +73,8 @@ def find_similar(arr, name, price)
   arr.each do |line|
     next if line[0] == name
 
-    if ((price - eps)..(price + eps)).cover?(line[-3].to_f)
-      ans.append("'" + line[0] + "'")
-    end
+    ans.append("'" + line[0] + "'")\
+      if ((price - eps)..(price + eps)).cover?(line[-3].to_f)
   end
   ans
 end
