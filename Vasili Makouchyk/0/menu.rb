@@ -10,7 +10,7 @@ module Validation
 
   def handle_choice_input(products)
     loop do
-      index_choice = gets.chomp!
+      index_choice = gets.chomp
       index_choice = begin Integer(index_choice)
                      rescue ArgumentError
                        nil
@@ -36,6 +36,16 @@ module Validation
     end
     price.round(2)
   end
+
+  def ask_for_input
+    puts 'What product are you looking for? (Write EXIT to break)'
+    input = gets.chomp.upcase
+    input = begin String(input)
+            rescue ArgumentError
+              nil
+            end
+    input
+  end
 end
 
 # Class is used for operating excel data from Belstat
@@ -52,16 +62,6 @@ class Menu
                  current_file = 'data/Average_prices(serv)-10-2018.xlsx')
     @files = previous_files
     @current_file = current_file
-  end
-
-  def ask_for_input
-    puts 'What product are you looking for? (Write EXIT to break)'
-    input = gets.chomp!
-    input = begin String(input)
-    rescue ArgumentError
-      nil
-    end
-    input
   end
 
   def find_product_in_current_file(user_input, file_to_parse = @current_file)
