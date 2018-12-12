@@ -37,7 +37,6 @@ class PriceCollector
   PRODUCT_NAME_COL = 0
   MINSK_PRICE_COL = 6
 
-
   def self.collect_data(&block)
     print 'Please wait'
     Dir['data/*'].each do |f|
@@ -50,8 +49,6 @@ class PriceCollector
     end
     puts
   end
-
-  private
 
   def self.collect_from_xls(file, block)
     xls = Roo::Excel.new(file)
@@ -81,7 +78,7 @@ class PriceCollector
   end
 
   def self.parse_date(date_str)
-    month_index = MONTHS.index {|m| date_str.include?(m) }
+    month_index = MONTHS.index { |m| date_str.include?(m) }
     return unless month_index
     month_number = month_index + 1
     match_data = date_str.match(/(\d{4})/)
@@ -91,11 +88,14 @@ class PriceCollector
   end
 
   def self.clean_name(name)
-    name.to_s.gsub(/[a-z<\/>]/, '').squeeze(' ')
+    name.to_s.gsub(%r/[a-z<\/>]/, '').squeeze(' ')
   end
 end
 
 class Products
+  DENOMINATION_DATE = '2017/01'
+  DENOMINATION_VALUE = 10_000
+
   attr_accessor :products
 
   def initialize
@@ -117,15 +117,19 @@ class Products
   private
 
   def add_product(name, price, date)
-    price = price.to_f
-    price /= 10_000 if date < '2017/01'
-    price = price.round(2)
+    price = convert_price(price, date)
     existing_product = products[name]
     if existing_product
       existing_product.update(price, date)
     else
       products[name] = ProductPrice.new(price, date)
     end
+  end
+
+  def convert_price(price, date)
+    price = price.to_f
+    price /= DENOMINATION_VALUE if date < DENOMINATION_DATE
+    price.round(2)
   end
 
   def ask_product
@@ -136,7 +140,7 @@ class Products
 
   def search_product(user_product)
     products.keys.select do |name|
-      name.downcase.gsub(%r/[^(а-я)]/, ' ').split(/\s+/).include?(user_product) && products[name].last_price
+      name.downcase.gsub(%r{[^(а-я)]}, ' ').split(%r{\s+}).include?(user_product) && products[name].last_price
     end
   end
 
@@ -150,9 +154,8 @@ class Products
   def show_same_price_products(found, product_name)
     product_price = products[product_name]
     same_price_products = find_same_price(found, product_price.last_price)
-    unless same_price_products.empty?
-      puts "For similar price you also can afford #{same_price_products.join(' and ')}."
-    end
+    return if same_price_products.empty?
+    puts "For similar price you also can afford #{same_price_products.join(' and ')}."
   end
 
   def find_same_price(found, price)
