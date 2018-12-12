@@ -2,8 +2,7 @@ require 'bundler/setup'
 Bundler.require(:default)
 
 file_list = Dir.entries('./.data')
-xls_list = []
-file_list.each_with_object(xls_list) do |file, arr|
+xls_list = file_list.each_with_object([]) do |file, arr|
   arr.append('./.data/' + file) if file.index('xls')
 end
 
@@ -13,7 +12,7 @@ xls_list.each do |xls|
   xls_table.append([xls, xls[ind - 3..ind + 3]])
 end
 
-@table = {}
+table = {}
 
 def find_frow(sheet)
   sheet.first_row.upto(sheet.last_row) do |i|
@@ -21,11 +20,9 @@ def find_frow(sheet)
     sheet.first_column.upto(sheet.last_column) do |j|
       next if sheet.cell(i, j).to_s.index('ПРОДОВОЛЬСТВЕННЫЕ ТОВАРЫ').nil?
 
-      @frow = i + 1
-      return @frow
+      return i + 1
     end
   end
-  @frow
 end
 
 xls_table.each do |xls|
@@ -56,30 +53,26 @@ xls_table.each do |xls|
       price_arr.append(cur_price)
     end
   end
-  @table[date] = price_arr
+  table[date] = price_arr
 end
 
 def find_by_kwd(arr, kwd)
-  ans = []
-  arr.each do |i|
+  arr.each_with_object([]) do |i, ans|
     ans.append([i[0], i[-3]]) if i[0].to_s.index(kwd)
   end
-  ans
 end
 
 def find_similar(arr, name, price)
   eps = 0.05
-  ans = []
-  arr.each do |line|
+  arr.each_with_object([]) do |line, arr_ans|
     next if line[0] == name
 
-    ans.append("'" + line[0] + "'")\
+    arr_ans.append("'" + line[0] + "'")\
       if ((price - eps)..(price + eps)).cover?(line[-3].to_f)
   end
-  ans
 end
 
-def m_atoi(arr)
+def array_to_string(arr)
   return 0 if arr == []
 
   ans = arr[0]
@@ -98,14 +91,14 @@ puts 'Enter the query:'
 
 today = '10-2018'
 query = ''
-while query != '^C'
+while query != 'exit'
   query = gets.chomp
   if query == ''
     query = 'бензин'
     puts "Sample for '#{query}':"
   end
   query = query.downcase.capitalize
-  info = find_by_kwd(@table[today], query)
+  info = find_by_kwd(table[today], query)
 
   puts "'#{query}' can not be found in database." if info == []
 
@@ -117,8 +110,8 @@ while query != '^C'
     min_d = today
     max = i[1].to_f
     max_d = today
-    @table.keys.each do |key|
-      arr = @table[key]
+    table.keys.each do |key|
+      arr = table[key]
       res = find_by_kwd(arr, kwd)[0]
       next if res.nil?
 
@@ -136,11 +129,16 @@ while query != '^C'
     puts "Lowest was on #{parse_date(min_d)} at price #{min} BYN"
     puts "Maximum was on #{parse_date(max_d)} at #{max} BYN"
 
-    sim = m_atoi(find_similar(@table[today], i[0], i[1].to_f))
+    sim = array_to_string(find_similar(table[today], i[0], i[1].to_f))
 
     puts "For similar price you also can afford #{sim}" if sim != 0
 
     puts "\n"
   end
   # break
+end
+
+trap 'SIGINT' do
+  puts 'Exiting'
+  exit 0
 end
