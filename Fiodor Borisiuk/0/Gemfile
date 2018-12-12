@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+source 'http://gems.github.com'
+
+gem 'nokogiri'
+gem 'roo'
+gem 'roo-xls'
