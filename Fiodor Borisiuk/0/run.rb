@@ -91,7 +91,7 @@ puts 'Enter the query:'
 
 today = '10-2018'
 query = ''
-while query != 'exit'
+while query != '/exit'
   query = gets.chomp
   if query == ''
     query = 'бензин'
@@ -100,7 +100,7 @@ while query != 'exit'
   query = query.downcase.capitalize
   info = find_by_kwd(table[today], query)
 
-  puts "'#{query}' can not be found in database." if info == []
+  puts "'#{query}' can not be found in database." if info == [] unless query == '/exit'
 
   info.each do |i|
     puts "'#{i[0]}' is #{i[1]} BYN in Minsk these days."
@@ -136,9 +136,4 @@ while query != 'exit'
     puts "\n"
   end
   # break
-end
-
-trap 'SIGINT' do
-  puts 'Exiting'
-  exit 0
 end
