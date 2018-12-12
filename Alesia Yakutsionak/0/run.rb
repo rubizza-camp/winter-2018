@@ -57,23 +57,19 @@ class PriceCollector
     sheet.rows.each_with_index do |row, i|
       next if i < FIRST_DATA_ROW || row[PRODUCT_NAME_COL].nil?
       name = clean_name(row[PRODUCT_NAME_COL])
-      price = row[MINSK_PRICE_COL]
-      block.call(name, price, date)
+      block.call(name, row[MINSK_PRICE_COL], date)
     end
   end
 
   def self.collect_from_xlsx(file, block)
     sheet = Roo::Excelx.new(file).sheet(SHEET_NUM)
     date = parse_date(sheet.row(DATE_ROW).compact.first)
-    unless date
-      puts "Can't parse date in #{file}"
-    end
+    puts "Can't parse date in #{file}" unless date
 
     sheet.each_row_streaming(offset: FIRST_DATA_ROW - 1) do |row|
       name = clean_name(row[PRODUCT_NAME_COL].cell_value)
       next if name.nil?
-      price = row[MINSK_PRICE_COL].cell_value
-      block.call(name, price, date)
+      block.call(name, row[MINSK_PRICE_COL].cell_value, date)
     end
   end
 
@@ -81,8 +77,7 @@ class PriceCollector
     month_index = MONTHS.index { |m| date_str.include?(m) }
     return unless month_index
     month_number = month_index + 1
-    match_data = date_str.match(/(\d{4})/)
-    year = match_data[1] if match_data
+    year = date_str[/\d{4}/]
     return unless year
     "#{year}/#{month_number.to_s.rjust(2, '0')}"
   end
