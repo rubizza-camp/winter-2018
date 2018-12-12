@@ -1,67 +1,10 @@
-require 'roo'
-require 'roo-xls'
-require 'open-uri'
-require 'nokogiri'
-require 'net/http'
+require 'bundler/setup'
+Bundler.require(:default)
 
-puts 'Please wait until the data is loaded.'
-
-url = 'http://www.belstat.gov.by/ofitsialnaya-statistika/makroekonomika-i-okruzhayushchaya-sreda/tseny/operativnaya-informatsiya_4/srednie-tseny-na-potrebitelskie-tovary-i-uslugi-po-respublike-belarus'
-html = URI.parse(url).open.read
-
-doc = Nokogiri::HTML(html).to_s
-ind_low = doc.index('СРЕДНИЕ ЦЕНЫ НА ТОВАРЫ, РЕАЛИЗУЕМЫЕ В РОЗНИЧНОЙ СЕТИ')
-ind_high_def = doc.index('Средние цены (тарифы) на отдельные виды платных')
-doc = doc[ind_low..ind_high_def]
-
-months = %w[янв фев мар апр май июн июл авг сен окт ноя дек]
-url_table = {}
-f = true
-while f
-  ind_low = doc.index('<a href="')
-  ind_high = doc.index('</a>')
-  if ind_low && ind_high
-    str = doc[ind_low..ind_high]
-    ind = str.index('за')
-    break if ind.nil?
-
-    month = months.index(str[ind + 3..ind + 5]) + 1
-
-    ind = str.index('200')
-    ind = str.index('201') if ind.nil?
-    break if ind.nil?
-
-    year = str[ind..ind + 3]
-    date = if month < 10
-             '0'
-           else
-             ''
-           end
-    date += month.to_s + '-' + year
-    url = str[str.index('"') + 1..str.index('>') - 2]
-    url_table[date] = url
-    doc = doc[ind_high + 2..ind_high_def]
-  else
-    f = false
-  end
-end
-
-url_table.keys.each do |key|
-  Net::HTTP.start('www.belstat.gov.by') do |http|
-    resp = http.get(url_table[key])
-    xls_format = if url_table[key].index('xlsx').nil?
-                   'xls'
-                 else
-                   'xlsx'
-                 end
-    open("ex#{key}.#{xls_format}", 'wb') { |file| file.write(resp.body) }
-  end
-end
-
-file_list = Dir.entries('.')
+file_list = Dir.entries('./.data')
 xls_list = []
 file_list.each_with_object(xls_list) do |file, arr|
-  arr.append(file) if file.index('xls')
+  arr.append('./.data/' + file) if file.index('xls')
 end
 
 xls_table = []
@@ -152,14 +95,14 @@ def parse_date(dat)
   dat[3..6] + '/' + dat[0..1]
 end
 
-puts "Done.\n\nEnter the query:"
+puts 'Enter the query:'
 
 today = '10-2018'
 query = ''
 while query != '^C'
   query = gets.chomp
   if query == ''
-    query = 'Хлеб'
+    query = 'бензин'
     puts "Sample for '#{query}':"
   end
   query = query.downcase.capitalize
