@@ -21,29 +21,27 @@ url_table = {}
 loop do
   ind_low = doc.index('<a href="')
   ind_high = doc.index('</a>')
-  if ind_low && ind_high
-    str = doc[ind_low..ind_high]
-    ind = str.index('за')
-    break if ind.nil?
+  break unless ind_low && ind_high
 
-    month = MONTHS.index(str[ind + 3..ind + 5]) + 1
+  str = doc[ind_low..ind_high]
+  ind = str.index('за')
+  break if ind.nil?
 
-    ind = str.index('200')
-    ind = str.index('201') if ind.nil?
-    break if ind.nil?
+  month = MONTHS.index(str[ind + 3..ind + 5]) + 1
 
-    year = str[ind..ind + 3]
-    date = if month < 10
-             '0'
-           else
-             ''
-           end
-    date += month.to_s + '-' + year
-    url_table[date] = str[str.index('"') + 1..str.index('>') - 2]
-    doc = doc[ind_high + 2..ind_high_def]
-  else
-    break
-  end
+  ind = str.index('200')
+  ind = str.index('201') if ind.nil?
+  break if ind.nil?
+
+  year = str[ind..ind + 3]
+  date = if month < 10
+           '0'
+         else
+           ''
+         end
+  date += month.to_s + '-' + year
+  url_table[date] = str[str.index('"') + 1..str.index('>') - 2]
+  doc = doc[ind_high + 2..ind_high_def]
 end
 
 url_table.keys.each do |key|
