@@ -4,6 +4,8 @@ require 'bundler/setup'
 Bundler.require(:default)
 
 class ProductPrice
+  LAST_PRICE_DATE = '2018/10'.freeze
+
   attr_accessor :min_price, :max_price, :last_price, :min_price_date, :max_price_date
 
   def initialize(price, date)
@@ -11,11 +13,11 @@ class ProductPrice
     @min_price_date = date
     @max_price = price
     @max_price_date = date
-    @last_price = price if date == '2018/10'
+    @last_price = price if date == LAST_PRICE_DATE
   end
 
   def update(price, date)
-    @last_price = price if date == '2018/10'
+    @last_price = price if date == LAST_PRICE_DATE
     if min_price > price
       @min_price = price
       @min_price_date = date
@@ -29,6 +31,71 @@ end
 
 class PriceCollector
   MONTHS = %w(январь февраль март апрель май июнь июль август сентябрь октябрь ноябрь декабрь).freeze
+  SHEET_NUM = 0
+  DATE_ROW = 3
+  FIRST_DATA_ROW = 8
+  PRODUCT_NAME_COL = 0
+  MINSK_PRICE_COL = 6
+
+
+  def self.collect_data(&block)
+    print 'Please wait'
+    Dir['data/*'].each do |f|
+      if f.end_with?('.xls')
+        collect_from_xls(f, block)
+      elsif f.end_with?('.xlsx')
+        collect_from_xlsx(f, block)
+      end
+      print '.'
+    end
+    puts
+  end
+
+  private
+
+  def self.collect_from_xls(file, block)
+    xls = Roo::Excel.new(file)
+    sheet = xls.worksheets.first
+    date = parse_date(sheet.rows[DATE_ROW - 1].compact.first)
+    puts "Can't parse date in #{file}" unless date
+
+    sheet.rows.each_with_index do |row, i|
+      next if i < FIRST_DATA_ROW || row[PRODUCT_NAME_COL].nil?
+      name = clean_name(row[PRODUCT_NAME_COL])
+      price = row[MINSK_PRICE_COL]
+      block.call(name, price, date)
+    end
+  end
+
+  def self.collect_from_xlsx(file, block)
+    xlsx = Roo::Excelx.new(file)
+    date = parse_date(xlsx.sheet(SHEET_NUM).row(DATE_ROW).compact.first)
+    puts "Can't parse date in #{file}" unless date
+
+    xlsx.sheet(SHEET_NUM).each_row_streaming(offset: FIRST_DATA_ROW - 1) do |row|
+      name = clean_name(row[PRODUCT_NAME_COL].cell_value)
+      next if name.nil?
+      price = row[MINSK_PRICE_COL].cell_value
+      block.call(name, price, date)
+    end
+  end
+
+  def self.parse_date(date_str)
+    month_index = MONTHS.index {|m| date_str.include?(m) }
+    return unless month_index
+    month_number = month_index + 1
+    match_data = date_str.match(/(\d{4})/)
+    year = match_data[1] if match_data
+    return unless year
+    "#{year}/#{month_number.to_s.rjust(2, '0')}"
+  end
+
+  def self.clean_name(name)
+    name.to_s.gsub(/[a-z<\/>]/, '').squeeze(' ')
+  end
+end
+
+class Products
   attr_accessor :products
 
   def initialize
@@ -36,7 +103,9 @@ class PriceCollector
   end
 
   def start
-    collect_data
+    PriceCollector.collect_data do |name, price, date|
+      add_product(name, price, date)
+    end
     found = search_product(ask_product)
     found.each do |product|
       show_found_product(product)
@@ -46,46 +115,6 @@ class PriceCollector
   end
 
   private
-
-  def collect_data
-    print 'Please wait'
-    Dir['data/*'].each do |f|
-      if f.end_with?('.xls')
-        collect_from_xls(f)
-      elsif f.end_with?('.xlsx')
-        collect_from_xlsx(f)
-      end
-      print '.'
-    end
-    puts
-  end
-
-  def collect_from_xls(file)
-    xls = Roo::Excel.new(file)
-    sheet = xls.worksheets.first
-    date = parse_date(sheet.rows[2].compact.first)
-    puts "Can't parse date in #{file}" unless date
-
-    sheet.rows.each_with_index do |row, i|
-      next if i < 8 || row[0].nil?
-      name = clean_name(row[0])
-      price = row[6]
-      add_product(name, price, date)
-    end
-  end
-
-  def collect_from_xlsx(file)
-    xlsx = Roo::Excelx.new(file)
-    date = parse_date(xlsx.sheet(0).row(3).compact.first)
-    puts "Can't parse date in #{file}" unless date
-
-    xlsx.sheet(0).each_row_streaming(offset: 7) do |row|
-    name = clean_name(row[0].cell_value)
-      next if name.nil?
-      price = row[6].cell_value
-      add_product(name, price, date)
-    end
-  end
 
   def add_product(name, price, date)
     price = price.to_f
@@ -97,20 +126,6 @@ class PriceCollector
     else
       products[name] = ProductPrice.new(price, date)
     end
-  end
-
-  def parse_date(date_str)
-    month = MONTHS.find{|m| date_str.include?(m)}
-    return unless month
-    month_number = MONTHS.index(month) + 1
-    match_data = date_str.match(/(\d{4})/)
-    year = match_data[1] if match_data
-    return unless year
-    "#{year}/#{month_number.to_s.rjust(2, '0')}"
-  end
-
-  def clean_name(name)
-    name.to_s.gsub(/[a-z<\/>]/, '').squeeze(' ')
   end
 
   def ask_product
@@ -152,4 +167,4 @@ class PriceCollector
   end
 end
 
-PriceCollector.new.start
+Products.new.start
