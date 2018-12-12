@@ -22,10 +22,9 @@ class ProductPrice
       @min_price = price
       @min_price_date = date
     end
-    if max_price < price
-      @max_price = price
-      @max_price_date = date
-    end
+    return unless max_price < price
+    @max_price = price
+    @max_price_date = date
   end
 end
 
@@ -51,8 +50,7 @@ class PriceCollector
   end
 
   def self.collect_from_xls(file, block)
-    xls = Roo::Excel.new(file)
-    sheet = xls.worksheets.first
+    sheet = Roo::Excel.new(file).worksheets.first
     date = parse_date(sheet.rows[DATE_ROW - 1].compact.first)
     puts "Can't parse date in #{file}" unless date
 
@@ -65,11 +63,13 @@ class PriceCollector
   end
 
   def self.collect_from_xlsx(file, block)
-    xlsx = Roo::Excelx.new(file)
-    date = parse_date(xlsx.sheet(SHEET_NUM).row(DATE_ROW).compact.first)
-    puts "Can't parse date in #{file}" unless date
+    sheet = Roo::Excelx.new(file).sheet(SHEET_NUM)
+    date = parse_date(sheet.row(DATE_ROW).compact.first)
+    unless date
+      puts "Can't parse date in #{file}"
+    end
 
-    xlsx.sheet(SHEET_NUM).each_row_streaming(offset: FIRST_DATA_ROW - 1) do |row|
+    sheet.each_row_streaming(offset: FIRST_DATA_ROW - 1) do |row|
       name = clean_name(row[PRODUCT_NAME_COL].cell_value)
       next if name.nil?
       price = row[MINSK_PRICE_COL].cell_value
@@ -93,7 +93,7 @@ class PriceCollector
 end
 
 class Products
-  DENOMINATION_DATE = '2017/01'
+  DENOMINATION_DATE = '2017/01'.freeze
   DENOMINATION_VALUE = 10_000
 
   attr_accessor :products
@@ -106,11 +106,16 @@ class Products
     PriceCollector.collect_data do |name, price, date|
       add_product(name, price, date)
     end
-    found = search_product(ask_product)
-    found.each do |product|
-      show_found_product(product)
-      show_same_price_products(found, product)
-      puts
+    user_product = ask_product
+    found = search_product(user_product)
+    if found.empty?
+      puts "'#{user_product}' can not be found in database."
+    else
+      found.each do |product|
+        show_found_product(product)
+        show_same_price_products(found, product)
+        puts
+      end
     end
   end
 
@@ -135,12 +140,12 @@ class Products
   def ask_product
     puts 'What price are you looking for?'
     print '> '
-    gets.chomp.downcase
+    gets.chomp
   end
 
   def search_product(user_product)
     products.keys.select do |name|
-      name.downcase.gsub(%r{[^(а-я)]}, ' ').split(%r{\s+}).include?(user_product) && products[name].last_price
+      name.downcase.gsub(/[^(а-я)]/, ' ').split(/\s+/).include?(user_product.downcase) && products[name].last_price
     end
   end
 
