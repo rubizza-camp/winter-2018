@@ -57,7 +57,8 @@ class PriceCollector
     sheet.rows.each_with_index do |row, i|
       next if i < FIRST_DATA_ROW || row[PRODUCT_NAME_COL].nil?
       name = clean_name(row[PRODUCT_NAME_COL])
-      block.call(name, row[MINSK_PRICE_COL], date)
+      price = row[MINSK_PRICE_COL]
+      block.call(name, price, date)
     end
   end
 
@@ -69,7 +70,8 @@ class PriceCollector
     sheet.each_row_streaming(offset: FIRST_DATA_ROW - 1) do |row|
       name = clean_name(row[PRODUCT_NAME_COL].cell_value)
       next if name.nil?
-      block.call(name, row[MINSK_PRICE_COL].cell_value, date)
+      price = row[MINSK_PRICE_COL].cell_value
+      block.call(name, price, date)
     end
   end
 
