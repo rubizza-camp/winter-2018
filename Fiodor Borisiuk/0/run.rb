@@ -1,4 +1,3 @@
-require 'bundler/setup'
 Bundler.require(:default)
 
 file_list = Dir.entries('./.data')
