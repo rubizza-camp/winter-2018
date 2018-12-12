@@ -15,7 +15,7 @@ module Validation
                      rescue ArgumentError
                        nil
                      end
-      return [products[index_choice.to_s.to_i]] if
+      return [products[index_choice]] if
         validate_index_choice(index_choice, products.size)
 
       puts 'Wrong input! Chose again wisely...'
