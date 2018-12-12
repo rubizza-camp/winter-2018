@@ -100,7 +100,7 @@ while query != '/exit'
   query = query.downcase.capitalize
   info = find_by_kwd(table[today], query)
 
-  puts "'#{query}' can not be found in database." if info == [] unless query == '/exit'
+  puts "'#{query}' can not be found in database." if info == [] && query != '/exit'
 
   info.each do |i|
     puts "'#{i[0]}' is #{i[1]} BYN in Minsk these days."
