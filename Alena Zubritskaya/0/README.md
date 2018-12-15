@@ -6,7 +6,7 @@
 
 - All of Excel files shoud be in data folder
 - run bundle install
-- run ruby level1.rb
+- run ruby level3.rb
 
 Example:
-ruby level.rb
+ruby level3.rb
