@@ -49,46 +49,51 @@ class RooBookParser
     array.join('/')
   end
 
+  def denomination_convertation(date, price)
+    price[MINSK_CONSTATN_CELL_COL] = price[MINSK_CONSTATN_CELL_COL] / 10_000.0 if date[1].to_i < 2017
+    price
+  end
+
   def search_price_by_name(name_of_item, table = @actual_table)
     table.select { |elem| regexp_template_for_item(name_of_item).match?(elem[0]) || name_of_item == elem[0] }
+         .map { |price| denomination_convertation(get_month_and_year(table), price) }
   end
 
   def output_template(array_of_prices, name_of_item)
     puts("\'#{name_of_item}\' can not be found in database.") && return if array_of_prices.empty?
     array_of_prices.each do |elem|
       puts "#{name_of_item} is #{elem[MINSK_CONSTATN_CELL_COL]} BYN in these days."
-      lvl_2_out(elem[0])
+      if @all_files.empty?
+        puts 'Put some data files if you wanna see prices by previous years'
+      else
+        min_max_prices_out(elem[0])
+      end
     end
   end
 
-  def denomination_convertation(template)
-    # code for prices before 2017/01
-  end
-
-  def min_max_sort(array)
+  def min_max_value(array)
     [
       [array.min_by { |el| el[1] }[0], array.min_by { |el| el[1] }[1]],
       [array.max_by { |el| el[1] }[0], array.max_by { |el| el[1] }[1]]
     ]
   end
 
-  def lvl_2(name)
-    arr = []
-    puts 'Put some data files if you wanna see prices by previous years' && return if @all_files.empty?
+  def min_max_prices(name)
+    array = []
     @all_files.sort.each do |table|
       next if search_price_by_name(name, table[1]).empty?
 
-      arr << [table[0], search_price_by_name(name, table[1]).flatten[MINSK_CONSTATN_CELL_COL]]
+      array << [table[0], search_price_by_name(name, table[1]).flatten[MINSK_CONSTATN_CELL_COL]]
     end
-    min_max_sort(arr)
+    min_max_value(array)
   end
 
-  def lvl_2_out(name)
-    puts "Lowest was on #{lvl_2(name)[0][0]} at price #{lvl_2(name)[0][1]} BYN"
-    puts "Maximum was on #{lvl_2(name)[1][0]} at price #{lvl_2(name)[1][1]} BYN"
+  def min_max_prices_out(name)
+    puts "Lowest was on #{min_max_prices(name)[0][0]} at price #{min_max_prices(name)[0][1]} BYN"
+    puts "Maximum was on #{min_max_prices(name)[1][0]} at price #{min_max_prices(name)[1][1]} BYN"
   end
 
-  def lvl_1(input_name)
+  def actual_price_check(input_name)
     if collect_all_files.empty?
       puts 'There is no file to check in data folder. So we take actual file from uri.'
       search_price_by_name(input_name)
@@ -99,8 +104,7 @@ class RooBookParser
   end
 
   def output_parser(input_name)
-    prices = lvl_1(input_name)
-    output_template(prices, input_name)
+    output_template(actual_price_check(input_name), input_name)
   end
 end
 
