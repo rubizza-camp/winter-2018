@@ -18,6 +18,7 @@ MONTH = {
 class RooBookParser
   def initialize
     @actual_table = Roo::Spreadsheet.open(ACTUAL_FILE_URI)
+    @last_table = Roo::Spreadsheet
     @all_files = []
   end
 
@@ -47,8 +48,8 @@ class RooBookParser
          .map { |price| TableConverter.denomination_convertation(get_month_and_year(table), price) }
   end
 
-  def search_similar_name_by_price(price_of_item, name_of_item, table = @actual_table)
-    table.select do |elem|
+  def search_similar_name_by_price(price_of_item, name_of_item)
+    @all_files.sort.max[1].select do |elem|
       ((price_of_item.equal?(elem[MINSK_CONSTATN_CELL_COL]) && name_of_item != elem[0]) &&
       !regexp_template_for_item(name_of_item).match?(elem[0]))
     end
