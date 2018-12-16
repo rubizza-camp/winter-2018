@@ -1,7 +1,4 @@
-require 'rake'
-require 'roo'
-require 'roo-xls'
-MINSK_CONSTATN_CELL_COL = 14
+require_relative 'tableconverter'
 ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'.freeze
 MONTH = {
   'январь' => '01',
@@ -38,35 +35,52 @@ class RooBookParser
   def convert_month_and_year(filename)
     date = get_month_and_year(filename)
     date[0] = MONTH[date[0]]
-    date.reverse
+    date.reverse.join('/')
   end
 
   def regexp_template_for_item(name)
-    /^#{name.upcase}\b/
-  end
-
-  def convert_date(array)
-    array.join('/')
-  end
-
-  def denomination_convertation(date, price)
-    price[MINSK_CONSTATN_CELL_COL] = price[MINSK_CONSTATN_CELL_COL] / 10_000.0 if date[1].to_i < 2017
-    price
+    /#{name.upcase}\b/
   end
 
   def search_price_by_name(name_of_item, table = @actual_table)
     table.select { |elem| regexp_template_for_item(name_of_item).match?(elem[0]) || name_of_item == elem[0] }
-         .map { |price| denomination_convertation(get_month_and_year(table), price) }
+         .map { |price| TableConverter.denomination_convertation(get_month_and_year(table), price) }
+  end
+
+  def search_similar_name_by_price(price_of_item, name_of_item, table = @actual_table)
+    table.select do |elem|
+      ((price_of_item.equal?(elem[MINSK_CONSTATN_CELL_COL]) && name_of_item != elem[0]) &&
+      !regexp_template_for_item(name_of_item).match?(elem[0]))
+    end
+  end
+
+  def similar_template(array_of_similar_prices)
+    'For similar price you also can afford ' +
+      case array_of_similar_prices.length
+      when 1
+        "\'#{array_of_similar_prices[0]}\'."
+      when 2
+        "\'#{array_of_similar_prices[0]}\' and \'#{array_of_similar_prices[1]}\'"
+      when 3..Float::INFINITY
+        array_of_similar_prices[0..array_of_similar_prices.length - 2].join('\', \'') +
+        + '\' and ' + "\'#{array_of_similar_prices[-1]}\'."
+      end
+  end
+
+  def similar_price_out(output)
+    output.map! { |el| el[0] = TableConverter.converting_similar_name(el[0]) }
+    output.empty? ? puts('There is no items with similar price.') : puts(similar_template(output).to_s)
   end
 
   def output_template(array_of_prices, name_of_item)
     puts("\'#{name_of_item}\' can not be found in database.") && return if array_of_prices.empty?
     array_of_prices.each do |elem|
-      puts "#{name_of_item} is #{elem[MINSK_CONSTATN_CELL_COL]} BYN in these days."
+      puts "\'#{name_of_item}\' is #{elem[MINSK_CONSTATN_CELL_COL].round(2)} BYN in these days."
       if @all_files.empty?
         puts 'Put some data files if you wanna see prices by previous years'
       else
         min_max_prices_out(elem[0])
+        similar_price_out(search_similar_name_by_price(elem[MINSK_CONSTATN_CELL_COL], name_of_item))
       end
     end
   end
@@ -98,7 +112,7 @@ class RooBookParser
       puts 'There is no file to check in data folder. So we take actual file from uri.'
       search_price_by_name(input_name)
     else
-      collect_all_files.each { |file| @all_files << [convert_date(convert_month_and_year(file)), file] }
+      collect_all_files.each { |file| @all_files << [convert_month_and_year(file), file] }
       search_price_by_name(input_name, @all_files.max_by { |el| el[0] }[1])
     end
   end
