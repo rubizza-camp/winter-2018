@@ -1,5 +1,6 @@
 require_relative 'tableconverter'
-ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-10-2018.xlsx'.freeze
+ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-11-2018.xlsx'.freeze
+MINSK_CONSTATN_CELL_COL = 'г. Минск'.freeze
 MONTH = {
   'январь' => '01',
   'февраль' => '02',
@@ -18,7 +19,6 @@ MONTH = {
 class RooBookParser
   def initialize
     @actual_table = Roo::Spreadsheet.open(ACTUAL_FILE_URI)
-    @last_table = Roo::Spreadsheet
     @all_files = []
   end
 
@@ -40,28 +40,28 @@ class RooBookParser
   end
 
   def regexp_template_for_item(name)
-    /#{name.upcase}\b/
+    /^#{name.upcase}\b/
   end
 
-  def search_price_by_name(name_of_item, table = @actual_table)
+  def search_price_by_name(name_of_item, minsk_const, table = @actual_table)
     table.select { |elem| regexp_template_for_item(name_of_item).match?(elem[0]) || name_of_item == elem[0] }
-         .map { |price| TableConverter.denomination_convertation(get_month_and_year(table), price) }
+         .map { |price| TableConverter.denomination_convertation(get_month_and_year(table), price, minsk_const) }
   end
 
-  def search_similar_name_by_price(price_of_item, name_of_item)
+  def search_similar_name_by_price(price_of_item, minsk_const, name_of_item)
     @all_files.sort.max[1].select do |elem|
-      ((price_of_item.equal?(elem[MINSK_CONSTATN_CELL_COL]) && name_of_item != elem[0]) &&
+      ((price_of_item.equal?(elem[minsk_const]) && name_of_item != elem[0]) &&
       !regexp_template_for_item(name_of_item).match?(elem[0]))
     end
   end
 
   def similar_template(array_of_similar_prices)
-    'For similar price you also can afford ' +
+    'For similar price you also can afford \'' +
       case array_of_similar_prices.length
       when 1
-        "\'#{array_of_similar_prices[0]}\'."
+        "#{array_of_similar_prices[0]}\'."
       when 2
-        "\'#{array_of_similar_prices[0]}\' and \'#{array_of_similar_prices[1]}\'"
+        "#{array_of_similar_prices[0]}\' and \'#{array_of_similar_prices[1]}\'"
       when 3..Float::INFINITY
         array_of_similar_prices[0..array_of_similar_prices.length - 2].join('\', \'') +
         + '\' and ' + "\'#{array_of_similar_prices[-1]}\'."
@@ -73,15 +73,15 @@ class RooBookParser
     output.empty? ? puts('There is no items with similar price.') : puts(similar_template(output).to_s)
   end
 
-  def output_template(array_of_prices, name_of_item)
+  def output_template(array_of_prices, name_of_item, minsk_const)
     puts("\'#{name_of_item}\' can not be found in database.") && return if array_of_prices.empty?
     array_of_prices.each do |elem|
-      puts "\'#{name_of_item}\' is #{elem[MINSK_CONSTATN_CELL_COL].round(2)} BYN in these days."
+      puts "\'#{name_of_item}\' is #{elem[minsk_const].round(2)} BYN in these days."
       if @all_files.empty?
         puts 'Put some data files if you wanna see prices by previous years'
       else
         min_max_prices_out(elem[0])
-        similar_price_out(search_similar_name_by_price(elem[MINSK_CONSTATN_CELL_COL], name_of_item))
+        similar_price_out(search_similar_name_by_price(elem[minsk_const], minsk_const, name_of_item))
       end
     end
   end
@@ -96,9 +96,9 @@ class RooBookParser
   def min_max_prices(name)
     array = []
     @all_files.sort.each do |table|
-      next if search_price_by_name(name, table[1]).empty?
+      next if search_price_by_name(name, minsk_cell(table[1]), table[1]).empty?
 
-      array << [table[0], search_price_by_name(name, table[1]).flatten[MINSK_CONSTATN_CELL_COL]]
+      array << [table[0], search_price_by_name(name, minsk_cell(table[1]), table[1]).flatten[minsk_cell(table[1])]]
     end
     min_max_value(array)
   end
@@ -108,18 +108,27 @@ class RooBookParser
     puts "Maximum was on #{min_max_prices(name)[1][0]} at price #{min_max_prices(name)[1][1]} BYN"
   end
 
+  def minsk_cell(filename)
+    filename.row(7).index(MINSK_CONSTATN_CELL_COL)
+  end
+
+  def all_max_by
+    @all_files.max_by { |el| el[0] }
+  end
+
   def actual_price_check(input_name)
     if collect_all_files.empty?
       puts 'There is no file to check in data folder. So we take actual file from uri.'
-      search_price_by_name(input_name)
+      search_price_by_name(input_name, minsk_cell(@actual_table))
     else
-      collect_all_files.each { |file| @all_files << [convert_month_and_year(file), file] }
-      search_price_by_name(input_name, @all_files.max_by { |el| el[0] }[1])
+      collect_all_files.each { |file| @all_files << [convert_month_and_year(file), file, minsk_cell(file)] }
+      [search_price_by_name(input_name, all_max_by[2], all_max_by[1]), all_max_by[2]]
     end
   end
 
   def output_parser(input_name)
-    output_template(actual_price_check(input_name), input_name)
+    prices, const = actual_price_check(input_name)
+    output_template(prices, input_name, const)
   end
 end
 

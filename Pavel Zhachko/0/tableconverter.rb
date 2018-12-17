@@ -2,15 +2,13 @@ require 'rake'
 require 'roo'
 require 'roo-xls'
 
-MINSK_CONSTATN_CELL_COL = 14
-
 module TableConverter
-  def self.denomination_convertation(date, price)
-    price[MINSK_CONSTATN_CELL_COL] =
+  def self.denomination_convertation(date, price, const)
+    price[const] =
       if date[1].to_i < 2017
-        (price[MINSK_CONSTATN_CELL_COL] / 10_000.0).round(2)
+        (price[const] / 10_000.0).round(2)
       else
-        price[MINSK_CONSTATN_CELL_COL].round(2)
+        price[const].round(2)
       end
     price
   end
