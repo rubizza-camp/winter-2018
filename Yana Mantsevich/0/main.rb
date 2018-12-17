@@ -4,6 +4,9 @@ class PriceStatistic
   MONTHS = %w[01 02 03 04 05 06 07 08 09 10 11 12].freeze
   ROWS = %w[G I K M Q S].freeze
   MINSK_REGION = 'Q'.freeze
+  REGIONS_AMOUNT = 6
+  PRICE_MINUS_25_PER = 4.5
+  PRICE_PLUS_25_PER = 7.5
   PRODUCT = 'A'.freeze
   def initialize
     @nowaday_price = 0
@@ -27,7 +30,7 @@ class PriceStatistic
   def nowadays_product_price
     sum = 0.0
     amount = 0
-    last_month.simple_rows.select do |row|
+    last_month.simple_rows.each do |row|
       if row[PRODUCT].to_s.match?(/#{@product}/i)
         sum += row[MINSK_REGION].to_f
         amount += 1
@@ -49,13 +52,13 @@ class PriceStatistic
     amount = 0
     if row[PRODUCT].to_s.match?(/#{@product}/i)
       avg_price += count_sum(row)
-      amount += 6
+      amount += REGIONS_AMOUNT
     end
     check_denominanion(amount, avg_price, year, month)
   end
 
   def check_denominanion(amount, avg_price, year, month)
-    amount *= 10_000 if year.to_i < 17 && !amount.zero?
+    amount *= 10_000 if year.to_i < 17
     @prices[month + '/20' + year] = avg_price / amount unless amount.zero?
   end
 
@@ -89,7 +92,7 @@ class PriceStatistic
   end
 
   def check_prices(row)
-    count_sum(row) < @nowaday_price * 7.5 && count_sum(row) > @nowaday_price * 4.5
+    count_sum(row) < @nowaday_price * PRICE_PLUS_25_PER && count_sum(row) > @nowaday_price * PRICE_MINUS_25_PER
   end
 
   def products_for_similar_price
@@ -103,7 +106,7 @@ class PriceStatistic
   end
 
   def count_sum(row)
-    ROWS.map { |i| row[i].to_f }.inject(:+)
+    ROWS.map { |i| row[i].to_f }.sum
   end
 end
 
