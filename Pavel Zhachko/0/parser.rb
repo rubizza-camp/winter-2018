@@ -1,20 +1,6 @@
 require_relative 'tableconverter'
 ACTUAL_FILE_URI = 'http://www.belstat.gov.by/upload-belstat/upload-belstat-excel/Oficial_statistika/Average_prices(serv)-11-2018.xlsx'.freeze
 MINSK_CONSTATN_CELL_COL = 'г. Минск'.freeze
-MONTH = {
-  'январь' => '01',
-  'февраль' => '02',
-  'март' => '03',
-  'апрель' => '04',
-  'май' => '05',
-  'июнь' => '06',
-  'июль' => '07',
-  'август' => '08',
-  'сентябрь' => '09',
-  'октябрь' => '10',
-  'ноябрь' => '11',
-  'декабрь' => '12'
-}.freeze
 
 class RooBookParser
   def initialize
@@ -29,23 +15,13 @@ class RooBookParser
     end
   end
 
-  def get_month_and_year(filename)
-    filename.row(3)[0].split(' ').select { |el| /20[01][0-9]$/.match?(el) || MONTH.key?(el) }
-  end
-
-  def convert_month_and_year(filename)
-    date = get_month_and_year(filename)
-    date[0] = MONTH[date[0]]
-    date.reverse.join('/')
-  end
-
   def regexp_template_for_item(name)
     /^#{name.upcase}\b/
   end
 
   def search_price_by_name(name_of_item, minsk_const, table = @actual_table)
     table.select { |elem| regexp_template_for_item(name_of_item).match?(elem[0]) || name_of_item == elem[0] }
-         .map { |price| TableConverter.denomination_convertation(get_month_and_year(table), price, minsk_const) }
+         .map { |price| TableConverter.denomination_convertation(table, price, minsk_const) }
   end
 
   def search_similar_name_by_price(price_of_item, minsk_const, name_of_item)
@@ -93,12 +69,16 @@ class RooBookParser
     ]
   end
 
+  def min_max_template(name, table)
+    [table[0], search_price_by_name(name, minsk_cell(table[1]), table[1]).flatten[minsk_cell(table[1])]]
+  end
+
   def min_max_prices(name)
     array = []
     @all_files.sort.each do |table|
       next if search_price_by_name(name, minsk_cell(table[1]), table[1]).empty?
 
-      array << [table[0], search_price_by_name(name, minsk_cell(table[1]), table[1]).flatten[minsk_cell(table[1])]]
+      array << min_max_template(name, table)
     end
     min_max_value(array)
   end
@@ -116,13 +96,17 @@ class RooBookParser
     @all_files.max_by { |el| el[0] }
   end
 
+  def actual_template(input_name)
+    [search_price_by_name(input_name, all_max_by[2], all_max_by[1]), all_max_by[2]]
+  end
+
   def actual_price_check(input_name)
     if collect_all_files.empty?
       puts 'There is no file to check in data folder. So we take actual file from uri.'
       search_price_by_name(input_name, minsk_cell(@actual_table))
     else
-      collect_all_files.each { |file| @all_files << [convert_month_and_year(file), file, minsk_cell(file)] }
-      [search_price_by_name(input_name, all_max_by[2], all_max_by[1]), all_max_by[2]]
+      collect_all_files.each { |file| @all_files << [TableConverter.convert_month_and_year(file), file, minsk_cell(file)] }
+      actual_template(input_name)
     end
   end
 
