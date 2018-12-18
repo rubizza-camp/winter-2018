@@ -105,7 +105,9 @@ class RooBookParser
       puts 'There is no file to check in data folder. So we take actual file from uri.'
       search_price_by_name(input_name, minsk_cell(@actual_table))
     else
-      collect_all_files.each { |file| @all_files << [TableConverter.convert_month_and_year(file), file, minsk_cell(file)] }
+      collect_all_files.each do |file|
+        @all_files << [TableConverter.convert_month_and_year(file), file, minsk_cell(file)]
+      end
       actual_template(input_name)
     end
   end
