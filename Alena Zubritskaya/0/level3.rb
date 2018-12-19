@@ -28,9 +28,8 @@ Find.find('./data/') do |file|
   workbook = RubyXL::Parser.parse(file).worksheets
   workbooks << workbook
   workbook.each do |worksheet_rows|
-    num_rows = 0
     date = worksheet_rows[2][0].value
-    worksheet_rows.select { |row| row&.cells&.at(0)&.value }.each_with_index do |row, index|
+    worksheet_rows.select { |row| row&.cells&.at(0)&.value }.each do |row|
       price = row.cells[MNSK_COL]&.value || 0
       next unless row.cells[0].value.include?(ans)
 
