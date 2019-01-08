@@ -4,10 +4,12 @@ require './data_parser.rb'
 require './download_sheets.rb'
 require './db_requester.rb'
 
+FILES_COUNT = 100
+
 class Waiter
   def check_files
     FileUtils.mkdir_p './data'
-    Dir['./data/*.*'].count < 100 ? DownloadSheets.new.perform_data : true
+    DownloadSheets.new.perform_data if count < FILES_COUNT
   end
 
   def check_data
