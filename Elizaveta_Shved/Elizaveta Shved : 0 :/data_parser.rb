@@ -8,6 +8,13 @@ COST_INDEX = 3
 REGION_INDEX = 2
 DATE_FOR_DENOMIZATION = 1482181200
 AMOUNT_FOR_DENOMOZATION = 10000.0
+REGIONS = [{region_name: 'Брестская область', row_number: 6},
+    region_name: 'Витебская область', row_number: 8},
+    region_name: 'Гомельская область', row_number: 10},
+    region_name: 'Гродненская область', row_number: 12},
+    region_name: 'Минск', row_number: 14},
+    region_name: 'Минская область', row_number: 16},
+    region_name: 'Могилевская область', row_number: 18}]
 
 class DataParser
   def perform_files
@@ -44,31 +51,15 @@ class DataParser
        (row[12].is_a?(Numeric) && row[14].is_a?(Numeric) && row[16].is_a?(Numeric) && row[18].is_a?(Numeric))
     next unless check_data
       product_name = row[0].downcase
-      brest_region = row[6]
-      vitebsk_region = row[8]
-      homel_region = row[10]
-      grodno_region = row[12]
-      minsk = row[14]
-      minsk_region = row[16]
-      mogilev_region = row[18]
+      regions_cost = REGIONS.each { |region| row[regions[:row_number]] }
 
       if date < DATE_FOR_DENOMIZATION
-        brest_region = brest_region / AMOUNT_FOR_DENOMOZATION if !brest_region.nil?
-        vitebsk_region = vitebsk_region / AMOUNT_FOR_DENOMOZATION if !vitebsk_region.nil?
-        homel_region = homel_region / AMOUNT_FOR_DENOMOZATION if !homel_region.nil?
-        grodno_region = grodno_region / AMOUNT_FOR_DENOMOZATION if !grodno_region.nil?
-        minsk = minsk / AMOUNT_FOR_DENOMOZATION if !minsk.nil?
-        minsk_region = minsk_region / AMOUNT_FOR_DENOMOZATION if !minsk_region.nil?
-        mogilev_region = mogilev_region / AMOUNT_FOR_DENOMOZATION if !mogilev_region.nil?
+        regions_cost = regions_cost.map { |region_cost| regions_cost / AMOUNT_FOR_DENMOZATION if !region_cost.nil? }
       end
 
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Брестская область',#{brest_region}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Витебская область',#{vitebsk_region}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Гомельская область',#{homel_region}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Гродненская область',#{grodno_region}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Минск',#{minsk}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Минская область',#{minsk_region}, #{date})"
-      @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}','Могилевская область',#{mogilev_region}, #{date})"
+      REGIONS.each_with_index do |elem, index|
+        @db.execute "INSERT INTO Items (name, region, price, date) VALUES('#{product_name}',elem[:region_name],#{region_cost[index]}, #{date})"
+      end
     end
   end
 
