@@ -7,7 +7,7 @@ require 'logger'
 COST_INDEX = 3
 REGION_INDEX = 2
 DATE_FOR_DENOMIZATION = 1482181200
-AMOUNT_FOR_DENOMOZATION = 10000.0
+AMOUNT_FOR_DENOMIZATION = 10000.0
 REGIONS = [{region_name: 'Брестская область', row_number: 6},
     region_name: 'Витебская область', row_number: 8},
     region_name: 'Гомельская область', row_number: 10},
@@ -54,7 +54,7 @@ class DataParser
       regions_cost = REGIONS.each { |region| row[regions[:row_number]] }
 
       if date < DATE_FOR_DENOMIZATION
-        regions_cost = regions_cost.map { |region_cost| regions_cost / AMOUNT_FOR_DENMOZATION if !region_cost.nil? }
+        regions_cost = regions_cost.map { |region_cost| regions_cost / AMOUNT_FOR_DENOMIZATION if !region_cost.nil? }
       end
 
       REGIONS.each_with_index do |elem, index|
