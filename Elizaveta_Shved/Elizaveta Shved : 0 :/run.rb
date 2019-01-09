@@ -9,7 +9,7 @@ FILES_COUNT = 100
 class Waiter
   def check_files
     FileUtils.mkdir_p './data'
-    DownloadSheets.new.perform_data if count < FILES_COUNT
+    DownloadSheets.new.perform_data if Dir['./data/*.*'].count < FILES_COUNT
   end
 
   def check_data

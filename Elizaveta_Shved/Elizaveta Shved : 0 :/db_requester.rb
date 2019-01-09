@@ -8,22 +8,20 @@ class DbRequester
   end
 
   def request
-    begin
-      check_record
-      if check_record
-        last_time
-        lowest_cost_item
-        maximim_cost_item
-        similar_price
-      else
-        puts "#{@product_name} can not be found in database."
-      end
-    rescue SQLite3::Exception => e
-      puts 'Exception occurred'
-      puts e
-    ensure
-      @db.close if @db
+    check_record
+    if check_record
+      last_time
+      lowest_cost_item
+      maximim_cost_item
+      similar_price
+    else
+      puts "#{@product_name} can not be found in database."
     end
+  rescue SQLite3::Exception => e
+    puts 'Exception occurred'
+    puts e
+  ensure
+    @db&.close
   end
 
   private

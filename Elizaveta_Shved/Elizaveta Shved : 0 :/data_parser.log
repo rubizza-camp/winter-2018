@@ -1,0 +1,13 @@
+# Logfile created on 2019-01-10 00:05:53 +0300 by logger.rb/61378
+W, [2019-01-10T00:05:53.610866 #8673]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:09:57.113274 #8694]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:11:03.578463 #8702]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:14:44.674410 #8716]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:17:11.498922 #8731]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:25:34.738412 #8770]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:48:03.986474 #8838]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/11_2015.xlsx 
+W, [2019-01-10T00:48:35.045818 #8838]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/05_2018.xlsx 
+W, [2019-01-10T00:49:41.128771 #8838]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/02_2016.xlsx 
+W, [2019-01-10T00:50:12.130753 #8838]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/07_2018.xlsx 
+W, [2019-01-10T00:50:31.079414 #8838]  WARN -- : Problem with parser, error: Zip end of central directory signature not found, file - ./data/03_2016.xlsx 
+W, [2019-01-10T00:53:36.552824 #8838]  WARN -- : Problem with parser, error: OLE2 signature is invalid, file - ./data/02_2014.xls 
