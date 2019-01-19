@@ -8,12 +8,12 @@ bot.get_updates(fail_silently: true) do |message|
   command = message.get_command_for(bot)
 
   message.reply do |reply|
-    case command
-    when /hi/i
-      reply.text = "Hello, #{message.from.first_name}!"
-    else
-      reply.text = "#{message.from.first_name}, have no idea what #{command.inspect} means."
-    end
+    reply.text = case command
+                 when /hi/i
+                   "Hello, #{message.from.first_name}!"
+                 else
+                   "#{message.from.first_name}, have no idea what #{command.inspect} means."
+                 end
     puts "sending #{reply.text.inspect} to @#{message.from.username}"
     reply.send_with(bot)
   end
