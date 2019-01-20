@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 require 'pry-byebug'
-require_relative 'base'
+require_relative 'db_wrapper'
 
 BASE_PAGES = ['https://www.bydewey.com/pun.html', 'https://www.bydewey.com/pun2.html'].freeze
 

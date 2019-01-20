@@ -1,4 +1,4 @@
-require_relative 'base'
+require_relative 'db_wrapper'
 require 'telegram_bot'
 
 class WordplayBot

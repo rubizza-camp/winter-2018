@@ -1,7 +1,7 @@
-require_relative 'wordplay_bot'
+require_relative 'lib/wordplay_bot'
 
-token = '723564519:AAHV5KL3h0pM0WZEv6_tcb5_5nbRdnJ0ToY'
+TOKEN = '723564519:AAHV5KL3h0pM0WZEv6_tcb5_5nbRdnJ0ToY'.freeze
 
-bot = WordplayBot.new(token)
+bot = WordplayBot.new(TOKEN)
 
 bot.start
