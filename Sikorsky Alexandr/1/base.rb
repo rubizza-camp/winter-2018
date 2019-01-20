@@ -13,4 +13,8 @@ class DBWrapper
   def random_record
     @redis.get(@redis.randomkey)
   end
+
+  def flush
+    @redis.flushdb
+  end
 end
