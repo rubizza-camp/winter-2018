@@ -2,9 +2,6 @@ require 'open-uri'
 require 'nokogiri'
 require 'pry-byebug'
 require_relative 'db_wrapper'
-
-BASE_PAGES = ['https://www.bydewey.com/pun.html', 'https://www.bydewey.com/pun2.html'].freeze
-
 class Parser
   REGEX = /\.\s([^~]+)/.freeze
 
@@ -25,13 +22,10 @@ class Parser
 end
 
 if $PROGRAM_NAME == __FILE__
-  binding.pry
   parser = Parser.new
   wordplays = BASE_PAGES.reduce([]) { |stach, url| stach << parser.parse(url) }
 
   db_wrapper = DBWrapper.new
   db_wrapper.flush
   db_wrapper.multiple_set(wordplays.flatten)
-
-  rand = db_wrapper.random_record
 end

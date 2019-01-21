@@ -1,4 +1,5 @@
 source 'https://rubygems.org' do
   gem 'redis'
   gem 'telegram_bot', '~> 0.0.4'
+  gem 'nokogiri'
 end

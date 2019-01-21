@@ -17,4 +17,12 @@ class DBWrapper
   def flush
     @redis.flushdb
   end
+
+  def ping
+    @redis.ping
+  end
+
+  def empty?
+    @redis.keys.empty?
+  end
 end

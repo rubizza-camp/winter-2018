@@ -2,9 +2,11 @@ require_relative 'db_wrapper'
 require 'telegram_bot'
 
 class WordplayBot
-  def initialize(token)
-    @bot = TelegramBot.new(token: token)
-    @db = DBWrapper.new
+  TOKEN = '723564519:AAHV5KL3h0pM0WZEv6_tcb5_5nbRdnJ0ToY'.freeze
+
+  def initialize(db)
+    @bot = TelegramBot.new(token: TOKEN)
+    @db = db
     @commands = create_commands
   end
 
