@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'nokogiri'
+gem 'redis'
+gem 'rubyfish'
+gem 'telegram-bot-ruby'
+gem 'translit'

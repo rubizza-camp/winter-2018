@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    json (2.1.0)
+    mini_portile2 (2.3.0)
+    nokogiri (1.8.5)
+      mini_portile2 (~> 2.3.0)
+    redis (4.1.0)
+    rubyfish (0.0.6)
+    translit (0.1.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  json
+  nokogiri
+  redis
+  rubyfish
+  translit
+
+BUNDLED WITH
+   1.17.1
