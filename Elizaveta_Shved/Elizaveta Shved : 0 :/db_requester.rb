@@ -2,7 +2,7 @@ require 'rubygems'
 require 'sqlite3'
 
 class DbRequester
-  FILE_NAME = 'site_parsing_data.db'
+  FILE_NAME = 'site_parsing_data.db'.freeze
   def initialize(product_name)
     @product_name = product_name
     @db = SQLite3::Database.open FILE_NAME

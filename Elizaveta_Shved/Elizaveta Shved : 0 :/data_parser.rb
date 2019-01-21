@@ -17,7 +17,7 @@ REGIONS = [{ region_name: 'Брестская область', row_number: 6 },
            { region_name: 'Могилевская область', row_number: 18 }].freeze
 
 ROW_DATA_TYPES = { '0': String, '6': Numeric, '8': Numeric, '10': Numeric,
-                   '12': Numeric, '14': Numeric, '16': Numeric, '18': Numeric }
+                   '12': Numeric, '14': Numeric, '16': Numeric, '18': Numeric }.freeze
 
 class DataParser
   def perform_files
@@ -91,7 +91,7 @@ class DataParser
   end
 end
 
-  private
+private
 
   def validate_row_data(row)
     ROW_DATA_TYPES.each do |key, data_type|
