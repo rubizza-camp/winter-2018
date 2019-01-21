@@ -7,6 +7,6 @@ Go <a href="t.me/valkovikWordplayBot"> here</a> <br>(some explicit/offending con
 {<br>
   "pass": "SECRET",<br>
   "url": "Redis url of db",<br>
-  "token": "Telegram bot api"<br>
+  "token": "Telegram bot token"<br>
 }<br>
 Or just replace/remove all not vital for testing lines of code
