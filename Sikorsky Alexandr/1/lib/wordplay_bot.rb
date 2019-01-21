@@ -4,9 +4,9 @@ require 'telegram_bot'
 class WordplayBot
   TOKEN = '723564519:AAHV5KL3h0pM0WZEv6_tcb5_5nbRdnJ0ToY'.freeze
 
-  def initialize(db)
+  def initialize(database)
     @bot = TelegramBot.new(token: TOKEN)
-    @db = db
+    @db = database
     @commands = create_commands
   end
 
