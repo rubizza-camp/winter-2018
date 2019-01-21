@@ -10,7 +10,7 @@ class Runner
 
     return if check_connection(database).nil?
 
-    fill_database(database) if db.empty?
+    fill_database(database) if database.empty?
 
     bot = WordplayBot.new(database)
 
@@ -19,11 +19,11 @@ class Runner
 
   private
 
-  def fill_database(_database)
+  def fill_database(database)
     parser = Parser.new
     wordplays = BASE_PAGES.reduce([]) { |stach, url| stach << parser.parse(url) }
 
-    db.multiple_set(wordplays.flatten)
+    database.multiple_set(wordplays.flatten)
   end
 
   def check_connection(database)
