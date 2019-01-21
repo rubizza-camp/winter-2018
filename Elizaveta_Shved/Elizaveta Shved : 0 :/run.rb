@@ -13,8 +13,8 @@ class Waiter
   end
 
   def check_data
-    File.new('test.db', 'a')
-    @db = SQLite3::Database.open 'test.db'
+    File.new('site_parsing_data.db', 'a')
+    @db = SQLite3::Database.open 'site_parsing_data.db'
     @db.execute 'CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT,
       Name Text, Region TEXT, Price REAL, Date INTEGER )'
     count = @db.execute 'SELECT count(*) FROM Items'

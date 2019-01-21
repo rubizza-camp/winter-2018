@@ -16,6 +16,9 @@ REGIONS = [{ region_name: 'Брестская область', row_number: 6 },
            { region_name: 'Минская область', row_number: 16 },
            { region_name: 'Могилевская область', row_number: 18 }].freeze
 
+ROW_DATA_TYPES = { '0': String, '6': Numeric, '8': Numeric, '10': Numeric,
+                   '12': Numeric, '14': Numeric, '16': Numeric, '18': Numeric }
+
 class DataParser
   def perform_files
     xls_files = Dir['./data/*.xls']
@@ -47,8 +50,7 @@ class DataParser
   def perform_rows(table, date)
     (9..table.last_row).each do |number|
       row = table.row(number)
-      check_data = (row[0].is_a?(String) && row[6].is_a?(Numeric) && row[8].is_a?(Numeric)) &&
-                   (row[12].is_a?(Numeric) && row[14].is_a?(Numeric) && row[16].is_a?(Numeric) && row[18].is_a?(Numeric))
+      check_data = validate_row_data(row)
       next unless check_data
 
       product_name = row[0].downcase
@@ -64,16 +66,9 @@ class DataParser
     end
   end
 
-  def convert_to_unix_date(path)
-    date_keys = File.basename(path, '.*').split('_')
-    month = date_keys[0].to_i
-    year = date_keys[1].to_i
-    Date.new(year, month, 1).to_time.to_i
-  end
-
   def perform_data
-    File.new('test.db', 'a')
-    @db = SQLite3::Database.open 'test.db'
+    FileUtils.touch 'site_parsing_data.db'
+    @db = SQLite3::Database.open 'site_parsing_data.db'
     @db.execute 'CREATE TABLE IF NOT EXISTS Items(Id INTEGER PRIMARY KEY AUTOINCREMENT,
       Name Text, Region TEXT, Price REAL, Date INTEGER )'
     perform_files
@@ -84,7 +79,22 @@ class DataParser
     @db&.close
   end
 
+  def convert_to_unix_date(path)
+    date_keys = File.basename(path, '.*').split('_')
+    month = date_keys[0].to_i
+    year = date_keys[1].to_i
+    Date.new(year, month, 1).to_time.to_i
+  end
+
   def logger
     @logger ||= Logger.new('data_parser.log')
   end
 end
+
+  private
+
+  def validate_row_data(row)
+    ROW_DATA_TYPES.each do |key, data_type|
+      return false  unless row[key.to_s.to_i].is_a?(data_type) 
+    end
+  end
