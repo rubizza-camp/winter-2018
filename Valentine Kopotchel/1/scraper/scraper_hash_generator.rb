@@ -25,16 +25,22 @@ module ScraperHashGenerator
           .reject { |s| s.empty? || s.start_with?('(', '[') }
   end
 
+  def add_elem_to_lyrics_hash(elem, lyrics)
+    url = gen_song_url(elem['path'])
+    title = elem['title']
+    lyrics[title] = process_song_link(url)
+    lyrics
+  end
+
   def lyrics_hash_gen(songs_hash)
     lyrics = {}
     songs_hash.each_value do |hash|
       hash = hash['response']['songs']
       hash.each do |elem|
-        url = gen_song_url(elem['path'])
-        title = elem['title']
-        lyrics[title] = process_song_link(url)
+        add_elem_to_lyrics_hash(elem, lyrics)
       end
     end
+    lyrics = lyrics.reject { |_key, value| value.empty? }
     lyrics
   end
 end
