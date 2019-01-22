@@ -93,8 +93,8 @@ end
 
 private
 
-  def validate_row_data(row)
-    ROW_DATA_TYPES.each do |key, data_type|
-      return false  unless row[key.to_s.to_i].is_a?(data_type) 
-    end
+def validate_row_data(row)
+  ROW_DATA_TYPES.each do |key, data_type|
+    return false unless row[key.to_s.to_i].is_a?(data_type)
   end
+end
