@@ -20,3 +20,4 @@ Level 1 and 2.
 - [ ] Credentials are NOT hardcoded
 - [ ] Large files and credentials added to .gitignore INSIDE homework dir
 - [ ] It can be tested in under 10 minutes (download part + parse + execute)
+- [ ] Gemfile added, it runs under bundle exec without error
