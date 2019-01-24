@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'json'
 # Here we create requests to Genius API
 module URLGenerator
