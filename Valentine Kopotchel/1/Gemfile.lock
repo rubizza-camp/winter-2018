@@ -14,13 +14,19 @@ GEM
       multipart-post (>= 1.2, < 3)
     ice_nine (0.11.2)
     inflecto (0.0.2)
+    json (2.1.0)
+    mini_portile2 (2.3.0)
     multipart-post (2.0.0)
+    nokogiri (1.8.5)
+      mini_portile2 (~> 2.3.0)
     redis (4.1.0)
+    rubyfish (0.0.6)
     telegram-bot-ruby (0.8.6.1)
       faraday
       inflecto
       virtus
     thread_safe (0.3.6)
+    translit (0.1.5)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -31,8 +37,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
+  nokogiri
   redis
+  rubyfish
   telegram-bot-ruby
+  translit
 
 BUNDLED WITH
    1.17.1

@@ -10,12 +10,11 @@ class Rhymer
     @wordplays = {}
     songs_hash.each_entry do |key, song_lines|
       @wordplays[key] = []
-      song_lines.each_slice(4) do |a, b, c, d|
-        @wordplays[key] << [a, b, c, d].join("\n") if
-            quadruple_wordplay?(a, b, c, d)
+      song_lines.each_slice(4) do |*args|
+        args = args.flatten
+        @wordplays[key] << args.join("\n") if quadruple_wordplay?(*args)
       end
     end
-    @wordplays = @wordplays.compact
   end
 
   attr_accessor :wordplays

@@ -1,13 +1,11 @@
-$LOAD_PATH << '.'
 require 'json'
 require 'redis'
-require 'url_generator.rb'
-require 'scraper_hash_generator.rb'
-require 'rhymer'
-REDIS_PASSWORD = JSON.parse(File.read('config.json'))['pass']
-                     .freeze
-REDIS_URL = JSON.parse(File.read('config.json'))['url']
-                .freeze
+require_relative 'url_generator'
+require_relative 'scraper_hash_generator'
+require_relative 'rhymer'
+CONFIG_FILE = JSON.parse(File.read('config.json')).freeze
+REDIS_PASSWORD = CONFIG_FILE['pass'].freeze
+REDIS_URL = CONFIG_FILE['url'].freeze
 BATTLE_LEAGUES_IDS = [1_043_148, 349_224, 1_014_895, 1_148_720,
                       461_389, 1_570_020, 669_868].freeze
 # Fills database(remember about config.json!)
