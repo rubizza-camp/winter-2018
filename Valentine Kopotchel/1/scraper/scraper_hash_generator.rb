@@ -1,9 +1,8 @@
-$LOAD_PATH << '.'
-require 'url_generator.rb'
 require 'rubygems'
 require 'nokogiri'
 require 'json'
 require 'net/http'
+require_relative 'url_generator'
 # Parses HTML and JSoN to hashes
 module ScraperHashGenerator
   include URLGenerator
