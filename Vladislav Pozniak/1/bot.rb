@@ -6,10 +6,10 @@ require_relative 'db.rb'
 
 # Telegram bot
 class Bot
-  def initialize(db)
+  def initialize(database)
     @token = File.read('bot.token')
     @bot = Telegram::Bot::Client.new(@token)
-    @db = db
+    @db = database
     puts 'Bot is started, enjoy!'
     run
   end
