@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'json'
 require 'redis'
 require_relative 'url_generator'

@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'rubyfish'
 require 'translit'
 # Uses double metaphone to look for the words that sound identically

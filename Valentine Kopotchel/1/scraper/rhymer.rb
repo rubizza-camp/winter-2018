@@ -1,7 +1,7 @@
-require 'rubygems'
+$LOAD_PATH << '.'
 require 'rubyfish'
 require 'translit'
-require_relative 'strings_distance_counter'
+require 'strings_distance_counter'
 # Fills database hash with wordplays
 class Rhymer
   include StringsDistanceCounter
