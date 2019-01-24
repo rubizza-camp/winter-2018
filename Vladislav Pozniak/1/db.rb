@@ -6,7 +6,7 @@ require 'redis'
 
 # Needed jobs with database
 class Db
-  URL_BASE = 'https://www.punoftheday.com/pun/'.freeze # Site with puns
+  URL_BASE = 'https://www.punoftheday.com/pun/' # Site with puns
   MIN_ID = 1 # First pun's ID in range to parse
   MAX_ID = 5000 # Last pun's ID in range to parse
 
