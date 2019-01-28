@@ -5,15 +5,16 @@ require 'mechanize'
 require 'redis'
 require 'json'
 
+URL = 'http://rapstyle.su/quotes.php'.freeze
+
 class DataBase
   def initialize
-    @url = 'http://rapstyle.su/quotes.php'.freeze
     @database = Redis.new
   end
 
   def download_page
     agent = Mechanize.new
-    page = agent.get(@url)
+    page = agent.get(URL)
     File.write('citaty.html', page.body)
   end
 
@@ -22,7 +23,6 @@ class DataBase
     quotes = page.css('.post-entry p')
     quotes.each_with_index do |quote, index|
       @database.set(String(index), quote.inner_text.to_json)
-      # puts "added #{quote.inner_text}"
     end
   end
 
