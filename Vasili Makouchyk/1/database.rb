@@ -1,4 +1,4 @@
-#
+# 
 
 require 'nokogiri'
 require 'mechanize'
@@ -8,26 +8,26 @@ require 'json'
 class DataBase
   def initialize
     @url = 'http://rapstyle.su/quotes.php'.freeze
-    @db = Redis.new
+    @database = Redis.new
   end
 
-  def get_page
+  def download_page
     agent = Mechanize.new
     page = agent.get(@url)
     File.write('citaty.html', page.body)
   end
 
-  def get_quotes
+  def scrape_quotes
     page = Nokogiri::HTML(File.read('citaty.html'))
     quotes = page.css('.post-entry p')
     quotes.each_with_index do |quote, index|
-      @db.set String(index), quote.inner_text.to_json
-      #puts "added #{quote.inner_text}"
+      @database.set(String(index), quote.inner_text.to_json)
+      # puts "added #{quote.inner_text}"
     end
   end
 
-  def get_random_quote
-    @db.get(@db.randomkey)
+  def random_quote
+    @database.get(@database.randomkey)
   end
 end
 
