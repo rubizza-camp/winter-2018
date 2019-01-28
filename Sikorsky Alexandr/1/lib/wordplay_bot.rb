@@ -1,5 +1,6 @@
-require_relative 'db_wrapper'
 require 'telegram_bot'
+
+require_relative 'db_wrapper'
 
 class WordplayBot
   def initialize(database, token)
@@ -18,6 +19,8 @@ class WordplayBot
 
   def reply2message(message)
     user_command = message.get_command_for(@bot)
+
+    return if user_command.nil?
 
     message.reply do |reply|
       required_command = @commands.find { |command| user_command.match?(command[:regex]) }
@@ -40,7 +43,9 @@ class WordplayBot
   end
 
   def create_commands
-    [{ regex: /hi/i, proc: ->(*args) { greeting(args.first) } },
-     { regex: /wordplay/i, proc: ->(*_args) { random_wordplay } }]
+    [
+      { regex: /hi/i, proc: ->(*args) { greeting(args.first) } },
+      { regex: /wordplay/i, proc: ->(*_args) { random_wordplay } }
+    ]
   end
 end

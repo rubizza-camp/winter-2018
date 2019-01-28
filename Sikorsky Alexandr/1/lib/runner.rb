@@ -27,9 +27,9 @@ class Runner
 
   def fill_database(database)
     parser = Parser.new
-    wordplays = BASE_PAGES.reduce([]) { |stach, url| stach << parser.parse(url) }
 
-    database.multiple_set(wordplays.flatten)
+    wordplays = BASE_PAGES.flat_map { |url| parser.parse(url) }
+    database.multiple_set(wordplays)
   end
 
   def check_connection(database)

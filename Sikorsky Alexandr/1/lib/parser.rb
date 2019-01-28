@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
+
 require_relative 'db_wrapper'
 class Parser
   def parse(url)
