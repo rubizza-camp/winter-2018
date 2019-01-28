@@ -1,4 +1,5 @@
 require 'yaml'
+
 require_relative 'wordplay_bot'
 require_relative 'db_wrapper'
 require_relative 'parser.rb'
