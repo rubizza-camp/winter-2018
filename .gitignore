@@ -1,7 +1,4 @@
 .DS_Store
 *.mov
 .idea
-test.db
-/data/
-data_parser.log
 
