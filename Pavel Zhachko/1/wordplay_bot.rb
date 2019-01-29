@@ -6,7 +6,7 @@ require_relative 'wordplay_db'
 # Bot fot getting random wordplay from Database
 class Bot
   def initialize
-    @token = '671502180:AAGTzsMZ3nzk_ZTPx0UqlG2m48JendDrGis'
+    @token = File.read('bot.token').chomp
     @bot = Telegram::Bot::Client.new(@token)
     @db = Database.new
   end
