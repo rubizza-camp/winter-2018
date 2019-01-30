@@ -1,5 +1,3 @@
-# 
-
 require 'nokogiri'
 require 'mechanize'
 require 'redis'
@@ -30,6 +28,3 @@ class DataBase
     @database.get(@database.randomkey)
   end
 end
-
-db = DataBase.new
-db.get_quotes
