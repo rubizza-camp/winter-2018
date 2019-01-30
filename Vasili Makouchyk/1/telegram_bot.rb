@@ -24,8 +24,8 @@ class TelegramBot
       stop(message)
     when '/wordplay'
       worldplay(message)
-    when '/help'
-      help(message)
+    # when '/help'
+    #   help(message)
     else
       default(message)
     end
@@ -47,9 +47,7 @@ class TelegramBot
   end
 
   def help(message)
-    help = '/wordplay
-/start
-/stop'
+    help = "/wordplay\n/start\n/stop"
     @bot.api.send_message(chat_id: message.chat.id, text: help)
   end
 

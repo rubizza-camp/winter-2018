@@ -8,6 +8,8 @@ URL = 'http://rapstyle.su/quotes.php'.freeze
 class DataBase
   def initialize
     @database = Redis.new
+    download_page
+    scrape_quotes
   end
 
   def download_page
