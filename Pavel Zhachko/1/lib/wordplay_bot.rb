@@ -39,7 +39,3 @@ class Bot
     end
   end
 end
-
-tg = Bot.new
-
-tg.run
