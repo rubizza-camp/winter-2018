@@ -1,1 +1,1 @@
-web: ruby run.rb
+worker: ruby run.rb
