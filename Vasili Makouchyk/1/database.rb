@@ -1,15 +1,17 @@
 require 'nokogiri'
 require 'mechanize'
 require 'redis'
-require 'json'
+require 'open-uri'
 
 URL = 'http://rapstyle.su/quotes.php'.freeze
 
 class DataBase
   def initialize
     @database = Redis.new
-    download_page
+    @quotes = []
+    # download_page
     scrape_quotes
+    set_db
   end
 
   def download_page
@@ -19,10 +21,14 @@ class DataBase
   end
 
   def scrape_quotes
-    page = Nokogiri::HTML(File.read('citaty.html'))
-    quotes = page.css('.post-entry p')
-    quotes.each_with_index do |quote, index|
-      @database.set(String(index), quote.inner_text.to_json)
+    page = Nokogiri::HTML(open(URL)) # File.read('citaty.html'))
+    @quotes = page.css('.post-entry p')
+  end
+
+  def set_db
+    abort("Quotes hadn't been scraped") if @quotes.empty?
+    @quotes.each_with_index do |quote, index|
+      @database.set(index, quote.inner_text)
     end
   end
 

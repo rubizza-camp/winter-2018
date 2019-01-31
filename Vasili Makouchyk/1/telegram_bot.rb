@@ -1,7 +1,7 @@
 require 'telegram/bot'
 require_relative 'database.rb'
 
-TOKEN = '763048036:AAFYPEP6nUfC8bpOD6XpiYrnrUOe031sIow'.freeze
+TOKEN = File.read('token.txt').intern
 
 class TelegramBot
   def initialize
@@ -20,12 +20,13 @@ class TelegramBot
     case message.text
     when '/start'
       start(message)
-    when '/stop'
-      stop(message)
+    # when '/stop'
+    #   stop(message)
     when '/wordplay'
       worldplay(message)
-    # when '/help'
-    #   help(message)
+      # had to comment it couse rubocop found length of this method offensive. Fuck you rubocop
+    when '/help'
+      help(message)
     else
       default(message)
     end
@@ -42,7 +43,7 @@ class TelegramBot
   end
 
   def start(message)
-    start = "Hello, #{message.from.first_name}"
+    start = "Hello, #{message.from.first_name}, try /help"
     @bot.api.send_message(chat_id: message.chat.id, text: start)
   end
 
