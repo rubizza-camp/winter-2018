@@ -4,4 +4,3 @@ gem 'httparty'
 gem 'nokogiri'
 gem 'redis'
 gem 'telegram/bot'
-
