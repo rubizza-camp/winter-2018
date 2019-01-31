@@ -4,12 +4,13 @@ require 'redis'
 require 'open-uri'
 
 URL = 'http://rapstyle.su/quotes.php'.freeze
+FILE = 'citaty.html'.freeze
 
 class DataBase
   def initialize
     @database = Redis.new
     @quotes = []
-    # download_page
+    download_page
     scrape_quotes
     set_db
   end
@@ -17,11 +18,11 @@ class DataBase
   def download_page
     agent = Mechanize.new
     page = agent.get(URL)
-    File.write('citaty.html', page.body)
+    File.write(FILE, page.body)
   end
 
   def scrape_quotes
-    page = Nokogiri::HTML(open(URL)) # File.read('citaty.html'))
+    page = Nokogiri::HTML(File.open(FILE)) # File.read('citaty.html'))
     @quotes = page.css('.post-entry p')
   end
 
