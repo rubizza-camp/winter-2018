@@ -4,7 +4,7 @@ require_relative 'db'
 # this is bot
 class Bot
   def initialize
-    @token = '764108158:AAGennGjr9eC9MO35OGL0jJ4zWFs-s6Uork'
+    @token = File.read('token.bot').chomp
     @db = DB.new
   end
 
