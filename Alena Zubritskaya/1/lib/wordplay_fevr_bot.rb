@@ -12,14 +12,14 @@ class MyBot
       bot.listen do |message|
         case message.text
         when '/start'
-          message(bot,message,"Здарова #{message.from.first_name}")
-          @question = "Нажми:"
+          message(bot, message, "Здарова #{message.from.first_name}")
+          @question = 'Нажми:'
           @answers = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: %w(/wordplay), one_time_keyboard: true)
           bot.api.send_message(chat_id: message.chat.id, text: @question, reply_markup: @answers)
         when '/wordplay'
           message(bot, message, db)
         else
-          message(bot, message,'Нажми на /wordplay')
+          message(bot, message, 'Нажми на /wordplay')
         end
       end
     end

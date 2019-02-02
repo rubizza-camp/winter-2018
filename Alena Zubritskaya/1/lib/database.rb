@@ -7,13 +7,13 @@ class Database
     @parser = Parser.new.get_wordplay
   end
 
-  def set_data
+  def setdata
     (0...@parser.length).each do |i|
       @redis.set(i, @parser[i])
     end
   end
 
-  def get_data
+  def getdata
     i = rand(0...@parser.length)
     @redis.get(i)
   end
