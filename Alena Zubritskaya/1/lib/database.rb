@@ -4,7 +4,7 @@ require './parser'
 class Database
   def initialize
     @redis = Redis.new
-    @parser = Parser.new.get_wordplay
+    @parser = Parser.new.getwordplay
   end
 
   def setdata
