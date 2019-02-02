@@ -6,7 +6,7 @@ class Parser
     @page = a.get('https://icitata.ru/citaty-iz-pesen-rep/')
   end
 
-  def get_wordplay
+  def getwordplay
     @page.css('.td-ss-main-content p:nth-child(n)').map(&:inner_text)
   end
 end
