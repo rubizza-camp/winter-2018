@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem 'mechanize'
+gem 'nokogiri'
+gem 'redis'
+gem 'telegram-bot-ruby'
