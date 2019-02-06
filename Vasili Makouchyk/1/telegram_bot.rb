@@ -1,9 +1,9 @@
 class TelegramBot
   require 'telegram/bot'
   require_relative 'database.rb'
-  
-  TOKEN = '763048036:AAFYPEP6nUfC8bpOD6XpiYrnrUOe031sIow'
-  
+
+  TOKEN = '763048036:AAFYPEP6nUfC8bpOD6XpiYrnrUOe031sIow'.freeze
+
   def initialize
     @db = DataBase.new
     @bot = Telegram::Bot::Client.new(TOKEN)
