@@ -2,7 +2,8 @@
 ## How to start:
 * create file token.txt and add your's bot_token inside
 <br>
-@WiselyBot
+(my current bot token: 763048036:AAFYPEP6nUfC8bpOD6XpiYrnrUOe031sIow)<br>
+(@WiselyBot)
 * run 
 ```
     bundle
