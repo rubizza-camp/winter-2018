@@ -1,12 +1,12 @@
-require 'nokogiri'
-require 'mechanize'
-require 'redis'
-require 'open-uri'
-
-URL = 'http://rapstyle.su/quotes.php'.freeze
-FILE = 'citaty.html'.freeze
-
 class DataBase
+  require 'nokogiri'
+  require 'mechanize'
+  require 'redis'
+  require 'open-uri'
+
+  URL = 'http://rapstyle.su/quotes.php'.freeze
+  FILE = 'citaty.html'.freeze
+
   def initialize
     @database = Redis.new
     @quotes = []
@@ -22,7 +22,7 @@ class DataBase
   end
 
   def scrape_quotes
-    page = Nokogiri::HTML(File.open(FILE)) # File.read('citaty.html'))
+    page = Nokogiri::HTML(File.open(FILE))
     @quotes = page.css('.post-entry p')
   end
 

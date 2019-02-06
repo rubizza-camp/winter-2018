@@ -1,9 +1,9 @@
-require 'telegram/bot'
-require_relative 'database.rb'
-
-TOKEN = File.read('token.txt').intern
-
 class TelegramBot
+  require 'telegram/bot'
+  require_relative 'database.rb'
+  
+  TOKEN = 763048036:AAFYPEP6nUfC8bpOD6XpiYrnrUOe031sIow
+  
   def initialize
     @db = DataBase.new
     @bot = Telegram::Bot::Client.new(TOKEN)
@@ -20,11 +20,8 @@ class TelegramBot
     case message.text
     when '/start'
       start(message)
-    # when '/stop'
-    #   stop(message)
     when '/wordplay'
       worldplay(message)
-      # had to comment it couse rubocop found length of this method offensive. Fuck you rubocop
     when '/help'
       help(message)
     else
