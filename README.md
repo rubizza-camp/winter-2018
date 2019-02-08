@@ -72,3 +72,47 @@ For similar price you also can afford 'Йогурт' and 'Кефир'.
 ### Deadline
 
 2018-12-09 23:59:59 UTC+3
+
+# Homework 1
+
+If you are familiar with battle-rap, you probable heard about word plays. If you never heard about that, you can go and check this [link](https://www.thoughtco.com/word-play-definition-1692504) to get some understanding. On this homeword we will try to write a telegram-bot, who could help different people generate some wordplays.
+
+### Goal
+
+On this homework we will practise how to:
+
+* Write data scrapers from website
+* Create telegram bots
+* Structure your code with multiple classes
+* Use third party gems
+* Store persisted data on database
+
+### Requirements
+
+* Data for wordplays should be parsed with custom script and saved to database. Those scripts should be included to your submission
+* For database storage you should use `redis` database and use 'redis' gem for this. 
+* For telegram bot you should use `telegram-bot-ruby` gem.
+* Your code should be well-scructured with multiple classes
+* You can choose any language you love ( Russian, English, whatever ) to get a data for this.
+
+### Hints
+
+* It's up to you how you will define wordplays or get data for them. In the very end it should be just funny. One of the best ways of detecting and generating them is to do some simple sound analysis about different words in a vocabulary. Or you can lookup some website with wordplays and parse it.
+
+### Level 1
+
+For this homeword we are going to have only one level will have only one command, which will simply take one wordplay or phrase from database and print it on your telegram.
+
+Here is an example:
+
+```
+> Hey bot!
+> Hey bro!
+> /wordplay
+> Here is your random wordplay:
+> She got a big __booty__, so I call her big __booty__
+```
+
+### Deadline
+
+2018-01-31 23:59:59 UTC+3

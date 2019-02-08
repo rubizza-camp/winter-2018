@@ -1,0 +1,7 @@
+*.csv
+*.xl*
+
+csv_data/
+raw_data/
+lol_data/
+test_data/
