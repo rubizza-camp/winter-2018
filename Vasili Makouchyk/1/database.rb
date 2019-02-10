@@ -8,7 +8,7 @@ class DataBase
   end
 
   def load_quotes
-    set_db(ScrapeQuotes.new.scrape_quotes)
+    fill_db(ScrapeQuotes.new.scrape_quotes)
   end
 
   def fill_db(quotes)
