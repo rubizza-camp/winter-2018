@@ -26,12 +26,15 @@ class Bot
     when /^hey|hi|hello$/i
       bot.api.sendMessage(chat_id: message.chat.id, text: "Hey, #{message.from.first_name}")
     when '/wordplay' then
-      random_pun = select_random_pun
-      wordplay_text = "Random wordplay [#{random_pun[:number]}]:\n#{random_pun[:text]}"
       bot.api.sendMessage(chat_id: message.chat.id, text: wordplay_text)
     else
       bot.api.sendMessage(chat_id: message.chat.id, text: INVALID_COMMAND_TEXT)
     end
+  end
+
+  def wordplay_text
+    random_pun = select_random_pun
+    "Random wordplay [#{random_pun[:number]}]:\n#{random_pun[:text]}"
   end
 
   def select_random_pun
@@ -40,6 +43,6 @@ class Bot
   end
 
   def load_token
-    YAML.load_file(SECRETS_PATH)["TELEGRAM_TOKEN"]
+    YAML.load_file(SECRETS_PATH)['TELEGRAM_TOKEN']
   end
 end
