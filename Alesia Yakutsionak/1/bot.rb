@@ -1,9 +1,10 @@
 require 'telegram/bot'
 require 'redis'
+require 'yaml'
 
 class Bot
   INVALID_COMMAND_TEXT = "I didn't understand you.".freeze
-  BOT_TOKEN = 'Your_Telegram_Bot_Token'.freeze
+  SECRETS_PATH = 'secrets.yml'.freeze
 
   def initialize
     @redis = Redis.new
@@ -11,7 +12,7 @@ class Bot
   end
 
   def run
-    Telegram::Bot::Client.run(BOT_TOKEN) do |bot|
+    Telegram::Bot::Client.run(load_token) do |bot|
       bot.listen do |message|
         reply(bot, message)
       end
@@ -36,5 +37,9 @@ class Bot
   def select_random_pun
     i = rand(0..@puns_count - 1)
     { number: i, text: @redis.get("pun_#{i}") }
+  end
+
+  def load_token
+    YAML.load_file(SECRETS_PATH)["TELEGRAM_TOKEN"]
   end
 end
