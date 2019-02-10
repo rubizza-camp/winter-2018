@@ -2,7 +2,6 @@ require 'nokogiri'
 require 'mechanize'
 
 class ScrapeQuotes
-
   URL = 'http://rapstyle.su/quotes.php'.freeze
   FILE = 'citaty.html'.freeze
 
