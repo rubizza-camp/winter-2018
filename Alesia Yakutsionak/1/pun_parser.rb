@@ -7,7 +7,7 @@ class PunParser
   BASE_URL = 'https://onelinefun.com'.freeze
 
   def run
-    while true do
+    loop do
       puts "Parsing #{@link}"
       page = parse_page
       @link = find_next_page_link(page)
@@ -26,21 +26,21 @@ class PunParser
 
   def parse_page
     url = BASE_URL + @link
-    page = Nokogiri::HTML(open(url))
+    page = Nokogiri::HTML(URI.open(url))
     page.css('article div p').each do |p|
       pun = p.text
       @puns << pun
-      end
+    end
     page
   end
 
   def find_next_page_link(page)
     a_next = page.css('article div.p > a')
     @link = if a_next && a_next.text =~ /^next/i
-      a_next.attr('href').value
-    else
-      nil
-    end
+              a_next.attr('href').value
+            else
+              nil
+            end
     @link
   end
 

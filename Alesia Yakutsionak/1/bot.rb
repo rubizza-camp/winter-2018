@@ -34,7 +34,7 @@ class Bot
   end
 
   def select_random_pun
-    i = rand(0..@puns_count-1)
+    i = rand(0..@puns_count - 1)
     { number: i, text: @redis.get("pun_#{i}") }
   end
 end
