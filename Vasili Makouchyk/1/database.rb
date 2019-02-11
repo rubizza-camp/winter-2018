@@ -2,7 +2,6 @@ require 'redis'
 require_relative 'scrape_quotes.rb'
 
 class DataBase
-
   def initialize
     @database = Redis.new
   end

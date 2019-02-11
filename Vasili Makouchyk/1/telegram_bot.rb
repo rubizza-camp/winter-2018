@@ -3,7 +3,7 @@ require_relative 'database.rb'
 
 class TelegramBot
   def initialize
-    @token = File.read('token.txt').intern
+    @token = File.read('token.txt').chomp
     raise StandartError, "token.txt doesn't exist" unless @token
     @db = DataBase.new
     @db.load_quotes
