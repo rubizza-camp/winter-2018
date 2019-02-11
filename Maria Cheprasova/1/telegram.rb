@@ -13,9 +13,9 @@ class Bot
   end
 
   def start(message)
-    start = "Hi there, #{message.from.first_name} " +
-    "\n @GovorynBot is there to provide you with best panches," +
-    " quites and wordplays\n Use /wordplay command to get a quote" +
+    start = "Hi there, #{message.from.first_name} " \
+    "\n @GovorynBot is there to provide you with best panches," \
+    " quites and wordplays\n Use /wordplay command to get a quote" \
     "\n /stop will finish bot process"
     @bot.api.sendMessage(chat_id: message.chat.id, text: start)
   end
