@@ -3,11 +3,9 @@ require 'nokogiri'
 require 'open-uri'
 require 'redis'
 
-URL = 'https://examples.yourdictionary.com/examples-of-puns.html'.freeze
-
 # Hi there
 class Parser
-  def initialize
+  URL = 'https://examples.yourdictionary.com/examples-of-puns.html'.freez def initialize
     @wp = []
     @db = Redis.new
     parse
@@ -16,8 +14,8 @@ class Parser
 
   def parse
     doc = Nokogiri::HTML(URI.open(URL))
-    @wp=doc.css('#article_intro ul li').map(&:content)
-    @wp=doc.css('#article_body ul li').map(&:content)
+    @wp = doc.css('#article_intro ul li').map(&:content)
+    @wp = doc.css('#article_body ul li').map(&:content)
     @wp.reverse!
     @wp.slice!(0..2)
   end
