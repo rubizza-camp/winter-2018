@@ -16,12 +16,8 @@ class Parser
 
   def parse
     doc = Nokogiri::HTML(URI.open(URL))
-    doc.css('#article_intro ul li').each do |link|
-      @wp.push(link.content)
-    end
-    doc.css('#article_body ul li').each do |link|
-      @wp.push(link.content)
-    end
+    @wp=doc.css('#article_intro ul li').map(&:content)
+    @wp=doc.css('#article_body ul li').map(&:content)
     @wp.reverse!
     @wp.slice!(0..2)
   end
