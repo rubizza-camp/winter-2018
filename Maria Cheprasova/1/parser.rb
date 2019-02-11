@@ -5,7 +5,8 @@ require 'redis'
 
 # Hi there
 class Parser
-  URL = 'https://examples.yourdictionary.com/examples-of-puns.html'.freez def initialize
+    URL = 'https://examples.yourdictionary.com/examples-of-puns.html'.freeze
+    def initialize
     @wp = []
     @db = Redis.new
     parse
