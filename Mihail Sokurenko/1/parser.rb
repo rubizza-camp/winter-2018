@@ -10,9 +10,9 @@ class Scraper
   end
 
   def wordplay
-    @parse_page.css('div#article_intro').css('li').map { |n| @wrd << n.text }
+    @parse_page.css('div#article_intro').css('li').each { |n| @wrd << n.text }
     unless @parse_page.css('div#article_body').css('li').css('a')
-      @parse_page.css('div#article_body').css('li').map { |n| @wrd << n.text }
+      @parse_page.css('div#article_body').css('li').each { |n| @wrd << n.text }
     end
     @wrd
   end
