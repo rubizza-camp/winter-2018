@@ -67,9 +67,9 @@ class IngestionsController < ApplicationController
   end
 
   def require_permission
-    redirect_to ingestions_url, alert: 'You do not have permissions to do it this way' if
-      current_user != Ingestion.find(params[:id]).user
-    # Or do something else here
+    return unless current_user != Ingestion.find(params[:id]).user
+      redirect_to ingestions_url, alert: 'You do not have permissions to do it this way'
+      # Or do something else here
     end
   end
 
