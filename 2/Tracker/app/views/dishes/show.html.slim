@@ -1,0 +1,27 @@
+p#notice = notice
+div class="card mx-auto" style="width: 18rem;"
+  div class="card-body"
+    h5 class="card-title"
+      strong Name:
+      = @dish.name
+    ul class="list-group list-group-flush"
+      li class="list-group-item"
+        strong Weight:
+        = @dish.weight
+      li class="list-group-item"
+        strong Calorie value:
+        = @dish.calorie_value
+
+      li class="list-group-item"
+        strong Proteins:
+        = @dish.proteins
+      li class="list-group-item"
+        strong Carbohydrates:
+        = @dish.carbohydrates
+      li class="list-group-item"
+        strong Fats:
+        = @dish.fats
+
+=> link_to 'Edit', edit_dish_path(@dish)
+'|
+=< link_to 'Back', dishes_path
