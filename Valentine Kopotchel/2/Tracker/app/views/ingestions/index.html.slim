@@ -1,0 +1,26 @@
+h1 class="text-center" Listing your ingestions
+
+table class="table table-bordered text-center"
+  thead
+    tr
+      th User
+      th Dish
+      th Name
+      th
+      th
+      th
+
+  tbody
+    - @ingestions.each do |ingestion|
+      - if ingestion.user== current_user
+        tr
+          td class="align-middle" = ingestion.user
+          td class="align-middle" = options_from_collection_for_select(ingestion.dishes, 'id', 'name')
+          td class="align-middle" = ingestion.name
+          td class="align-middle" = link_to 'Show', ingestion
+          td class="align-middle" = link_to 'Edit', edit_ingestion_path(ingestion)
+          td class="align-middle" = link_to 'Destroy', ingestion, data: {confirm: 'Are you sure?'}, method: :delete
+
+br
+
+= link_to 'New Ingestion', new_ingestion_path

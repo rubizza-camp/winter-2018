@@ -1,0 +1,28 @@
+h1 class="text-center" Listing dishes
+table class="table table-bordered text-center"
+  thead
+    tr
+      th scope="col" Name
+      th scope="col" Diagram
+      th Calorie value
+      th Weight
+      th
+      th
+      th
+
+  tbody
+    - @dishes.each do |dish|
+      tr
+        td class="align-middle" = dish.name
+        td height="50"= pie_chart ({'Carbohydrates' => dish.carbohydrates, 'Proteins' => dish.proteins, 'Fats' =>dish.fats})
+        td class="align-middle"= dish.calorie_value
+        td class="align-middle"= dish.weight
+        td class="align-middle"= link_to 'Show', dish
+        td class="align-middle"= link_to 'Edit', edit_dish_path(dish)
+        td class="align-middle"= link_to 'Destroy', dish, data: { confirm: 'Are you sure?' }, method: :delete
+
+
+
+br
+
+= link_to 'New Dish', new_dish_path
