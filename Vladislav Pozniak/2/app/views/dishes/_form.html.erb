@@ -1,0 +1,47 @@
+<%= form_with(model: dish, local: true) do |form| %>
+  <% if dish.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(dish.errors.count, "error") %> prohibited this dish from being saved:</h2>
+
+      <ul>
+      <% dish.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :weight %>
+    <%= form.number_field :weight %>
+  </div>
+
+  <div class="field">
+    <%= form.label :calorie_value %>
+    <%= form.number_field :calorie_value %>
+  </div>
+
+  <div class="field">
+    <%= form.label :proteins %>
+    <%= form.number_field :proteins %>
+  </div>
+
+  <div class="field">
+    <%= form.label :carbohydrates %>
+    <%= form.number_field :carbohydrates %>
+  </div>
+
+  <div class="field">
+    <%= form.label :fats %>
+    <%= form.number_field :fats %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

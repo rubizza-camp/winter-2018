@@ -1,0 +1,23 @@
+<div class="container align-items-center h-60">
+<div class="row">
+<h2>Food ration</h2> 
+</div>
+<div class="row">  
+<%= pie_chart current_user.ingestions.joins(:dishes).group("dishes.name").count %>
+</div>
+<div class="row">
+<h2>Total ingestions for last 7 days</h2>
+</div>
+<div class="row">
+<%= column_chart current_user.ingestions.group_by_day(:time, range: 6.days.ago.midnight..Time.now).count %>
+</div>
+<div class="row">
+<h2>Total daily calories for last 7 days</h2>
+</div>
+<div class="row">
+<%= line_chart current_user.ingestions.group_by_day(:time, range: 6.days.ago.midnight..Time.now).joins(:dishes).sum(:calorie_value) %>
+</div>
+<div class="row">
+<%= link_to 'Back', ingestions_path, :class => "btn btn-secondary" %>
+</div>
+</div>

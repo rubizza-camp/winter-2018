@@ -1,0 +1,18 @@
+<%= bootstrap_form_with(model: ingestion, local: true) do |form| %>
+  <% if ingestion.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(ingestion.errors.count, "error") %> prohibited this ingestion from being saved:</h2>
+
+      <ul>
+      <% ingestion.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+    <%= form.datetime_select :time %>
+    <%= form.label :dishes %>
+    <%= collection_select(:ingestion, :dish_ids, Dish.all, :id, :name, {}, { :multiple => true, :class => 'form-control' } )%>
+    <%= form.primary %>
+<% end %>

@@ -1,0 +1,41 @@
+<% unless notice.nil? %>
+<p id="notice", class="alert alert-dismissible alert-success text-center"><%= notice %></p>
+<% end %>
+<% unless alert.nil? %>
+<p id="alert", class="alert alert-dismissible alert-danger text-center"><%= alert %></p>
+<% end %>
+
+<div class="container align-items-center h-60">
+<div class="row">
+<h1>Ingestions</h1>
+</div>
+<div class="row">
+<%= link_to 'New Ingestion', new_ingestion_path, class: "btn btn-primary" %>
+</div>
+<div class="row">
+<table class="table table-hover">
+  <thead>
+    <tr class="table-primary">
+      <th scope="col">Time</th>
+      <th scope="col">Dishes</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% current_user.ingestions.each do |ingestion| %>
+      <tr>
+        <td><%= ingestion.time %></td>
+        <td><%= ingestion.dishes.map(&:name).join(', ') %></td>
+        <td style="width:60px"><%= link_to 'Edit', edit_ingestion_path(ingestion), class: "btn btn-outline-primary" %></td>
+        <td style="width:60px"><%= link_to 'Destroy', ingestion, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div class="row">
+<%= link_to 'Back', root_path, class: "btn btn-secondary" %>
+</div>
+</div>
