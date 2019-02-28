@@ -18,7 +18,7 @@ To submit your homework you need to do following:
 
 # Homework 0
 
-If you looking into Belarussian IT industry - you might hear about [Viktor Prokopenya](https://en.wikipedia.org/wiki/Viktor_Prokopenya), who is a famous enterpreneur here. Recently he gave [interview](https://www.youtube.com/watch?v=9efHso_5FOc) on youtube. During this interview one of keypoints which was discovered - he does not know how much bread costs these days. Our goal for todays homework will be help such people to learn about pricing for different basic items. 
+If you looking into Belarussian IT industry - you might hear about [Viktor Prokopenya](https://en.wikipedia.org/wiki/Viktor_Prokopenya), who is a famous enterpreneur here. Recently he gave [interview](https://www.youtube.com/watch?v=9efHso_5FOc) on youtube. During this interview one of keypoints which was discovered - he does not know how much bread costs these days. Our goal for todays homework will be help such people to learn about pricing for different basic items.
 
 ### Requirements
 
@@ -27,7 +27,7 @@ If you looking into Belarussian IT industry - you might hear about [Viktor Proko
 
 ## Level 1
 
-On this level you should create a basic program, where you can enter a name ( in Russian ) and it will give you an answer if item is found. 
+On this level you should create a basic program, where you can enter a name ( in Russian ) and it will give you an answer if item is found.
 
 Examples:
 
@@ -63,7 +63,7 @@ Examples
 ruby run.rb
 What price are you looking for?
 > Хлеб
-'Хлеб' is 1.14 BYN in Minsk these days. 
+'Хлеб' is 1.14 BYN in Minsk these days.
 Lowest was on 2017/01 at price 0.72 1.73BYN
 Maximum was on 2012/04 at 1.73BYN
 For similar price you also can afford 'Йогурт' and 'Кефир'.
@@ -90,7 +90,7 @@ On this homework we will practise how to:
 ### Requirements
 
 * Data for wordplays should be parsed with custom script and saved to database. Those scripts should be included to your submission
-* For database storage you should use `redis` database and use 'redis' gem for this. 
+* For database storage you should use `redis` database and use 'redis' gem for this.
 * For telegram bot you should use `telegram-bot-ruby` gem.
 * Your code should be well-scructured with multiple classes
 * You can choose any language you love ( Russian, English, whatever ) to get a data for this.
@@ -116,3 +116,48 @@ Here is an example:
 ### Deadline
 
 2018-01-31 23:59:59 UTC+3
+
+# Homework 2
+
+So new homework is about keeping you in fit, so just track what you eat and you'll live forever.
+Or a fairy tale about one more foodtracker.
+
+### Goal
+
+On this homework we will practise how to:
+
+* Create simple rails application
+* Use generators
+* Use associations
+* Use third party gems
+* Store persisted data on database
+
+### Requirements
+
+* There are three entities: a user, a dish and an ingestion.
+* Each entity has set of fields.
+  - User: first_name, last_name, age, weight and height
+  - Dish: name, weight, calorie_value, proteins, carbohydrates and fats
+  - Ingestion is who ate and what was eaten
+* For database storage you should use `postgresql` database and use 'pg' gem for this.
+* Your code should be well-scructured with multiple classes
+* Nobody should die of eyes bleeding. Use CSS power!
+### Hints
+
+* Check previous lectures for help.
+
+### Level 1
+
+The easiest thing you can do is implement functionality for user who can perform following operations: sign up/log in/log out and profile editing.
+If you think that it's enough - you are wrong. You need to add all entities and needed operations for foodtracker.
+
+### Level 2
+
+It's not funny to look at number of rows in tables, so please show stats in charts
+
+### Level 3
+
+Rails world has number of cool gems for managing DB, please use any of them to manage your new shiny app.
+### Deadline
+
+2019-02-29 23:59:59 UTC+3
