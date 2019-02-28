@@ -70,7 +70,6 @@ class IngestionsController < ApplicationController
     return unless current_user != Ingestion.find(params[:id]).user
       redirect_to ingestions_url, alert: 'You do not have permissions to do it this way'
       # Or do something else here
-    end
   end
 
   def collect_dishes
