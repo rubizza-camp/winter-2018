@@ -1,1 +1,1 @@
-json.partial! "ingestions/ingestion", ingestion: @ingestion
+json.partial! 'ingestions/ingestion', ingestion: @ingestion
