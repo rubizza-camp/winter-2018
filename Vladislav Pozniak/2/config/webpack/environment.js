@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 const { environment } = require('@rails/webpacker');
 
 const webpack = require('webpack');

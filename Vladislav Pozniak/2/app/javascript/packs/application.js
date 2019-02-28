@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 /* eslint no-console:0 */
 // This file is automatically compiled by Webpack, along with any other files
 // present in this directory. You're encouraged to place your actual application logic in
@@ -20,4 +21,4 @@ import Turbolinks from 'turbolinks';
 Rails.start();
 Turbolinks.start();
 
-console.log('Hello World from Webpacker')
+console.log('Hello World from Webpacker');
