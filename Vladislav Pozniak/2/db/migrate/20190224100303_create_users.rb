@@ -10,7 +10,7 @@ class CreateUsers < ActiveRecord::Migration[5.2]
       t.string :age
       t.string :weight
       t.string :height
-      
+
       t.timestamps
     end
     add_index :users, :email, unique: true

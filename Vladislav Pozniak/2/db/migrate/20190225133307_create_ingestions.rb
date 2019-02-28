@@ -4,7 +4,7 @@ class CreateIngestions < ActiveRecord::Migration[5.2]
       t.datetime :time
       t.belongs_to :user, foreign_key: true
       t.references :dish, index: true
- 
+
       t.timestamps
     end
   end
