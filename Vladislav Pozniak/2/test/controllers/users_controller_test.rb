@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
@@ -5,17 +7,17 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
   end
 
-  test "should get index" do
+  test 'should get index' do
     get users_url
     assert_response :success
   end
 
-  test "should get new" do
+  test 'should get new' do
     get new_user_url
     assert_response :success
   end
 
-  test "should create user" do
+  test 'should create user' do
     assert_difference('User.count') do
       post users_url, params: { user: { age: @user.age, email: @user.email, first_name: @user.first_name, height: @user.height, last_name: @user.last_name, password: 'secret', password_confirmation: 'secret', weight: @user.weight } }
     end
@@ -23,22 +25,22 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to user_url(User.last)
   end
 
-  test "should show user" do
+  test 'should show user' do
     get user_url(@user)
     assert_response :success
   end
 
-  test "should get edit" do
+  test 'should get edit' do
     get edit_user_url(@user)
     assert_response :success
   end
 
-  test "should update user" do
+  test 'should update user' do
     patch user_url(@user), params: { user: { age: @user.age, email: @user.email, first_name: @user.first_name, height: @user.height, last_name: @user.last_name, password: 'secret', password_confirmation: 'secret', weight: @user.weight } }
     assert_redirected_to user_url(@user)
   end
 
-  test "should destroy user" do
+  test 'should destroy user' do
     assert_difference('User.count', -1) do
       delete user_url(@user)
     end

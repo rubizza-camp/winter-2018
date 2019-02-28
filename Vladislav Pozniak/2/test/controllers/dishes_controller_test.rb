@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class DishesControllerTest < ActionDispatch::IntegrationTest
@@ -5,17 +7,17 @@ class DishesControllerTest < ActionDispatch::IntegrationTest
     @dish = dishes(:one)
   end
 
-  test "should get index" do
+  test 'should get index' do
     get dishes_url
     assert_response :success
   end
 
-  test "should get new" do
+  test 'should get new' do
     get new_dish_url
     assert_response :success
   end
 
-  test "should create dish" do
+  test 'should create dish' do
     assert_difference('Dish.count') do
       post dishes_url, params: { dish: { calorie_value: @dish.calorie_value, carbohydrates: @dish.carbohydrates, fats: @dish.fats, name: @dish.name, proteins: @dish.proteins, weight: @dish.weight } }
     end
@@ -23,22 +25,22 @@ class DishesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to dish_url(Dish.last)
   end
 
-  test "should show dish" do
+  test 'should show dish' do
     get dish_url(@dish)
     assert_response :success
   end
 
-  test "should get edit" do
+  test 'should get edit' do
     get edit_dish_url(@dish)
     assert_response :success
   end
 
-  test "should update dish" do
+  test 'should update dish' do
     patch dish_url(@dish), params: { dish: { calorie_value: @dish.calorie_value, carbohydrates: @dish.carbohydrates, fats: @dish.fats, name: @dish.name, proteins: @dish.proteins, weight: @dish.weight } }
     assert_redirected_to dish_url(@dish)
   end
 
-  test "should destroy dish" do
+  test 'should destroy dish' do
     assert_difference('Dish.count', -1) do
       delete dish_url(@dish)
     end
