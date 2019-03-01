@@ -1,0 +1,20 @@
+{
+  "name": "foodtracker",
+  "private": true,
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "bootstrap": "^4.3.1",
+    "bootswatch": "^4.3.1",
+    "chart.js": "^2.7.3",
+    "chartkick": "^3.0.2",
+    "jquery": "^3.3.1",
+    "jquery-ujs": "^1.2.2",
+    "popper.js": "^1.14.7",
+    "rails-ujs": "^5.2.2",
+    "turbolinks": "^5.2.0",
+    "yarn": "^1.13.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "2.11.2"
+  }
+}

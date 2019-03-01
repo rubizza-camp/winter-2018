@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Time:</strong>
+  <%= @ingestion.time %>
+</p>
+
+</p>
+  <strong>User:</strong>
+  <%#= @ingestion.user.id %>
+</p>
+
+<p>
+  <strong>Dishes:</strong>
+  <%= @ingestion.dishes.map(&:name).join(', ') %>
+</p>
+
+<%= link_to 'Edit', edit_ingestion_path(@ingestion) %> |
+<%= link_to 'Back', ingestions_path %>

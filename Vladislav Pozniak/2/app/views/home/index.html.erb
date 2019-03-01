@@ -1,0 +1,17 @@
+<% unless notice.nil? %>
+<p id="notice", class="alert alert-dismissible alert-success text-center"><%= notice %></p>
+<% end %>
+<div class="container align-items-center h-60">
+<div class="row">
+<h1>Simple foodtracker app</h1>
+</div>
+<div class="row">
+<h4>
+<% if current_user %>
+Hi, <%= render :plain => "#{current_user.first_name} #{current_user.last_name}" %>! Lets eat something! :3
+<% else %>
+Hi there! Please, log in or sign up first.
+<% end %>
+</h4>
+</div>
+</div>

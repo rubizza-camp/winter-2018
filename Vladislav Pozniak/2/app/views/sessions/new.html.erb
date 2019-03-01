@@ -1,0 +1,17 @@
+<% unless alert.nil? %>
+<p id="alert", class="alert alert-dismissible alert-danger text-center"><%= alert %></p>
+<% end %>
+<div class="container align-items-center h-60">
+<div class="row">
+<h1>Login</h1>
+</div>
+<div class="row">
+<%= bootstrap_form_tag url: '/sessions' do |form| %>
+    <%= form.text_field :email %>
+    <%= form.password_field :password %>
+    <%= form.primary "Login" %>
+<% end %>
+</div>
+<div class="row">
+<%= link_to 'Back',root_path, :class => "btn btn-secondary" %>
+</div>
