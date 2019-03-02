@@ -8,13 +8,11 @@ class Database
   end
 
   def setdata
-    (0...@parser.length).each do |i|
-      @redis.set(i, @parser[i])
-    end
+    0.upto(@parser.length) { |i| @redis.set(i, @parser[i]) }
   end
 
   def getdata
-    i = rand(0...@parser.length)
+    i = rand(@parser.length)
     @redis.get(i)
   end
 end

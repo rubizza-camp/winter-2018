@@ -1,16 +1,17 @@
 require 'telegram/bot'
 require './database.rb'
 
+TELEGRAM_BOT_TOKEN = '603660924:AAFQSiTlEJNAh1zCt4MgwAkCZt1rprEebjc'.freeze
+
 class MyBot
   def initialize
-    @token = '603660924:AAFQSiTlEJNAh1zCt4MgwAkCZt1rprEebjc'
     @database = Database.new
     @question = 'Нажми:'
     @answers = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: %w(/wordplay), one_time_keyboard: true)
   end
 
   def start_listen
-    Telegram::Bot::Client.run(@token) do |bot|
+    Telegram::Bot::Client.run(TELEGRAM_BOT_TOKEN) do |bot|
       bot.listen do |message|
         choice(bot, message)
       end
@@ -30,7 +31,6 @@ class MyBot
     when '/start'
       message(bot, message, "Здарова #{message.from.first_name}")
       bot.api.send_message(chat_id: message.chat.id, text: @question, reply_markup: @answers)
-      # keyboard(bot, message, 'Нажми:', @answers)
     when '/wordplay'
       message(bot, message, db)
     else
