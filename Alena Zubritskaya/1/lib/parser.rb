@@ -3,10 +3,10 @@ require 'mechanize'
 class Parser
   def initialize
     a = Mechanize.new
-    @page = a.get("https://icitata.ru/citaty-iz-pesen-rep/")
+    @page = a.get('https://icitata.ru/citaty-iz-pesen-rep/')
   end
 
-  def get_wordplay
-    @page.css('.td-ss-main-content p:nth-child(n)').map{ |w| w.inner_text }
+  def getwordplay
+    @page.css('.td-ss-main-content p:nth-child(n)').map{|w| w.inner_text}
   end
 end
