@@ -1,0 +1,24 @@
+p#notice = notice
+
+p
+  strong Name:
+  = @dish.name
+p
+  strong Weight:
+  = @dish.weight
+p
+  strong Calorie value:
+  = @dish.calorie_value
+p
+  strong Proteins:
+  = @dish.proteins
+p
+  strong Carbohydrates:
+  = @dish.carbohydrates
+p
+  strong Fats:
+  = @dish.fats
+
+=> link_to 'Edit', edit_dish_path(@dish)
+'|
+=< link_to 'Back', dishes_path
