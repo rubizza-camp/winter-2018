@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title
+      | AmazingCalorieCounter
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+  body
+    = render 'layouts/nav'
+    .container
+      - if notice 
+        .alert.alert-success { role="alert" }
+          A = notice
+      = yield
+    footer.footer
+      .container
+        span &copy; #{ Date.today.year } Sikorsky inc.

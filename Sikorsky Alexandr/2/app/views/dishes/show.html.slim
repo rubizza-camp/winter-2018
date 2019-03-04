@@ -1,0 +1,22 @@
+.jumbotron
+  h3
+    strong = @dish.name.capitalize
+  p
+    strong Weight:
+    = @dish.weight
+  p
+    strong Calorie value:
+    = @dish.calorie_value
+  p
+    strong Proteins:
+    = @dish.proteins
+  p
+    strong Carbohydrates:
+    = @dish.carbohydrates
+  p
+    strong Fats:
+    = @dish.fats
+
+  => link_to '<button class="btn btn-primary">edit</button>'.html_safe, edit_dish_path(@dish)
+
+  =< link_to '<button class="btn btn-secondary">back</button>'.html_safe, dishes_path

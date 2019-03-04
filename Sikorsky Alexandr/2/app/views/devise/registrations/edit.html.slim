@@ -1,0 +1,41 @@
+h2
+  | Edit 
+  = resource_name.to_s.humanize
+= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+  = render "devise/shared/error_messages", resource: resource
+  = f.text_field :first_name, autofocus: true, autocomplete: "first_name"  
+  = f.text_field :last_name, autofocus: true, autocomplete: "last_name"  
+  .field
+    = f.email_field :email, autofocus: true, autocomplete: "email"
+  - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+    div
+      | Currently waiting confirmation for: 
+      = resource.unconfirmed_email
+  = f.number_field :age, in: 1..100, step: 1, autofocus: true
+  = f.number_field :weight, in: 10..150, step: 1, autofocus: true
+  = f.number_field :height, in: 1..100, step: 1, autofocus: true  
+    i
+      | (leave blank if you don't want to change it)
+    br
+    = f.password_field :password, autocomplete: "new-password"
+    - if @minimum_password_length
+      br
+      em
+        = @minimum_password_length
+        |  characters minimum
+  .field
+    = f.password_field :password_confirmation, autocomplete: "new-password"
+  .field
+    i
+      | (we need your current password to confirm your changes)
+    br
+    = f.password_field :current_password, autocomplete: "current-password"
+  .actions
+    = f.submit "Update"
+br
+h3
+  | Cancel my account
+p
+  | Unhappy? 
+  = button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete
+= link_to "Back", :back
