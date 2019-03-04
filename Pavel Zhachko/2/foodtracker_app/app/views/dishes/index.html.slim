@@ -17,11 +17,9 @@ table
     - @dishes.each do |dish|
       tr
         td = dish.name
-        td = dish.weight
+        td = pie_chart ({'Proteins' => dish.proteins, "Carbohydrates" => dish.carbohydrates,"Fats" => dish.fats})
         td = dish.calorie_value
-        td = dish.proteins
-        td = dish.carbohydrates
-        td = dish.fats
+        td = dish.weight
         td = link_to 'Show', dish
         td = link_to 'Edit', edit_dish_path(dish)
         td = link_to 'Destroy', dish, data: { confirm: 'Are you sure?' }, method: :delete

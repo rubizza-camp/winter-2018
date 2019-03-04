@@ -7,17 +7,12 @@ p
   strong Weight:
   = @dish.weight
 p
-  strong Calorie value:
+  strong Calorie:
   = @dish.calorie_value
-p
-  strong Proteins:
-  = @dish.proteins
-p
-  strong Carbohydrates:
-  = @dish.carbohydrates
-p
-  strong Fats:
-  = @dish.fats
+  
+= pie_chart [["Proteins", @dish.proteins], ["Carbohydrates", @dish.carbohydrates], ["Fats", @dish.fats]]
+
+
 
 => link_to 'Edit', edit_dish_path(@dish)
 '|
