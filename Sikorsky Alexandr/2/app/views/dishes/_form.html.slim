@@ -1,0 +1,15 @@
+= bootstrap_form_for @dish do |f|
+  - if @dish.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@dish.errors.count, "error")} prohibited this dish from being saved:"
+      ul
+        - @dish.errors.full_messages.each do |message|
+          li = message
+
+  = f.text_field :name
+  = f.number_field :weight
+  = f.number_field :calorie_value
+  = f.number_field :proteins
+  = f.number_field :carbohydrates
+  = f.number_field :fats
+  .actions = f.submit

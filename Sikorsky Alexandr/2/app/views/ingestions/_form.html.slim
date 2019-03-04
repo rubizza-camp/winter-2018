@@ -1,0 +1,10 @@
+= bootstrap_form_for @ingestion do |f|
+  - if @ingestion.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@ingestion.errors.count, "error")} prohibited this dish from being saved:"
+      ul
+        - @ingestion.errors.full_messages.each do |message|
+          li = message
+  = f.collection_select(:dish_ids, Dish.all, :id, :name, {}, {:multiple => true, :class => 'form-control'})
+  = f.datetime_select :time 
+  .actions = f.submit
