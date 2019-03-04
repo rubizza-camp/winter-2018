@@ -1,24 +1,10 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+* Ruby version 2.5.3
 
-Things you may want to cover:
+* Database creation: adjust appropriate postgres role (look into database.yml)  
 
-* Ruby version
+* run: rails db:setup , rails db:seed
 
-*s
+* test user: user@email.com | test123  
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
