@@ -19,3 +19,4 @@ Dish.create([
               { name: 'potato', weight: 200, calorie_value: 400, proteins: 3,
                 carbohydrates: 50, fats: 8 }
             ])
+AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
