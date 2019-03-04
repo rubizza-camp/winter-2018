@@ -12,8 +12,8 @@ h2
       | Currently waiting confirmation for: 
       = resource.unconfirmed_email
   = f.number_field :age, in: 1..100, step: 1, autofocus: true
-  = f.number_field :weight, in: 10..150, step: 1, autofocus: true
-  = f.number_field :height, in: 1..100, step: 1, autofocus: true  
+  = f.number_field :weight, in: 10..350, step: 1, autofocus: true
+  = f.number_field :height, in: 50..250, step: 1, autofocus: true  
     i
       | (leave blank if you don't want to change it)
     br
@@ -33,9 +33,7 @@ h2
   .actions
     = f.submit "Update"
 br
-h3
-  | Cancel my account
 p
   | Unhappy? 
-  = button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete
+  = button_to "Cancel my account", registration_path(resource_name), class: 'btn btn-danger', data: { confirm: "Are you sure?" }, method: :delete
 = link_to "Back", :back

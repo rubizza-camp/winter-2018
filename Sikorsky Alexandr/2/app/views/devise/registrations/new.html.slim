@@ -10,9 +10,9 @@ h2
   .field
     = f.number_field :age, in: 1..100, step: 1, autofocus: true
   .field
-    = f.number_field :weight, in: 20..180, step: 1, autofocus: true
+    = f.number_field :weight, in: 10..250, step: 1, autofocus: true
   .field
-    = f.number_field :height, in: 30..250, step: 1, autofocus: true    
+    = f.number_field :height, in: 50..250, step: 1, autofocus: true    
   .field
     - if @minimum_password_length
       em

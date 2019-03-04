@@ -13,21 +13,19 @@ class IngestionsController < ApplicationController
 
   def create
     @ingestion = current_user.ingestions.new(ingestion_params)
-
-    ingestion_params['dish_ids'].reject(&:empty?).each do |dish_id|
-      dish = Dish.find(dish_id)
-      @ingestion.dishes << dish
+    if @ingestion.save
+      redirect_to ingestions_path, notice: 'ingestion was successfully added.'
+    else
+      render :new
     end
-
-    respond2create(@ingestion.save)
   end
 
   def update
-    @ingestion.time = ingestion_params[:time]
-    @ingestion.dishes.clear
-    add_dishes
-
-    respond2update(@ingestion)
+    if @ingestion.update(ingestion_params)
+      redirect_to ingestions_path, notice: 'ingestion was successfully updated.'
+    else
+      render :edit
+    end
   end
 
   def destroy
@@ -47,22 +45,6 @@ class IngestionsController < ApplicationController
 
   def set_ingestion
     @ingestion = Ingestion.find(params[:id])
-  end
-
-  def respond2create(save_result)
-    if save_result
-      redirect_to ingestions_path, notice: 'ingestion was successfully added.'
-    else
-      render :new
-    end
-  end
-
-  def respond2update(save_result)
-    if save_result
-      redirect_to ingestions_path, notice: 'ingestion was successfully updated.'
-    else
-      render :edit
-    end
   end
 
   def ingestion_params
