@@ -1,0 +1,24 @@
+<%- provide(:title, 'Ingestions') %>
+<h1>List of your ingestion</h1>
+<table class="ingestions">
+  <thead>
+    <tr>
+      <th class="row-1 row-name">Name</th>
+      <th class="row-2 row-created_at">Date</th>
+    </tr>
+  </thead>
+  <%- current_user.ingestions.each do |ingestion| %>
+  <%- ingestion.dishes.each do |dish| %>
+  <tbody>
+    <tr>
+      <td><%= dish.name %></td>
+      <td><%= ingestion.created_at.to_date %></td>
+      <td><%= link_to 'Edit', edit_ingestion_path(ingestion) %></td>
+      <td><%= link_to 'Destroy', ingestion, method: :delete,
+                                       data: { confirm: 'Are you sure?' } %></td>
+  <% end %>
+  <% end %>
+  </tbody>
+</table>
+<br>
+<%= link_to 'New Ingestion', new_ingestion_path %>

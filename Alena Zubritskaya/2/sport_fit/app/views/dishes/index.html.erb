@@ -1,0 +1,36 @@
+<% provide(:title, 'All dishes') %>
+<h1>All dishes</h1>
+
+<table class="dishes">
+  <thead>
+    <tr>
+      <th class="row-1 row-name">Name</th>
+      <th class="row-2 row-weight">Weight</th>
+      <th class="row-3 row-calorie_value">Calories</th>
+      <th class="row-4 row-proteins">Proteins</th>
+      <th class="row-5 row-carbohydrates">Carbs*</th>
+      <th class="row-6 row-fats">Fats</th>
+    </tr>
+  </thead>
+
+<% @dishes.each do |dish| %>
+<tbody>
+  <tr>
+    <td><%= dish.name %></td>
+    <td><%= dish.weight %></td>
+    <td><%= dish.calorie_value %></td>
+    <td><%= dish.proteins %></td>
+    <td><%= dish.carbohydrates %></td>
+    <td><%= dish.fats %></td>
+    <td><%= link_to 'Edit', edit_dish_path(dish) %></td>
+    <% if current_user.admin? %>
+    <td><%= link_to 'Destroy', dish, method: :delete,
+                                     data: { confirm: 'Are you sure?' } %></td>
+                                     <% end %>
+<% end %>
+</tbody>
+</table>
+
+<br>
+<%= link_to 'New Dish', new_dish_path %>
+<%= render 'footer' %>
