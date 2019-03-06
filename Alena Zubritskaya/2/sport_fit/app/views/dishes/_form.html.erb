@@ -1,0 +1,23 @@
+<%= form_for(@dish) do |f| %>
+<%= render 'shared/error_messages_dishes' %>
+
+<%= f.label :name %>
+<%= f.text_field :name, class: 'form-control' %>
+
+<%= f.label :weight %>
+<%= f.text_field :weight, class: 'form-control' %>
+
+<%= f.label :calorie_value %>
+<%= f.text_field :calorie_value, class: 'form-control' %>
+
+<%= f.label :proteins %>
+<%= f.text_field :proteins, class: 'form-control' %>
+
+<%= f.label :carbohydrates %>
+<%= f.text_field :carbohydrates, class: 'form-control' %>
+
+<%= f.label :fats %>
+<%= f.text_field :fats, class: 'form-control' %>
+
+<%= f.submit yield(:button_text), class: "btn btn-primary" %>
+<% end %>

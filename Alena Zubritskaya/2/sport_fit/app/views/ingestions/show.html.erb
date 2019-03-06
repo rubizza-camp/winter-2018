@@ -1,0 +1,13 @@
+<% provide(:title, 'Show ingestion') %>
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info"
+    <ul>
+        <%- @ingestion.dishes.each do |dish| %>
+        <h3> <%= dish.name %></h3>
+        <% end %>
+        <h2> Created at: <%= @ingestion.created_at %></h2>
+        </ul>
+    </section>
+  </aside>
+</div>

@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  weight: 1
+  calorie_value: 1
+  proteins: 1
+  carbohydrates: 1
+  fats: 1
+
+two:
+  name: MyString
+  weight: 1
+  calorie_value: 1
+  proteins: 1
+  carbohydrates: 1
+  fats: 1

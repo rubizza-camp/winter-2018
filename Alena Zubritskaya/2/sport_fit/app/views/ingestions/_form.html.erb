@@ -1,0 +1,13 @@
+<%= form_for(@ingestion) do |f| %>
+
+
+
+<%= f.label :dish_id %>
+<% Dish.all.each do |dish| %>
+  <%= check_box_tag "ingestion[dish_ids][]", dish.id, @ingestion.dish_ids.include?(dish.id), id: dom_id(dish) %>
+  <%= dish.name %><br/>
+<% end %>
+
+
+<%= f.submit yield(:button_text), class: "btn btn-primary" %>
+<% end %>
