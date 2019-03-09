@@ -9,23 +9,16 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
-
-   <p class="navbar-text pull-right">
-   <% if user_signed_in? %>
-     <strong><%= current_user.email %></strong>.
-     <%= link_to 'Edit profile', edit_user_registration_path, :class => 'navbar-link' %> |
-     <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
-   <% else %>
-     <%= link_to "Login", new_user_session_path, :class => 'navbar-link'  %>
-   <% end %>
-   </p>
-
+  <body class="<%= yield (:body_class) %>">
    <% if notice %>
     <p class="alert alert-success"><%= notice %></p>
    <% end %>
    <% if alert %>
     <p class="alert alert-danger"><%= alert %></p>
+   <% end %>
+
+   <% if user_signed_in? %>
+     <%= render "menu/header" %>
    <% end %>
 
    <%= yield %>
