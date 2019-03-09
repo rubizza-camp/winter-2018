@@ -1,0 +1,1 @@
+Perform bundle install, start the redis server, then run telegram.rb
