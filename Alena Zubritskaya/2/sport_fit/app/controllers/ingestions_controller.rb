@@ -1,6 +1,6 @@
 class IngestionsController < ApplicationController
-  before_action :current_user,   only: [:edit, :update]
-  before_action :admin_user,     only: [:destroy]
+  before_action :current_user, only: %i[edit, update]
+  before_action :admin_user, only: :destroy
 
   def index
     @ingestions = Ingestion.all
@@ -17,7 +17,7 @@ class IngestionsController < ApplicationController
   def create
     @ingestion = current_user.ingestions.new(ingestion_params)
     if @ingestion.save!
-      flash[:success] = "Ingestion created!"
+      flash[:success] = 'Ingestion created!'
       render 'ingestions/index'
     else
       render 'static_pages/home'
@@ -31,7 +31,7 @@ class IngestionsController < ApplicationController
   def update
     @ingestion = Ingestion.find(params[:id])
     if @ingestion.update(ingestion_params)
-      flash[:success] = "Ingestion updated"
+      flash[:success] = 'Ingestion updated'
       redirect_to @ingestion
     else
       render 'edit'
@@ -40,15 +40,13 @@ class IngestionsController < ApplicationController
 
   def destroy
     Ingestion.find(params[:id]).destroy
-    flash[:success] = "Ingestion deleted."
+    flash[:success] = 'Ingestion deleted.'
     redirect_to ingestions_url
   end
 
   private
 
   def ingestion_params
-    defaults = { user_id: current_user.id }
-    params.require(:ingestion).permit(:user_id, :dish_ids=>[])
+    params.require(:ingestion).permit(:user_id, dish_ids: [])
   end
-
 end

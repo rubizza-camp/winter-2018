@@ -1,6 +1,6 @@
 class DishesController < ApplicationController
-  before_action :current_user,   only: [:edit, :update]
-  before_action :admin_user,     only: :destroy
+  before_action :current_user, only: %i[edit, update]
+  before_action :admin_user, only: :destroy
 
   def index
     @dishes = Dish.all
@@ -17,7 +17,7 @@ class DishesController < ApplicationController
   def create
   @dish = Dish.new(dish_params)
   if @dish.save
-    flash[:success] = "Our dish is create!"
+    flash[:success] = 'Our dish is create!'
     redirect_to @dish
     else
       render 'new'
@@ -31,7 +31,7 @@ class DishesController < ApplicationController
   def update
     @dish = Dish.find(params[:id])
     if @dish.update_attributes(dish_params)
-      flash[:success] = "Dish updated"
+      flash[:success] = 'Dish updated'
       redirect_to @dish
     else
       render 'edit'
@@ -40,7 +40,7 @@ class DishesController < ApplicationController
 
   def destroy
     Dish.find(params[:id]).destroy
-    flash[:success] = "Dish deleted."
+    flash[:success] = 'Dish deleted.'
     redirect_to dishes_url
   end
 
