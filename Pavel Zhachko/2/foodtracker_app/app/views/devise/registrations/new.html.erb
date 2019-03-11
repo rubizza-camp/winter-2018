@@ -22,42 +22,42 @@
                           <div class="form-group row">
                             <%= f.label :firstname, "First Name", class: "col-md-4 col-form-label text-md-right" %>
                             <div class="col-md-6">
-                              <%= f.text_field :firstname, autofocus: true, class: 'form-control' %>
+                              <%= f.text_field :firstname, :required => true, autofocus: true, class: 'form-control' %>
                             </div>
                           </div>
 
                           <div class="form-group row">
                             <%= f.label :lastname, "Last Name", class: "col-md-4 col-form-label text-md-right"  %>
                             <div class="col-md-6">
-                              <%= f.text_field :lastname, autofocus: true, class: 'form-control' %>
+                              <%= f.text_field :lastname, :required => true, autofocus: true, class: 'form-control' %>
                             </div>
                           </div>
 
                           <div class="form-group row">
                             <%= f.label :age, "Your Age", class: "col-md-4 col-form-label text-md-right"  %>
                             <div class="col-md-6">
-                              <%= f.number_field :age, min: "1", autofocus: true, class: 'form-control' %>
+                              <%= f.number_field :age, :required => true, min: "1", autofocus: true, class: 'form-control' %>
                             </div>
                           </div>
 
                           <div class="form-group row">
                             <%= f.label :weight, "Your Weight", class: "col-md-4 col-form-label text-md-right"  %>
                             <div class="col-md-6">
-                              <%= f.number_field :weight, min: "10", placeholder: "Please write your weight in kilograms", autofocus: true, class: 'form-control' %>
+                              <%= f.number_field :weight, :required => true, min: "10", placeholder: "Please write your weight in kilograms", autofocus: true, class: 'form-control' %>
                             </div>
                           </div>
 
                           <div class="form-group row">
                             <%= f.label :height, "Your Height", class: "col-md-4 col-form-label text-md-right"  %>
                             <div class="col-md-6">
-                              <%= f.number_field :height, min: "50", placeholder: "Please write your height in centimetres", autofocus: true, class: 'form-control' %>
+                              <%= f.number_field :height, :required => true, min: "50", placeholder: "Please write your height in centimetres", autofocus: true, class: 'form-control' %>
                             </div>
                           </div>
 
                           <div class="form-group row">
                             <%= f.label :email, "Email", class: "col-md-4 col-form-label text-md-right"  %>
                             <div class="col-md-6">
-                              <%= f.email_field :email, autofocus: true, autocomplete: 'email', class: 'form-control' %>
+                              <%= f.email_field :email, :required => true, autofocus: true, autocomplete: 'email', class: 'form-control' %>
                             </div>
                           </div>
 
