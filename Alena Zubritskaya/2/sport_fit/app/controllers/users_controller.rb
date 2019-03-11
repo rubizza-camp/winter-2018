@@ -14,11 +14,11 @@ class UsersController < ApplicationController
   end
 
   def create
-  @user = User.new(user_params)
-  if @user.save
-    log_in @user
-    flash[:success] = 'Welcome!'
-    redirect_to @user
+    @user = User.new(user_params)
+    if @user.save
+      log_in @user
+      flash[:success] = 'Welcome!'
+      redirect_to @user
     else
       render 'new'
     end
@@ -52,7 +52,7 @@ class UsersController < ApplicationController
 
   def logged_in_user
     unless logged_in?
-      flash[:danger] = "Please log in."
+      flash[:danger] = 'Please log in.''
       redirect_to login_url
     end
   end
@@ -65,5 +65,4 @@ class UsersController < ApplicationController
   def admin_user
     redirect_to(root_url) unless current_user.admin?
   end
-
 end

@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_05_112113) do
-
-  # These are extensions that must be enabled in order to support this database
+ActiveRecord::Schema.define(version: 201_903_051_121_13) do
   enable_extension 'plpgsql'
 
   create_table 'dish_ingestions', force: :cascade do |t|
