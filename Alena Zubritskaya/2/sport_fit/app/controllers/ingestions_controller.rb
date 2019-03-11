@@ -1,5 +1,5 @@
 class IngestionsController < ApplicationController
-  before_action :current_user, only: %i[edit, update]
+  before_action :current_user, only: %i[edit update]
   before_action :admin_user, only: :destroy
 
   def index

@@ -1,5 +1,5 @@
 class DishesController < ApplicationController
-  before_action :current_user, only: %i[edit, update]
+  before_action :current_user, only: %i[edit update]
   before_action :admin_user, only: :destroy
 
   def index
@@ -8,17 +8,17 @@ class DishesController < ApplicationController
 
   def show
     @dish = Dish.find(params[:id])
-   end
+  end
 
   def new
     @dish = Dish.new
   end
 
   def create
-  @dish = Dish.new(dish_params)
-  if @dish.save
-    flash[:success] = 'Our dish is create!'
-    redirect_to @dish
+    @dish = Dish.new(dish_params)
+    if @dish.save
+      flash[:success] = 'Our dish is create!'
+      redirect_to @dish
     else
       render 'new'
     end
