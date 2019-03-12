@@ -1,33 +1,33 @@
 .container
   .row
     .col-md-12
-      h4
+      h2[style="text-align: center;"]
         | Listing dishes
 
-        .table-responsive
-        table#mytable.table.table-bordered.table-striped.table-hover[style="width:120%;text-align: center;"]
-          thead
-            tr
-              th
-                | Name
-              th
-                | PCF
-              th
-                | Calorie value
-              th
-                | Weight
+.table-responsive
+  table#mytable.table.table-bordered.table-striped.table-hover[style="text-align: center;"]
+    thead
+      tr
+        th
+          | Name
+        th
+          | PCF
+        th
+          | Calorie value
+        th
+          | Weight
 
-          tbody
-            - @dishes.each do |dish|
-              tr
-                td = dish.name
-                td = pie_chart ({'Proteins' => dish.proteins, "Carbohydrates" => dish.carbohydrates,"Fats" => dish.fats})
-                td = dish.calorie_value
-                td = dish.weight
-                td = link_to 'Show', dish
-                td = link_to 'Edit', edit_dish_path(dish)
-                td = link_to 'Destroy', dish, data: { confirm: 'Are you sure?' }, method: :delete
+    tbody
+      - @dishes.each do |dish|
+        tr
+          td = dish.name
+          td = pie_chart ({'Proteins' => dish.proteins, "Carbohydrates" => dish.carbohydrates,"Fats" => dish.fats})
+          td = dish.calorie_value
+          td = dish.weight
+          td = link_to 'Show', dish
+          td = link_to 'Edit', edit_dish_path(dish)
+          td = link_to 'Destroy', dish, data: { confirm: 'Are you sure?' }, method: :delete
 
-        br
+  br
 
-        = link_to 'New Dish', new_dish_path
+  = link_to 'New Dish', new_dish_path

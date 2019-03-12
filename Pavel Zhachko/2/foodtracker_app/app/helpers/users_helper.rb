@@ -1,5 +1,5 @@
 module UsersHelper
   def full_name
-    @user.firstname + " " + @user.lastname
+    current_user.firstname + " " + current_user.lastname
   end
 end

@@ -6,10 +6,15 @@
         - @ingestion.errors.full_messages.each do |message|
           li = message
 
-  .field
-    = f.label :user
-    = f.text_field :user
-  .field
-    = f.label :dish
-    = f.text_field :dish
-  .actions = f.submit
+  .form-group.row
+    = f.label :user, class: "col-md-4 col-form-label text-md-right"
+    .col-md-6
+      = f.text_field :user, :required => true, class: 'form-control'
+  .form-group.row
+    = f.label :dish, class: "col-md-4 col-form-label text-md-right"
+    .col-md-6
+      = f.text_field :dish, :required => true, class: 'form-control'
+  .form-group.row
+    button.btn.btn-default type="submit" Create Ingestion
+  .form-group.row
+    = link_to '<button type="button" class="btn btn-default">Back</button>'.html_safe, :back
