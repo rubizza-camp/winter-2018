@@ -1,8 +1,9 @@
-h1 Editing dish
-
-== render 'form'
-
-=> link_to 'Show', @dish
-'|
-=< link_to 'Back', dishes_path
-
+.container
+  .row
+    .col-12
+      .card
+        .card-header
+          h3
+            | Editing dish
+        .card-body
+          == render 'form'

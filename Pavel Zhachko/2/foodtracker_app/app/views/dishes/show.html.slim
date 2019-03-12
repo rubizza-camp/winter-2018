@@ -1,19 +1,22 @@
-p#notice = notice
+.container
+  .row
+    .col-12
+      .card
+        .card-header
+          h3
+            | Name:
+            = @dish.name
+        .card-body
+          p
+          strong Weight:
+          = @dish.weight
+          p
+          strong Calorie:
+          = @dish.calorie_value
 
-p
-  strong Name:
-  = @dish.name
-p
-  strong Weight:
-  = @dish.weight
-p
-  strong Calorie:
-  = @dish.calorie_value
-  
-= pie_chart [["Proteins", @dish.proteins], ["Carbohydrates", @dish.carbohydrates], ["Fats", @dish.fats]]
+          = pie_chart [["Proteins", @dish.proteins], ["Carbohydrates", @dish.carbohydrates], ["Fats", @dish.fats]]
 
 
 
-=> link_to 'Edit', edit_dish_path(@dish)
-'|
-=< link_to 'Back', dishes_path
+          => link_to '<button type="button">Edit</button>'.html_safe, edit_dish_path(@dish)
+          =< link_to '<button type="button">Back</button>'.html_safe, dishes_path
