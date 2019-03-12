@@ -1,0 +1,23 @@
+h1 Listing ingestions
+
+table
+  thead
+    tr
+      th User
+      th Dish
+      th
+      th
+      th
+
+  tbody
+    - @ingestions.each do |ingestion|
+      tr
+        td = ingestion.user
+        td = ingestion.dish
+        td = link_to 'Show', ingestion
+        td = link_to 'Edit', edit_ingestion_path(ingestion)
+        td = link_to 'Destroy', ingestion, data: { confirm: 'Are you sure?' }, method: :delete
+
+br
+
+= link_to 'New Ingestion', new_ingestion_path

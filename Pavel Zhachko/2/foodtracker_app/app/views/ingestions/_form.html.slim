@@ -1,0 +1,15 @@
+= form_for @ingestion do |f|
+  - if @ingestion.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@ingestion.errors.count, "error")} prohibited this ingestion from being saved:"
+      ul
+        - @ingestion.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :user
+    = f.text_field :user
+  .field
+    = f.label :dish
+    = f.text_field :dish
+  .actions = f.submit

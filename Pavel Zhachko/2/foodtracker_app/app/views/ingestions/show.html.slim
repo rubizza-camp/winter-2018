@@ -1,0 +1,12 @@
+p#notice = notice
+
+p
+  strong User:
+  = @ingestion.user
+p
+  strong Dish:
+  = @ingestion.dish
+
+=> link_to 'Edit', edit_ingestion_path(@ingestion)
+'|
+=< link_to 'Back', ingestions_path
