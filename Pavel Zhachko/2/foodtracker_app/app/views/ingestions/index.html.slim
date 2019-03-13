@@ -10,18 +10,18 @@ table#mytable.table.table-bordered.table-striped.table-hover[style="width:120%;t
     tr
       th User
       th Dish
-      th
-      th
-      th
+      th Name
 
   tbody
     - @ingestions.each do |ingestion|
-      tr
-        td = ingestion.user
-        td = ingestion.dish
-        td = link_to 'Show', ingestion
-        td = link_to 'Edit', edit_ingestion_path(ingestion)
-        td = link_to 'Destroy', ingestion, data: { confirm: 'Are you sure?' }, method: :delete
+      - if ingestion.user== current_user
+        tr
+          td = ingestion.user
+          td = ingestion.dish.name
+          td = ingestion.name
+          td = link_to 'Show', ingestion
+          td = link_to 'Edit', edit_ingestion_path(ingestion)
+          td = link_to 'Destroy', ingestion, data: { confirm: 'Are you sure?' }, method: :delete
 
 br
 
