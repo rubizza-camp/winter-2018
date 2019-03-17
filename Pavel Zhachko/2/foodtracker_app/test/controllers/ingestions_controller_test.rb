@@ -18,7 +18,10 @@ class IngestionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create ingestion' do
     assert_difference('Ingestion.count') do
-      post ingestions_url, params: { ingestion: { name: @ingestion.name, time: @ingestion.time, dish_ids: @ingestion.dish_ids} }
+      post ingestions_url,
+           params: { ingestion: { name: @ingestion.name,
+                                  time: @ingestion.time,
+                                  dish_ids: @ingestion.dish_ids } }
     end
 
     assert_redirected_to ingestion_url(Ingestion.last)
@@ -35,7 +38,10 @@ class IngestionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should update ingestion' do
-    patch ingestion_url(@ingestion), params: { ingestion: { name: @ingestion.name, time: @ingestion.time, dish_ids: @ingestion.dish_ids} }
+    patch ingestion_url(@ingestion),
+          params: { ingestion: { name: @ingestion.name,
+                                 time: @ingestion.time,
+                                 dish_ids: @ingestion.dish_ids } }
     assert_redirected_to ingestion_url(@ingestion)
   end
 

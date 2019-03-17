@@ -14,8 +14,8 @@ class IngestionsTest < ApplicationSystemTestCase
     visit ingestions_url
     click_on 'New Ingestion'
 
-    fill_in "Name", with: @ingestion.name
-    fill_in "Time", with: @ingestion.time
+    fill_in 'Name', with: @ingestion.name
+    fill_in 'Time', with: @ingestion.time
     fill_in 'Dish', with: @ingestion.dish_ids
     click_on 'Create Ingestion'
 
@@ -27,8 +27,8 @@ class IngestionsTest < ApplicationSystemTestCase
     visit ingestions_url
     click_on 'Edit', match: :first
 
-    fill_in "Name", with: @ingestion.name
-    fill_in "Time", with: @ingestion.time
+    fill_in 'Name', with: @ingestion.name
+    fill_in 'Time', with: @ingestion.time
     fill_in 'Dish', with: @ingestion.dish_ids
     click_on 'Update Ingestion'
 

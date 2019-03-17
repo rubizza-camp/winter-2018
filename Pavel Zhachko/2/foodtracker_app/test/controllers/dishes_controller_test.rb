@@ -18,7 +18,13 @@ class DishesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create dish' do
     assert_difference('Dish.count') do
-      post dishes_url, params: { dish: { name: @dish.name, weight: @dish.weight, calorie_value: @dish.calorie_value, proteins: @dish.proteins, carbohydrates: @dish.carbohydrates, fats: @dish.fats } }
+      post dishes_url,
+           params: { dish: { name: @dish.name,
+                             weight: @dish.weight,
+                             calorie_value: @dish.calorie_value,
+                             proteins: @dish.proteins,
+                             carbohydrates: @dish.carbohydrates,
+                             fats: @dish.fats } }
     end
 
     assert_redirected_to dish_url(Dish.last)
@@ -35,7 +41,13 @@ class DishesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should update dish' do
-    patch dish_url(@dish), params: { dish: { name: @dish.name, weight: @dish.weight, calorie_value: @dish.calorie_value, proteins: @dish.proteins, carbohydrates: @dish.carbohydrates, fats: @dish.fats } }
+    patch dish_url(@dish),
+          params: { dish: { name: @dish.name,
+                            weight: @dish.weight,
+                            calorie_value: @dish.calorie_value,
+                            proteins: @dish.proteins,
+                            carbohydrates: @dish.carbohydrates,
+                            fats: @dish.fats } }
     assert_redirected_to dish_url(@dish)
   end
 
