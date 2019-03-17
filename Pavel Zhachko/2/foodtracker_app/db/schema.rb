@@ -15,15 +15,6 @@ ActiveRecord::Schema.define(version: 2019_03_13_124317) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "dish_ingestions", force: :cascade do |t|
-    t.bigint "dish_id"
-    t.bigint "ingestion_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["dish_id"], name: "index_dish_ingestions_on_dish_id"
-    t.index ["ingestion_id"], name: "index_dish_ingestions_on_ingestion_id"
-  end
-
   create_table "dishes", force: :cascade do |t|
     t.string "name"
     t.integer "weight"
@@ -72,8 +63,6 @@ ActiveRecord::Schema.define(version: 2019_03_13_124317) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "dish_ingestions", "dishes"
-  add_foreign_key "dish_ingestions", "ingestions"
   add_foreign_key "dishes_ingestions", "dishes"
   add_foreign_key "dishes_ingestions", "ingestions"
   add_foreign_key "ingestions", "dishes"

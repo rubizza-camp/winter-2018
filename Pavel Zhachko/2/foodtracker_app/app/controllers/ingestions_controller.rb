@@ -4,7 +4,7 @@ class IngestionsController < ApplicationController
   # GET /ingestions
   # GET /ingestions.json
   def index
-    @ingestions = Ingestion.all
+    @ingestions = current_user.ingestions
   end
 
   # GET /ingestions/1
@@ -14,7 +14,7 @@ class IngestionsController < ApplicationController
 
   # GET /ingestions/new
   def new
-    @ingestion = Ingestion.new
+    @ingestion = current_user.ingestions.new
   end
 
   # GET /ingestions/1/edit
@@ -24,7 +24,7 @@ class IngestionsController < ApplicationController
   # POST /ingestions
   # POST /ingestions.json
   def create
-    @ingestion = Ingestion.new(ingestion_params)
+    @ingestion = current_user.ingestions.new(ingestion_params)
 
     respond_to do |format|
       if @ingestion.save
@@ -69,6 +69,6 @@ class IngestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ingestion_params
-      params.require(:ingestion).permit(:user_id, :dish_id)
+      params.require(:ingestion).permit(:name, :time, dish_ids: [])
     end
 end
