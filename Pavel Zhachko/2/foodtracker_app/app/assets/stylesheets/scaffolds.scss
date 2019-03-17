@@ -1,6 +1,16 @@
+:root {
+  --err-exp-h2-color: #c00;
+  --err-exp: #f0f0f0;
+  --fff-color: #fff;
+  --red: #f0f0f0;
+  --333: #333;
+  --eee: #eee;
+  --000: #000
+}
+
 body {
-  background-color: #fff;
-  color: #333;
+  background-color: var(--body-bg-color);
+  color: var(--333);
   margin: 33px;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
@@ -14,21 +24,21 @@ p, ol, ul, td {
 }
 
 pre {
-  background-color: #eee;
+  background-color: var(--eee);
   padding: 10px;
   font-size: 11px;
 }
 
 a {
-  color: #000;
+  color: var(--000);
 
   &:visited {
     color: #666;
   }
 
   &:hover {
-    color: #fff;
-    background-color: #000;
+    color: var(--fff-color);
+    background-color: var(--000);
   }
 }
 
@@ -50,30 +60,30 @@ div {
   color: green;
 }
 
-.field_with_errors {
-  padding: 2px;
-  background-color: red;
+.field-with-errors {
+  background-color: var(--red);
   display: table;
+  padding: 2px;
 }
 
-#error_explanation {
-  width: 450px;
-  border: 2px solid red;
-  padding: 7px 7px 0;
+#error-explanation {
+  background-color: var(--err-exp);
+  border: 2px solid var(--red);
   margin-bottom: 20px;
-  background-color: #f0f0f0;
+  padding: 7px 7px 0;
+  width: 450px;
 
   h2 {
-    text-align: left;
-    font-weight: bold;
-    padding: 5px 5px 5px 15px;
+    background-color: var(--err-exp-h2-color);
+    color: var(--fff-color);
     font-size: 12px;
+    font-weight: bold;
     margin: -7px -7px 0;
-    background-color: #c00;
-    color: #fff;
+    padding: 5px 5px 15px;
+    text-align: left;
   }
 
-  ul li {
+  li {
     font-size: 12px;
     list-style: square;
   }
