@@ -1,45 +1,47 @@
-require "application_system_test_case"
+require 'application_system_test_case'
 
 class IngestionsTest < ApplicationSystemTestCase
   setup do
     @ingestion = ingestions(:one)
   end
 
-  test "visiting the index" do
+  test 'visiting the index' do
     visit ingestions_url
-    assert_selector "h1", text: "Ingestions"
+    assert_selector 'h1', text: 'Ingestions'
   end
 
-  test "creating a Ingestion" do
+  test 'creating a Ingestion' do
     visit ingestions_url
-    click_on "New Ingestion"
+    click_on 'New Ingestion'
 
-    fill_in "Dish", with: @ingestion.dish_id
-    fill_in "User", with: @ingestion.user_id
-    click_on "Create Ingestion"
+    fill_in "Name", with: @ingestion.name
+    fill_in "Time", with: @ingestion.time
+    fill_in 'Dish', with: @ingestion.dish_ids
+    click_on 'Create Ingestion'
 
-    assert_text "Ingestion was successfully created"
-    click_on "Back"
+    assert_text 'Ingestion was successfully created'
+    click_on 'Back'
   end
 
-  test "updating a Ingestion" do
+  test 'updating a Ingestion' do
     visit ingestions_url
-    click_on "Edit", match: :first
+    click_on 'Edit', match: :first
 
-    fill_in "Dish", with: @ingestion.dish_id
-    fill_in "User", with: @ingestion.user_id
-    click_on "Update Ingestion"
+    fill_in "Name", with: @ingestion.name
+    fill_in "Time", with: @ingestion.time
+    fill_in 'Dish', with: @ingestion.dish_ids
+    click_on 'Update Ingestion'
 
-    assert_text "Ingestion was successfully updated"
-    click_on "Back"
+    assert_text 'Ingestion was successfully updated'
+    click_on 'Back'
   end
 
-  test "destroying a Ingestion" do
+  test 'destroying a Ingestion' do
     visit ingestions_url
     page.accept_confirm do
-      click_on "Destroy", match: :first
+      click_on 'Destroy', match: :first
     end
 
-    assert_text "Ingestion was successfully destroyed"
+    assert_text 'Ingestion was successfully destroyed'
   end
 end

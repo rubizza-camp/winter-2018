@@ -3,7 +3,7 @@ nav.navbar.navbar-expand-lg.text-light.bg-dark
     li.nav-item
       span.navbar-text Already have an account?
     li.nav-item
-      = link_to 'Login', new_user_session_path, class: "nav-link"
+      = link_to 'Login', new_user_session_path, class: 'nav-link'
 = bootstrap_devise_error_messages!
 .cotainer
   .row.justify-content-center
@@ -14,40 +14,40 @@ nav.navbar.navbar-expand-lg.text-light.bg-dark
         .card-body
           = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
             .form-group.row
-              = f.label :firstname, "First Name", class: "col-md-4 col-form-label text-md-right"
+              = f.label :firstname, 'First Name', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
                 = f.text_field :firstname, :required => true, autofocus: true, class: 'form-control'
             .form-group.row
-              = f.label :lastname, "Last Name", class: "col-md-4 col-form-label text-md-right"
+              = f.label :lastname, 'Last Name', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
                 = f.text_field :lastname, :required => true, autofocus: true, class: 'form-control'
             .form-group.row
-              = f.label :age, "Your Age", class: "col-md-4 col-form-label text-md-right"
+              = f.label :age, 'Your Age', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
-                = f.number_field :age, :required => true, min: "1", autofocus: true, class: 'form-control'
+                = f.number_field :age, :required => true, min: '1', autofocus: true, class: 'form-control'
             .form-group.row
-              = f.label :weight, "Your Weight", class: "col-md-4 col-form-label text-md-right"
+              = f.label :weight, 'Your Weight', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
-                = f.number_field :weight, :required => true, min: "10", placeholder: "Please write your weight in kilograms", autofocus: true, class: 'form-control'
+                = f.number_field :weight, :required => true, min: '10', placeholder: 'Please write your weight in kilograms', autofocus: true, class: 'form-control'
             .form-group.row
-              = f.label :height, "Your Height", class: "col-md-4 col-form-label text-md-right"
+              = f.label :height, 'Your Height', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
-                = f.number_field :height, :required => true, min: "50", placeholder: "Please write your height in centimetres", autofocus: true, class: 'form-control'
+                = f.number_field :height, :required => true, min: '50', placeholder: 'Please write your height in centimetres', autofocus: true, class: 'form-control'
             .form-group.row
-              = f.label :email, "Email", class: "col-md-4 col-form-label text-md-right"
+              = f.label :email, 'Email', class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
                 = f.email_field :email, :required => true, autofocus: true, autocomplete: 'email', class: 'form-control'
             .form-group.row
-              = f.label :password, class: "col-md-4 col-form-label text-md-right"
+              = f.label :password, class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
                 = f.password_field :password, autocomplete: 'current-password', class: 'form-control'
                 - if @minimum_password_length
                   small.form-text.text-muted= t('devise.shared.minimum_password_length', count: @minimum_password_length)
             .form-group.row
-              = f.label :password_confirmation, class: "col-md-4 col-form-label text-md-right"
+              = f.label :password_confirmation, class: 'col-md-4 col-form-label text-md-right'
               .col-md-6
                 = f.password_field :password_confirmation, autocomplete: 'current-password', class: 'form-control'
             .col-md-6.offset-md-4
-              button.btn.btn-lg.btn-primary.btn-block type="submit"
+              button.btn.btn-lg.btn-primary.btn-block type='submit'
                 | Register
-              = button_tag "Reset fields", type: :reset, class: "btn btn-lg btn-primary btn-block"
+              = button_tag 'Reset fields', type: :reset, class: 'btn btn-lg btn-primary btn-block'

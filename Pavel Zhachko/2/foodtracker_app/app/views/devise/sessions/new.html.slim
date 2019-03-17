@@ -4,22 +4,22 @@ nav.navbar.navbar-expand-md.text-light.bg-dark.navbar-fixed-tops
       li.nav-item
         span.navbar-text New here?
       li.nav-item
-        = link_to 'Register', new_user_registration_path, class: "nav-link"
+        = link_to 'Register', new_user_registration_path, class: 'nav-link'
 = bootstrap_devise_error_messages!
 .form-signin
-  = form_for("user", :url => user_session_path ) do |f|
+  = form_for('user', :url => user_session_path ) do |f|
     /! Custom styles for this template
     = stylesheet_link_tag 'signin'
-    - body_class "text-center"
-    = image_tag "/assets/fruits.svg", style: "width:50%;heigth:50%;"
+    - body_class 'text-center'
+    = image_tag '/assets/fruits.svg', style: 'width:50%;heigth:50%;'
     h1.h3.mb-3.font-weight-normal Please sign in
-    = f.label :email, class: "sr-only"
-    = f.email_field :email, autofocus: true, placeholder: 'Email Address', class: "form-control"
-    = f.label :password, class: "sr-only"
-    = f.password_field :password, autocomplete: "off", placeholder: 'Password', class: "form-control"
+    = f.label :email, class: 'sr-only'
+    = f.email_field :email, autofocus: true, placeholder: 'Email Address', class: 'form-control'
+    = f.label :password, class: 'sr-only'
+    = f.password_field :password, autocomplete: 'off', placeholder: 'Password', class: 'form-control'
     .checkbox.mb-3
       label
-        input type="checkbox" value="remember-me" /
+        input type='checkbox' value='remember-me' /
         | Remember me
-    = f.submit "Sign in", class: 'btn btn-lg btn-primary btn-block'
+    = f.submit 'Sign in', class: 'btn btn-lg btn-primary btn-block'
     p.mt-5.mb-3.text-muted © 2017-2018

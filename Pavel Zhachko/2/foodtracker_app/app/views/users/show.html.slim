@@ -8,7 +8,10 @@
         .card-body
           .form-group.row
             .col-sm-3.col-md-2.col-5 First Name:
-            .col-sm-7.col-xs-6 =full_name
+            .col-sm-7.col-xs-6 =current_user.firstname
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Last Name:
+            .col-sm-7.col-xs-6 =current_user.lastname
           .form-group.row
             .col-sm-3.col-md-2.col-5 Email:
             .col-sm-7.col-xs-6 =current_user.email

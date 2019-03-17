@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class DishesIngestionTest < ActiveSupport::TestCase
-  # test "the truth" do
+  # test 'the truth' do
   #   assert true
   # end
 end

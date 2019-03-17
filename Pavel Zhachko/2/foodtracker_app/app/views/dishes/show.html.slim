@@ -14,9 +14,9 @@
           strong Calorie:
           = @dish.calorie_value
 
-          = pie_chart [["Proteins", @dish.proteins], ["Carbohydrates", @dish.carbohydrates], ["Fats", @dish.fats]]
+          = pie_chart [['Proteins', @dish.proteins], ['Carbohydrates', @dish.carbohydrates], ['Fats', @dish.fats]]
 
 
 
-          => link_to '<button type="button">Edit</button>'.html_safe, edit_dish_path(@dish)
-          =< link_to '<button type="button">Back</button>'.html_safe, dishes_path
+          => link_to "<button type='button'>Edit</button>".html_safe, edit_dish_path(@dish)
+          =< link_to "<button type='button'>Back</button>".html_safe, dishes_path
