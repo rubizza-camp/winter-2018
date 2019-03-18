@@ -3,14 +3,14 @@
   --err-exp: #f0f0f0;
   --fff-color: #fff;
   --red: #f0f0f0;
-  --333: #333;
+  --EEE: #333;
   --eee: #eee;
   --000: #000
 }
 
 body {
   background-color: var(--body-bg-color);
-  color: var(--333);
+  color: var(--EEE);
   margin: 33px;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
