@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_13_124317) do
+ActiveRecord::Schema.define(version: 20_19_03_13_12_43_17) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -30,8 +31,8 @@ ActiveRecord::Schema.define(version: 2019_03_13_124317) do
     t.bigint 'ingestion_id'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
-    t.index %w[dish_id], name: 'index_dishes_ingestions_on_dish_id'
-    t.index %w[ingestion_id], name: 'index_dishes_ingestions_on_ingestion_id'
+    t.index ['dish_id'], name: 'index_dishes_ingestions_on_dish_id'
+    t.index ['ingestion_id'], name: 'index_dishes_ingestions_on_ingestion_id'
   end
 
   create_table 'ingestions', force: :cascade do |t|
@@ -41,8 +42,8 @@ ActiveRecord::Schema.define(version: 2019_03_13_124317) do
     t.datetime 'updated_at', null: false
     t.string 'name'
     t.datetime 'time'
-    t.index %w[dish_id], name: 'index_ingestions_on_dish_id'
-    t.index %w[user_id], name: 'index_ingestions_on_user_id'
+    t.index ['dish_id'], name: 'index_ingestions_on_dish_id'
+    t.index ['user_id'], name: 'index_ingestions_on_user_id'
   end
 
   create_table 'users', force: :cascade do |t|
@@ -58,8 +59,8 @@ ActiveRecord::Schema.define(version: 2019_03_13_124317) do
     t.integer 'age'
     t.integer 'weight'
     t.integer 'height'
-    t.index %w[email], name: 'index_users_on_email', unique: true
-    t.index %w[reset_password_token], name: 'index_users_on_reset_password_token', unique: true
+    t.index ['email'], name: 'index_users_on_email', unique: true
+    t.index ['reset_password_token'], name: 'index_users_on_reset_password_token', unique: true
   end
 
   add_foreign_key 'dishes_ingestions', 'dishes'

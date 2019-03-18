@@ -5,7 +5,7 @@
   --red: #f0f0f0;
   --EEE: #333;
   --eee: #eee;
-  --000: #000
+  --OOO: #000
 }
 
 body {
@@ -30,7 +30,7 @@ pre {
 }
 
 a {
-  color: var(--000);
+  color: var(--OOO);
 
   &:visited {
     color: #666;
@@ -38,7 +38,7 @@ a {
 
   &:hover {
     color: var(--fff-color);
-    background-color: var(--000);
+    background-color: var(--OOO);
   }
 }
 
