@@ -1,16 +1,16 @@
 :root {
-  --err-exp-h2-color: #c00;
-  --err-exp: #f0f0f0;
-  --fff-color: #fff;
-  --red: #f0f0f0;
-  --EEE: #333;
-  --eee: #eee;
-  --OOO: #000
+  $backgr: #333;
+  $OOO: #000;
+  $eee: #eee;
+  $err: #f0f0f0;
+  $err-h2-color: #c00;
+  $fff: #fff;
+  $red: #f0f0f0;
 }
 
 body {
-  background-color: var(--body-bg-color);
-  color: var(--EEE);
+  background-color: $fff;
+  color: $backgr;
   margin: 33px;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
@@ -24,21 +24,21 @@ p, ol, ul, td {
 }
 
 pre {
-  background-color: var(--eee);
+  background-color: $eee;
   padding: 10px;
   font-size: 11px;
 }
 
 a {
-  color: var(--OOO);
+  color: $OOO;
 
   &:visited {
     color: #666;
   }
 
   &:hover {
-    color: var(--fff-color);
-    background-color: var(--OOO);
+    color: $fff;
+    background-color: $OOO;
   }
 }
 
@@ -61,21 +61,21 @@ div {
 }
 
 .field-with-errors {
-  background-color: var(--red);
+  background-color: $red;
   display: table;
   padding: 2px;
 }
 
 #error-explanation {
-  background-color: var(--err-exp);
-  border: 2px solid var(--red);
+  background-color: $err;
+  border: 2px solid $red;
   margin-bottom: 20px;
   padding: 7px 7px 0;
   width: 450px;
 
   h2 {
-    background-color: var(--err-exp-h2-color);
-    color: var(--fff-color);
+    background-color: $err-h2-color;
+    color: $fff;
     font-size: 12px;
     font-weight: bold;
     margin: -7px -7px 0;
