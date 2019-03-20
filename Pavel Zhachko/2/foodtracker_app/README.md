@@ -1,24 +1,33 @@
-# README
+# Foodtracker app
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Simple foodtracker app build by ruby on rails.
 
-Things you may want to cover:
+## Getting Started
 
-* Ruby version
+1. ruby-2.5.3
+2. rails 5+
 
-* System dependencies
 
-* Configuration
 
-* Database creation
+### Installing
+After you clone the app.
 
-* Database initialization
+```
+db:create db:migrate
+```
+Then run `bundle install`.
 
-* How to run the test suite
+Visit **`http://localhost:3000`**
 
-* Services (job queues, cache servers, search engines, etc.)
+You can register new user by clicking on Register link.
 
-* Deployment instructions
+To get admin permition to registered user:
+Change `config.verify_access_proc = proc { |controller| controller.current_user.admin? }`in
+ **`config/initializers/rails_db.rb`** to `config.verify_access_proc = proc { |controller| true }`
 
-* ...
+Then edit user and save. After that change config to permition only for admin.
+
+
+## Authors
+
+* **Pavel Zhachko** - *Initial work* - [SadTigger](https://github.com/SadTigger)
