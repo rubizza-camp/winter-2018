@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: breakfast
+  time: Time.now
+  dish_id: 1
+
+two:
+  name: lunch
+  time: Time.now
+  dish_id: 2

@@ -1,0 +1,35 @@
+  = form_for @dish do |f|
+    - if @dish.errors.any?
+      #error_explanation
+        h2 = "#{pluralize(@dish.errors.count, 'error')} prohibited this dish from being saved:"
+        ul
+          - @dish.errors.full_messages.each do |message|
+            li = message
+
+    .form-group.row
+      = f.label :name, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.text_field :name, :required => true, class: 'form-control'
+    .form-group.row
+      = f.label :weight, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.number_field :weight, min: '1', :required => true, class: 'form-control'
+    .form-group.row
+      = f.label :calorie_value, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.number_field :calorie_value, min: '1', :required => true, class: 'form-control'
+    .form-group.row
+      = f.label :proteins, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.number_field :proteins, min: '1', :required => true, class: 'form-control'
+    .form-group.row
+      = f.label :carbohydrates, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.number_field :carbohydrates, min: '1', :required => true, class: 'form-control'
+    .form-group.row
+      = f.label :fats, class: 'col-md-4 col-form-label text-md-right'
+      .col-md-6
+        = f.number_field :fats, min: '1', :required => true, class: 'form-control'
+    .form-group.row
+      .actions = f.submit class: 'btn btn-default'
+      =< link_to "<button type='button' class='btn btn-default'>Back</button>".html_safe, dishes_path

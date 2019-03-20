@@ -1,0 +1,29 @@
+.container
+  .row
+    .col-12
+      .card
+        .card-header
+          h4
+            | Profile
+        .card-body
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 First Name:
+            .col-sm-7.col-xs-6 =current_user.firstname
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Last Name:
+            .col-sm-7.col-xs-6 =current_user.lastname
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Email:
+            .col-sm-7.col-xs-6 =current_user.email
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Age:
+            .col-sm-7.col-xs-6 =current_user.age
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Weight:
+            .col-sm-7.col-xs-6 =current_user.weight
+          .form-group.row
+            .col-sm-3.col-md-2.col-5 Height:
+            .col-sm-7.col-xs-6 =current_user.height
+
+          = link_to '<button type="button">Edit Profile</button>'.html_safe, edit_user_registration_path
+          = link_to '<button type="button">Back</button>'.html_safe, :back
